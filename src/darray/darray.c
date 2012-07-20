@@ -1,6 +1,8 @@
 #include "darray/darray.h"
 
 static DArrayElement * darrayelement_at( DArray *, unsigned int );
+static void savdeclen( DArray * );
+static void savinclen( DArray * a );
 
 DArray * darray( void(*) e ) {
     DArrayElement el = (DArrayElement*) malloc( sizeof( DArrayElement ) );
@@ -21,6 +23,14 @@ static DArrayElement * darrayelement_at( DArray * a, unsigned int i ) {
             return NULL;
 
     return c; 
+}
+
+static void savdeclen( DArray * a ) {
+    if( a->len ) a->len--;
+}
+
+static void savinclen( DArray * a ) {
+    if( a->len ) a->len++;
 }
 
 /*
@@ -70,21 +80,30 @@ void (*) da_destroy_by_element( DArray * a, DArrayElement * e ) {
     if ( !e )
         return NULL;
 
-    if( e->p && e->n ) { // fix pointers of next and previous
-        e->n->p = e->p;
-        e->p->n = e->n;
+    if( e->p ) { // fix pointers of next and previous
+        if ( e->n ) 
+            e->p->n = e->n;
+        else 
+            e->p->n = NULL;
+    }
+    else { // fix first if destroyed was first
+        a->f = e->n;
     }
 
-    if( !e->n ) // fix last if destroyed was last
+    if( e->n ) {
+        if( e->p )
+            e->n->p = e->p; // if statements before this loc are redundant (#83,84)
+        else
+            e->n->p = NULL;
+    }
+    else { // fix last if destroyed was last
         a->l = e->p;
-
-    if( !e->p ) // fix first if destroyed was first
-        a->f = e->n;
+    }
 
     el = e->e; // save element value
     free( e );
 
-    if( a->len ) a->len--;
+    savdeclen(a);
 
     return el;
 }
