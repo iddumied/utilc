@@ -42,6 +42,20 @@ unsigned int da_len( DArray * a ) {
     return i;
 }
 
+/*
+ * You could do this by your own in your code,... but why not?
+ */
+void (*) da_last( DArray * a ) {
+    return a->l->e;
+}
+
+/*
+ * You could do this by your own in your code,... but why not?
+ */
+void (*) da_first( DArray * a ) {
+    return a->f->e;
+}
+
 void (*) da_element( DArray * a , unsigned int i ) {
     DArrayElement * e = darrayelement_at( a, i );
     if( e ) 

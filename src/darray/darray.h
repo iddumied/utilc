@@ -20,6 +20,8 @@ struct {
 
 DArray * darray(void(*) e);
 unsigned long long int da_len( DArray * );
+void (*) da_last( DArray * );
+void (*) da_first( DArray * );
 
 void da_destroy( DArray * );
 
