@@ -4,7 +4,7 @@ Mainly to work with C, Pointer stuff and memory handling. Learning-by-doing stuf
 you know?
 
 First goal is:
-Implement a dynamical array in C with all functionality required by an array:
+Implement a dynamical array (linked list) in C with all functionality required by an array:
 
 - init with a value
 - get length of it
