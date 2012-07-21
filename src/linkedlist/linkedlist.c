@@ -74,6 +74,19 @@ void (*) ll_element( LinkedList * l , unsigned int i ) {
         return e; // e == NULL
 }
 
+void (*) ll_pop( LinkedList * l ) {
+    return ll_destroy_by_element( l, l->f );
+} 
+
+void ll_push( LinkedList * l, void (*) e ) {
+    LinkedListElement * element = (LinkedListElement*) malloc( sizeof( LinkedListElement ) );
+    element->e = e;
+    element->p = l->l;
+    l->l->n = element;
+    l->l = element;
+    l->len++;
+}
+
 void (*) ll_destroy_by_element( LinkedList * l, LinkedListElement * e ) {
     void (*) el;
 

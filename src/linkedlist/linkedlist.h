@@ -19,21 +19,36 @@ struct {
 } LinkedList;
 
 LinkedList * linkedlist(void(*) e);
-unsigned long long int ll_len( LinkedList * );
+
+/*
+ * Get info about the LinkedList
+ */
+unsigned int ll_len( LinkedList * );
 void (*) ll_last( LinkedList * );
 void (*) ll_first( LinkedList * );
 
-void ll_destroy( LinkedList * );
+/*
+ * Work with elements of the LinkedList 
+ */
+void ll_element( LinkedList *, unsigned int );
+void (*) ll_pop( LinkedList* );
+void ll_push( LinkedList * );  
 
-void ll_element( LinkedList*, unsigned int );
-
+/*
+ * Remove elements or the LinkedList from memory
+ */
 void (*) ll_destroy_by_element( LinkedList *, LinkedListElement * );
 void (*) ll_destroy_by_index( LinkedList *, unsigned int );
 void ll_destroy( LinkedList * );
 
-void ll_push( LinkedList *, void(*) ); // l->len has to be set += 1 only if it was set
-void (*) ll_pop( LinkedList * );  // l->len -= 1 onyl if it was set
+/*
+ * Other functionality 
+ */
 LinkedList * ll_dump( LinkedList * );
+
+/*
+ * Sort the LinkedList
+ */
 LinkedList * ll_new_sorted( LinkedList * );
 LinkedList * ll_sort( LinkedList * );
 
