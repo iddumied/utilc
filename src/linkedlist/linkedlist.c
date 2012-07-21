@@ -34,6 +34,10 @@ static void savinclen( LinkedList * l ) {
 }
 
 /*
+ * Get info about the LinkedList
+ */
+
+/*
  * Saves the calculated value in the LinkedList struct.
  * So when called first time, it calculates the len int
  * O(n)
@@ -52,19 +56,17 @@ unsigned int ll_len( LinkedList * l ) {
     return i;
 }
 
-/*
- * You could do this by your own in your code,... but why not?
- */
 void (*) ll_last( LinkedList * l ) {
     return l->l->e;
 }
 
-/*
- * You could do this by your own in your code,... but why not?
- */
 void (*) ll_first( LinkedList * l ) {
     return l->f->e;
 }
+
+/*
+ * Work with elements in the List
+ */
 
 void (*) ll_element( LinkedList * l , unsigned int i ) {
     LinkedListElement * e = linkedlistelement_at( l, i );
@@ -80,12 +82,22 @@ void (*) ll_pop( LinkedList * l ) {
 
 void ll_push( LinkedList * l, void (*) e ) {
     LinkedListElement * element = (LinkedListElement*) malloc( sizeof( LinkedListElement ) );
-    element->e = e;
-    element->p = l->l;
-    l->l->n = element;
-    l->l = element;
+    if ( l->l ) {
+        element->e = e;
+        element->p = l->l;
+        l->l->n = element;
+        l->l = element;
+    }
+    else {
+        l->f = element;
+        l->l = element;
+    }
     l->len++;
 }
+
+/*
+ * Remove elements or the LinkedList from memory
+ */
 
 void (*) ll_destroy_by_element( LinkedList * l, LinkedListElement * e ) {
     void (*) el;
@@ -133,4 +145,17 @@ void (*) ll_destroy( LinkedList * l ) {
 
     free( l );
 } 
+
+/*
+ * Other functionality
+ */
+
+LinkedList * ll_dump( LinkedList * l ) {
+    LinkedList * new = linkedlist( l->f->e ); 
+    LinkedListElement * c = l->f;
+    while( c = c->n ) // O(n)
+        ll_push( new, c->e );
+    return new;
+}
+
 
