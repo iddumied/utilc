@@ -49,7 +49,6 @@ LinkedList * ll_dump( LinkedList * );
 /*
  * Sort the LinkedList
  */
-LinkedList * ll_new_sorted( LinkedList * );
-LinkedList * ll_sort( LinkedList * );
+LinkedList * ll_sort( LinkedList *, signed int (*)(void*,void*) );
 
 #endif

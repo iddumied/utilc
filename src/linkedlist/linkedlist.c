@@ -158,4 +158,69 @@ LinkedList * ll_dump( LinkedList * l ) {
     return new;
 }
 
+LinkedList * ll_sort( LinkedList * l, signed int (*cmpfunc)( void* a, void* b ) ) {
+    LinkedList * sorted;
+    if( !l->len ) ll_len(l);
+    if( l->len > 10 )
+        sorted = quicksort(l, cmpfunc );
+}
 
+LinkedList * quicksort( LinkedList * l, signed int (*cmpfunc)( void* a, void* b ) ) {
+    if( l->r == l->l ) return l;
+
+    LinkedListElement * pivot = l->r;
+    LinkedListElement * curr = l->l;
+
+    signed int cmp;
+    void (*) stash;
+    int run = 1;
+
+    while( run && curr != pivot ) {
+        cmp = (*cmpfunc)( pivot->e, curr->e );
+        curr = curr->n;
+        if( cmp > 0 ) { //  curr->previous is > than pivot, bring it on right side
+            stash = ll_destroy_by_element( l, curr->p );
+            ll_push( l, stash ); 
+        }
+    }
+
+    if( pivot->p ) {
+        // generate a new LinkedList for the left side, sort it with qs and merge
+        // it with this LinkedList
+        //
+        // This is done by breaking the chain into pieces and use the pieces as
+        // new LinkedList. Then sort it with quicksort and pack it into the old
+        // LinkedList by repairing the pointers.
+        //
+        LinkedList * left;
+        left->l = l->l;
+        left->r = pivot->p;
+        left->r->n = NULL;
+        
+        left = quicksort( left, cmpfunc );
+
+        left->r->n = pivot;
+
+    }
+
+    if( pivot->n ) {
+        // generate a new LinkedList for the right side, sort it with qs and merge
+        // it with this LinkedList
+        //
+        // This is done by breaking the chain into pieces and use the pieces as
+        // new LinkedList. Then sort it with quicksort and pack it into the old
+        // LinkedList by repairing the pointers.
+        //
+        LinkedList * right;
+        right->l = pivot->n;
+        right->l->p = NULL;
+        right->r = l->r;
+
+        right = quicksort( right, cmpfunc );
+
+        right->r->p = pivot;
+        
+    }
+
+    return l;
+}
