@@ -173,9 +173,8 @@ LinkedList * quicksort( LinkedList * l, signed int (*cmpfunc)( void* a, void* b 
 
     signed int cmp;
     void (*) stash;
-    int run = 1;
 
-    while( run && curr != pivot ) {
+    while( curr != pivot ) {
         cmp = (*cmpfunc)( pivot->e, curr->e );
         curr = curr->n;
         if( cmp > 0 ) { //  curr->previous is > than pivot, bring it on right side
