@@ -223,3 +223,23 @@ LinkedList * quicksort( LinkedList * l, signed int (*cmpfunc)( void* a, void* b 
 
     return l;
 }
+
+LinkedList * get_by_cond( LinkedList * l, int(*cnd)(void*) ) {
+    LinkedList new;
+    LinkedListElement * c = l->f;
+
+    if( (cnd)(l->f->e) )
+        new = linkedlist(l->f->e);
+    else
+        new = NULL;
+
+    while( c = c->n ) {
+        if( (cnd)(c->e) ) {
+            if( new == NULL ) 
+                new = linkedlist(c->e);
+            else
+                ll_push(new, c->e);
+        }
+    }
+    return new;
+}
