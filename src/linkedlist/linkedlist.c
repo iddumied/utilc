@@ -19,8 +19,10 @@ static LinkedListElement * linkedlistelement_at( LinkedList * l, unsigned int i 
     for( ; i != 0 ; i-- )
         if ( c->n )
             c = c->n;
-        else
-            return NULL;
+        else {
+            i = 0;
+            c = NULL;
+        }
 
     return c; 
 }
