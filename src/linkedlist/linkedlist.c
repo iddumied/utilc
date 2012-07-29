@@ -3,6 +3,7 @@
 static LinkedListElement * linkedlistelement_at( LinkedList *, unsigned int );
 static void savdeclen( LinkedList * );
 static void savinclen( LinkedList * );
+static LinkedList * quicksort( LinkedList*, signed int (*)(void(*), void(*)) );
 
 LinkedList * linkedlist( void(*) e ) {
     LinkedListElement el = (LinkedListElement*) malloc( sizeof( LinkedListElement ) );
@@ -167,7 +168,7 @@ LinkedList * ll_sort( LinkedList * l, signed int (*cmpfunc)( void* a, void* b ) 
         sorted = quicksort(l, cmpfunc );
 }
 
-LinkedList * quicksort( LinkedList * l, signed int (*cmpfunc)( void* a, void* b ) ) {
+static LinkedList * quicksort( LinkedList * l, signed int (*cmpfunc)( void* a, void* b ) ) {
     if( l->r == l->l ) return l;
 
     LinkedListElement * pivot = l->r;
