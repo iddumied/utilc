@@ -202,6 +202,7 @@ static LinkedList * quicksort( LinkedList * l, signed int (*cmpfunc)( void* a, v
         left = quicksort( left, cmpfunc );
 
         left->r->n = pivot;
+        pivot->p = left->r;
 
     }
 
@@ -220,7 +221,8 @@ static LinkedList * quicksort( LinkedList * l, signed int (*cmpfunc)( void* a, v
 
         right = quicksort( right, cmpfunc );
 
-        right->r->p = pivot;
+        right->l->p = pivot;
+        pivot->n = right->l;
         
     }
 
