@@ -5,13 +5,13 @@ static void savdeclen( LinkedList * );
 static void savinclen( LinkedList * );
 static LinkedList * quicksort( LinkedList*, signed int (*)(void(*), void(*)) );
 
-LinkedList * linkedlist( void(*) e ) {
-    LinkedListElement el = (LinkedListElement*) malloc( sizeof( LinkedListElement ) );
-    LinkedList l = (LinkedList*) malloc( sizeof( LinkedList ) );
+LinkedList * linkedlist( void *e ) {
+    LinkedListElement *el = (LinkedListElement*) malloc( sizeof( LinkedListElement ) );
+    LinkedList *l = (LinkedList*) malloc( sizeof( LinkedList ) );
     el->e = e;
     el->n = el->p = NULL;
 
-    l->f = l->p = el;
+    l->f = l->l = el;
     return l;
 }
 
@@ -48,62 +48,62 @@ static void savinclen( LinkedList * l ) {
  * afterwards it will take O(1)
  *
  */
-unsigned int ll_len( LinkedList * l ) {
-    if( l->len ) 
-        return l->len;
+unsigned int ll_len( LinkedList * list ) {
+    if( list->len ) 
+        return list->len;
 
     unsigned int i = 0;
-    LinkedListElement * c = l->f;
+    LinkedListElement * c = list->f;
     while( c = c->n ) i++;
-    l->len = i;
+    list->len = i;
     return i;
 }
 
-void (*) ll_last( LinkedList * l ) {
-    return l->l->e;
+void * ll_last( LinkedList * list ) {
+    return list->l->e;
 }
 
-void (*) ll_first( LinkedList * l ) {
-    return l->f->e;
+void * ll_first( LinkedList * list ) {
+    return list->f->e;
 }
 
 /*
  * Work with elements in the List
  */
 
-void (*) ll_element( LinkedList * l , unsigned int i ) {
-    LinkedListElement * e = linkedlistelement_at( l, i );
-    if( e ) 
-        return e->e;
+void * ll_element( LinkedList * l , unsigned int i ) {
+    LinkedListElement * listelement = linkedlistelement_at( l, i );
+    if( listelement ) 
+        return listelement->e;
     else
-        return e; // e == NULL
+        return NULL; // e == NULL
 }
 
-void (*) ll_pop( LinkedList * l ) {
-    return ll_destroy_by_element( l, l->f );
+void * ll_pop( LinkedList * list ) {
+    return ll_destroy_by_element( list, list->f );
 } 
 
-void ll_push( LinkedList * l, void (*) e ) {
+void ll_push( LinkedList * list, void * e ) {
     LinkedListElement * element = (LinkedListElement*) malloc( sizeof( LinkedListElement ) );
-    if ( l->l ) {
+    if ( list->l ) {
         element->e = e;
-        element->p = l->l;
-        l->l->n = element;
-        l->l = element;
+        element->p = list->l;
+        list->l->n = element;
+        list->l = element;
     }
     else {
-        l->f = element;
-        l->l = element;
+        list->f = element;
+        list->l = element;
     }
-    l->len++;
+    list->len++;
 }
 
 /*
  * Remove elements or the LinkedList from memory
  */
 
-void (*) ll_destroy_by_element( LinkedList * l, LinkedListElement * e ) {
-    void (*) el;
+void * ll_destroy_by_element( LinkedList * list, LinkedListElement * e ) {
+    void *el;
 
     if ( !e )
         return NULL;
@@ -115,7 +115,7 @@ void (*) ll_destroy_by_element( LinkedList * l, LinkedListElement * e ) {
             e->p->n = NULL;
     }
     else { // fix first if destroyed was first
-        l->f = e->n;
+        list->f = e->n;
     }
 
     if( e->n ) {
@@ -125,57 +125,60 @@ void (*) ll_destroy_by_element( LinkedList * l, LinkedListElement * e ) {
             e->n->p = NULL;
     }
     else { // fix last if destroyed was last
-        l->l = e->p;
+        list->l = e->p;
     }
 
     el = e->e; // save element value
     free( e );
 
-    savdeclen(l);
+    savdeclen(list);
 
     return el;
 }
 
-void (*) ll_destroy_by_index( LinkedList * l, unsigned int i ){
-    LinkedListElement * e = linkedlistelement_at( l, i );
-    return ll_destroy_by_element( l, e );
+void * ll_destroy_by_index( LinkedList * list, unsigned int i ){
+    LinkedListElement * e = linkedlistelement_at( list, i );
+    return ll_destroy_by_element( list, e );
 }  
 
-void (*) ll_destroy( LinkedList * l ) {
-    ll_len( l ); // just ensure the l->len value exists. 
-    while ( l->len )
-        ll_destroy_by_element( l, l->l );
+void ll_destroy( LinkedList * list ) {
+    if( !list->len ) ll_len( list ); // just ensure the l->len value exists. 
+    while ( list->len )
+        ll_destroy_by_element( list, list->l );
 
-    free( l );
+    free( list );
 } 
 
 /*
  * Other functionality
  */
 
-LinkedList * ll_dump( LinkedList * l ) {
-    LinkedList * new = linkedlist( l->f->e ); 
-    LinkedListElement * c = l->f;
+LinkedList * ll_dump( LinkedList *list ) {
+    LinkedList * new = linkedlist( list->f->e ); 
+    LinkedListElement * c = list->f;
     while( c = c->n ) // O(n)
         ll_push( new, c->e );
+
     return new;
 }
 
-LinkedList * ll_sort( LinkedList * l, signed int (*cmpfunc)( void* a, void* b ) ) {
+LinkedList * ll_sort( LinkedList * list, signed int (*cmpfunc)( void *a, void *b ) ) {
     LinkedList * sorted;
-    if( !l->len ) ll_len(l);
-    if( l->len > 10 )
-        sorted = quicksort(l, cmpfunc );
+    if( !list->len ) ll_len(list);
+    if( list->len > 10 )
+        sorted = quicksort(list, cmpfunc );
+
+    return sorted;
 }
 
 static LinkedList * quicksort( LinkedList * l, signed int (*cmpfunc)( void* a, void* b ) ) {
-    if( l->r == l->l ) return l;
+    if( l->f == l->l ) return l;
 
-    LinkedListElement * pivot = l->r;
+    LinkedListElement * pivot = l->f;
     LinkedListElement * curr = l->l;
 
     signed int cmp;
-    void (*) stash;
+    void *stash;
 
     while( curr != pivot ) {
         cmp = (*cmpfunc)( pivot->e, curr->e );
@@ -194,15 +197,15 @@ static LinkedList * quicksort( LinkedList * l, signed int (*cmpfunc)( void* a, v
         // new LinkedList. Then sort it with quicksort and pack it into the old
         // LinkedList by repairing the pointers.
         //
-        LinkedList * left;
+        LinkedList * left = (LinkedList*) malloc( sizeof( LinkedList ) );
         left->l = l->l;
-        left->r = pivot->p;
-        left->r->n = NULL;
+        left->f = pivot->p;
+        left->f->n = NULL;
         
         left = quicksort( left, cmpfunc );
 
-        left->r->n = pivot;
-        pivot->p = left->r;
+        left->f->n = pivot;
+        pivot->p = left->f;
 
     }
 
@@ -214,10 +217,10 @@ static LinkedList * quicksort( LinkedList * l, signed int (*cmpfunc)( void* a, v
         // new LinkedList. Then sort it with quicksort and pack it into the old
         // LinkedList by repairing the pointers.
         //
-        LinkedList * right;
+        LinkedList * right = (LinkedList*) malloc( sizeof( LinkedList ) );
         right->l = pivot->n;
         right->l->p = NULL;
-        right->r = l->r;
+        right->f = l->f;
 
         right = quicksort( right, cmpfunc );
 
@@ -230,8 +233,8 @@ static LinkedList * quicksort( LinkedList * l, signed int (*cmpfunc)( void* a, v
 }
 
 LinkedList * get_by_cond( LinkedList * l, int(*cnd)(void*) ) {
-    LinkedList new;
-    LinkedListElement * c = l->f;
+    LinkedList *new;
+    LinkedListElement *c = l->f;
 
     if( (cnd)(l->f->e) )
         new = linkedlist(l->f->e);
