@@ -32,7 +32,7 @@ void (*) ll_first( LinkedList * );
  */
 void ll_element( LinkedList *, unsigned int );
 void (*) ll_pop( LinkedList* );
-void ll_push( LinkedList * );  
+void ll_push( LinkedList *, void (*) );  
 
 /*
  * Remove elements or the LinkedList from memory
