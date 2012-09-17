@@ -114,25 +114,25 @@ void * ll_destroy_by_element( LinkedList * list, LinkedListElement * listelement
     if ( !listelement )
         return NULL;
 
-    if( listelement->prev ) { // fix pointers of next and previous
-        if ( listelement->next ) 
+    if ( !( list->first == listelement && list->last == listelement ) ) {
+        // listelement is NOT the only element in the list
+        if ( list->first == listelement ) {
+            // listelement is first
+            list->first->next->prev = NULL; // before 2nd there will be nothing
+            list->first = listelement->next;
+        }
+        else if ( list->last == listelement ) {
+            // listelement is last
+            list->last->prev->next = NULL; // after 2nd-last there will be nothing
+            list->last = listelement->prev;
+        }
+        else {
+            // listelement is inside the list 
             listelement->prev->next = listelement->next;
-        else 
-            listelement->prev->next = NULL;
+            listelement->next->prev = listelement->prev;
+        }
     }
-    else { // fix first if destroyed was first
-        list->first = listelement->next;
-    }
-
-    if( listelement->next ) {
-        if( listelement->prev )
-            listelement->next->prev = listelement->prev; // if statements before this loc are redundant (#83,84)
-        else
-            listelement->next->prev = NULL;
-    }
-    else { // fix last if destroyed was last
-        list->last = listelement->prev;
-    }
+    // else {}
 
     el = listelement->e; // save element value
     free( listelement );
