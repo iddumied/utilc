@@ -2,6 +2,7 @@
 #define __D_ARRAY__H__
 
 #include <stdlib.h>
+#include <stdbool.h>
 
 typedef struct linked_list_element  LinkedListElement;
 typedef struct linked_list          LinkedList;
@@ -44,6 +45,7 @@ void ll_destroy( LinkedList * );
 /*
  * Other functionality 
  */
+bool ll_element_in_list( LinkedList*, void* );
 LinkedList * ll_dump( LinkedList * );
 
 /*

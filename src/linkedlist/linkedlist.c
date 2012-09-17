@@ -159,6 +159,17 @@ void ll_destroy( LinkedList * list ) {
  * Other functionality
  */
 
+bool ll_element_in_list( LinkedList * list, void * el ) {
+    LinkedListElement * curr = list->first;
+    bool found = false;
+
+    while( !found ) {
+        found = curr->e == el;
+        curr = curr->next;
+    }
+    return found;
+}
+
 LinkedList * ll_dump( LinkedList *list ) {
     LinkedList * new = linkedlist( list->first->e ); 
     LinkedListElement * c = list->first;
