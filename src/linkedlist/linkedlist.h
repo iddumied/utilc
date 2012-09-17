@@ -8,14 +8,14 @@ typedef struct linked_list          LinkedList;
 
 struct linked_list_element {
     void * e;
-    LinkedListElement * n;
-    LinkedListElement * p;
+    LinkedListElement * next;
+    LinkedListElement * prev;
 };
 
 struct linked_list {
-    LinkedListElement * f;
-    LinkedListElement * l;
-    unsigned int len;
+    LinkedListElement * first;
+    LinkedListElement * last;
+    unsigned int length;
 };
 
 LinkedList * linkedlist( void(*) );

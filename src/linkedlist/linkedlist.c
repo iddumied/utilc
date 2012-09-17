@@ -9,9 +9,9 @@ LinkedList * linkedlist( void *e ) {
     LinkedListElement *el = (LinkedListElement*) malloc( sizeof( LinkedListElement ) );
     LinkedList *l = (LinkedList*) malloc( sizeof( LinkedList ) );
     el->e = e;
-    el->n = el->p = NULL;
+    el->next = el->prev = NULL;
 
-    l->f = l->l = el;
+    l->first = l->last = el;
     return l;
 }
 
@@ -21,11 +21,11 @@ LinkedList * linkedlist( void *e ) {
  * void* to the real element!
  */
 static LinkedListElement * linkedlistelement_at( LinkedList * list, unsigned int i ) {
-    LinkedListElement * c = list->f;
+    LinkedListElement * c = list->first;
     unsigned int j;
-    if (!list->len) ll_len(list);
-    for( j = 0 ; j < list->len && j != i  ; j++ ) {
-        if ( c->n ) c = c->n; // next
+    if (!list->length) ll_len(list);
+    for( j = 0 ; j < list->length && j != i  ; j++ ) {
+        if ( c->next ) c = c->next; 
         else {
             j = i; // abort the iteration the easy way.
             c = NULL; // but ensure there is NULLtype returned
@@ -35,12 +35,12 @@ static LinkedListElement * linkedlistelement_at( LinkedList * list, unsigned int
     return c; 
 }
 
-static void savdeclen( LinkedList * l ) {
-    if( l->len ) l->len--;
+static void savdeclen( LinkedList * list ) {
+    if( list->length ) list->length--;
 }
 
-static void savinclen( LinkedList * l ) {
-    if( l->len ) l->len++;
+static void savinclen( LinkedList * list ) {
+    if( list->length ) list->length++;
 }
 
 /*
@@ -56,22 +56,22 @@ static void savinclen( LinkedList * l ) {
  *
  */
 unsigned int ll_len( LinkedList * list ) {
-    if( list->len ) 
-        return list->len;
+    if( list->length ) 
+        return list->length;
 
     unsigned int i = 0;
-    LinkedListElement * c = list->f;
-    while( c = c->n ) i++;
-    list->len = i;
+    LinkedListElement * c = list->first;
+    while( c = c->next ) i++;
+    list->length = i;
     return i;
 }
 
 void * ll_last( LinkedList * list ) {
-    return list->l->e;
+    return list->last->e;
 }
 
 void * ll_first( LinkedList * list ) {
-    return list->f->e;
+    return list->first->e;
 }
 
 /*
@@ -87,55 +87,55 @@ void * ll_element( LinkedList * l , unsigned int i ) {
 }
 
 void * ll_pop( LinkedList * list ) {
-    return ll_destroy_by_element( list, list->f );
+    return ll_destroy_by_element( list, list->first );
 } 
 
 void ll_push( LinkedList * list, void * e ) {
     LinkedListElement * element = (LinkedListElement*) malloc( sizeof( LinkedListElement ) );
     element->e = e;
-    if ( list->l ) {
-        element->p = list->l;
-        list->l->n = element;
+    if ( list->last ) {
+        element->prev = list->last;
+        list->last->next = element;
     }
     else {
-        list->f = element;
+        list->first = element;
     }
-    list->l = element;
-    if( list->len ) list->len++;
+    list->last = element;
+    if( list->length ) list->length++;
 }
 
 /*
  * Remove elements or the LinkedList from memory
  */
 
-void * ll_destroy_by_element( LinkedList * list, LinkedListElement * e ) {
+void * ll_destroy_by_element( LinkedList * list, LinkedListElement * listelement ) {
     void *el;
 
-    if ( !e )
+    if ( !listelement )
         return NULL;
 
-    if( e->p ) { // fix pointers of next and previous
-        if ( e->n ) 
-            e->p->n = e->n;
+    if( listelement->prev ) { // fix pointers of next and previous
+        if ( listelement->next ) 
+            listelement->prev->next = listelement->next;
         else 
-            e->p->n = NULL;
+            listelement->prev->next = NULL;
     }
     else { // fix first if destroyed was first
-        list->f = e->n;
+        list->first = listelement->next;
     }
 
-    if( e->n ) {
-        if( e->p )
-            e->n->p = e->p; // if statements before this loc are redundant (#83,84)
+    if( listelement->next ) {
+        if( listelement->prev )
+            listelement->next->prev = listelement->prev; // if statements before this loc are redundant (#83,84)
         else
-            e->n->p = NULL;
+            listelement->next->prev = NULL;
     }
     else { // fix last if destroyed was last
-        list->l = e->p;
+        list->last = listelement->prev;
     }
 
-    el = e->e; // save element value
-    free( e );
+    el = listelement->e; // save element value
+    free( listelement );
 
     savdeclen(list);
 
@@ -148,9 +148,9 @@ void * ll_destroy_by_index( LinkedList * list, unsigned int i ){
 }  
 
 void ll_destroy( LinkedList * list ) {
-    if( !list->len ) ll_len( list ); // just ensure the l->len value exists. 
-    while ( list->len )
-        ll_destroy_by_element( list, list->l );
+    if( !list->length ) ll_len( list ); // just ensure the l->len value exists. 
+    while ( list->length )
+        ll_destroy_by_element( list, list->last );
 
     free( list );
 } 
@@ -160,9 +160,9 @@ void ll_destroy( LinkedList * list ) {
  */
 
 LinkedList * ll_dump( LinkedList *list ) {
-    LinkedList * new = linkedlist( list->f->e ); 
-    LinkedListElement * c = list->f;
-    while( c = c->n ) // O(n)
+    LinkedList * new = linkedlist( list->first->e ); 
+    LinkedListElement * c = list->first;
+    while( c = c->next ) // O(n)
         ll_push( new, c->e );
 
     return new;
@@ -170,32 +170,31 @@ LinkedList * ll_dump( LinkedList *list ) {
 
 LinkedList * ll_sort( LinkedList * list, signed int (*cmpfunc)( void *a, void *b ) ) {
     LinkedList * sorted;
-    if( !list->len ) ll_len(list);
-    if( list->len > 10 )
-        sorted = quicksort(list, cmpfunc );
+    if( !list->length ) ll_len(list);
+    if( list->length > 10 ) sorted = quicksort(list, cmpfunc );
 
     return sorted;
 }
 
-static LinkedList * quicksort( LinkedList * l, signed int (*cmpfunc)( void* a, void* b ) ) {
-    if( l->f == l->l ) return l;
+static LinkedList * quicksort( LinkedList * list, signed int (*cmpfunc)( void* a, void* b ) ) {
+    if( list->first == list->last ) return list;
 
-    LinkedListElement * pivot = l->f;
-    LinkedListElement * curr = l->l;
+    LinkedListElement * pivot = list->first;
+    LinkedListElement * curr = list->last;
 
     signed int cmp;
     void *stash;
 
     while( curr != pivot ) {
         cmp = (*cmpfunc)( pivot->e, curr->e );
-        curr = curr->n;
+        curr = curr->next;
         if( cmp > 0 ) { //  curr->previous is > than pivot, bring it on right side
-            stash = ll_destroy_by_element( l, curr->p );
-            ll_push( l, stash ); 
+            stash = ll_destroy_by_element( list, curr->prev );
+            ll_push( list, stash ); 
         }
     }
 
-    if( pivot->p ) {
+    if( pivot->prev ) {
         // generate a new LinkedList for the left side, sort it with qs and merge
         // it with this LinkedList
         //
@@ -204,18 +203,18 @@ static LinkedList * quicksort( LinkedList * l, signed int (*cmpfunc)( void* a, v
         // LinkedList by repairing the pointers.
         //
         LinkedList * left = (LinkedList*) malloc( sizeof( LinkedList ) );
-        left->l = l->l;
-        left->f = pivot->p;
-        left->f->n = NULL;
+        left->last = list->last;
+        left->first = pivot->prev;
+        left->first->next = NULL;
         
         left = quicksort( left, cmpfunc );
 
-        left->f->n = pivot;
-        pivot->p = left->f;
+        left->first->next = pivot;
+        pivot->prev = left->first;
 
     }
 
-    if( pivot->n ) {
+    if( pivot->next ) {
         // generate a new LinkedList for the right side, sort it with qs and merge
         // it with this LinkedList
         //
@@ -224,30 +223,30 @@ static LinkedList * quicksort( LinkedList * l, signed int (*cmpfunc)( void* a, v
         // LinkedList by repairing the pointers.
         //
         LinkedList * right = (LinkedList*) malloc( sizeof( LinkedList ) );
-        right->l = pivot->n;
-        right->l->p = NULL;
-        right->f = l->f;
+        right->last = pivot->next;
+        right->last->prev = NULL;
+        right->first = list->first;
 
         right = quicksort( right, cmpfunc );
 
-        right->l->p = pivot;
-        pivot->n = right->l;
+        right->last->prev = pivot;
+        pivot->next = right->last;
         
     }
 
-    return l;
+    return list;
 }
 
-LinkedList * get_by_cond( LinkedList * l, int(*cnd)(void*) ) {
+LinkedList * get_by_cond( LinkedList * list, int(*cnd)(void*) ) {
     LinkedList *new;
-    LinkedListElement *c = l->f;
+    LinkedListElement *c = list->first;
 
-    if( (cnd)(l->f->e) )
-        new = linkedlist(l->f->e);
+    if( (cnd)(list->first->e) )
+        new = linkedlist(list->first->e);
     else
         new = NULL;
 
-    while( c = c->n ) {
+    while( c = c->next ) {
         if( (cnd)(c->e) ) {
             if( new == NULL ) 
                 new = linkedlist(c->e);
