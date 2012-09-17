@@ -148,10 +148,13 @@ void * ll_destroy_by_index( LinkedList * list, unsigned int i ){
 }  
 
 void ll_destroy( LinkedList * list ) {
-    if( !list->length ) ll_len( list ); // just ensure the l->len value exists. 
-    while ( list->length )
-        ll_destroy_by_element( list, list->last );
+    LinkedListElement * curr = list->first;
 
+    while( curr->next ) {
+        curr = curr->next;
+        ll_destroy_by_element( list, curr->prev );
+    }
+    ll_destroy_by_element( list, list->last );
     free( list );
 } 
 
