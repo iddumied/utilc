@@ -15,15 +15,22 @@ LinkedList * linkedlist( void *e ) {
     return l;
 }
 
-static LinkedListElement * linkedlistelement_at( LinkedList * l, unsigned int i ) {
-    LinkedListElement * c = l->f;
-    for( ; i != 0 ; i-- )
-        if ( c->n )
-            c = c->n;
+/*
+ * This function is NOT redundant with the ll_element function!
+ * This one returns a LinkedListElement and the ll_element function returns the
+ * void* to the real element!
+ */
+static LinkedListElement * linkedlistelement_at( LinkedList * list, unsigned int i ) {
+    LinkedListElement * c = list->f;
+    unsigned int j;
+    if (!list->len) ll_len(list);
+    for( j = 0 ; j < list->len && j != i  ; j++ ) {
+        if ( c->n ) c = c->n; // next
         else {
-            i = 0;
-            c = NULL;
+            j = i; // abort the iteration the easy way.
+            c = NULL; // but ensure there is NULLtype returned
         }
+    }
 
     return c; 
 }
