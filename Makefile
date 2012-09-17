@@ -30,6 +30,8 @@ CFLAGS += -g
 # Write C99
 CFLAGS += -std=c99
 
+# Do not link
+CFLAGS += -c
 
 #
 # Some variables
@@ -37,16 +39,13 @@ CFLAGS += -std=c99
 HEADER_SEARCH_DIR = -I./src/
 
 LL = ./src/linkedlist/linkedlist.c
+LL_OUT = ./bin/linkedlist
 
 #
 # just do it...
 #
 
-all: clean prepare tests
+all: ll 
 
-clean:
-
-prepare:
-
-tests: clean prepare
-	${CC} ${HEADER_SEARCH_DIR} ${CFLAGS} ${LL}
+ll:
+	${CC} ${HEADER_SEARCH_DIR} ${CFLAGS} ${LL} -o ${LL_OUT}
