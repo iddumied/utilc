@@ -279,3 +279,30 @@ void ll_for_each_element_do( LinkedList * list, bool (*func)(void*) ) {
         curr = curr->next; 
     }
 }
+
+void ll_for_each_element_by_condition_do( LinkedList * list, bool (*cond)(void*), bool (*func)(void*) ) {
+    LinkedListElement *curr = list->first;
+    bool lastresult = true; 
+    while(lastresult) {
+        if( cond(curr->e) ) lastresult = func(curr->e);
+        curr = curr->next;
+    }
+}
+
+/*
+ * Easy join function. 
+ */
+LinkedList * ll_join( LinkedList *list1, LinkedList *list2 ) {
+    LinkedList * result = linkedlist(list1->first->e);
+
+    LinkedListElement *curr = list1->first;
+    while( curr = curr->next ) {
+        ll_push( result, curr->e );
+    }
+    curr = list2->first;
+    ll_push( result, list2->first->e );
+    while( curr = curr->next ) {
+        ll_push( result, curr->e );
+    }
+    return result;
+}

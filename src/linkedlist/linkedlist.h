@@ -59,5 +59,6 @@ LinkedList * ll_sort( LinkedList *, signed int (*)(void*,void*) );
 LinkedList * ll_get_by_cond( LinkedList * l, int(*cnd)(void*) );
 
 void ll_for_each_element_do( LinkedList*, bool (*func)(void*) );
-
+void ll_for_each_element_by_condition_do( LinkedList*, bool (*cond)(void*), bool (*func)(void*) );
+LinkedList * ll_join( LinkedList *list1, LinkedList *list2 );
 #endif
