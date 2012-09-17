@@ -85,17 +85,16 @@ void * ll_pop( LinkedList * list ) {
 
 void ll_push( LinkedList * list, void * e ) {
     LinkedListElement * element = (LinkedListElement*) malloc( sizeof( LinkedListElement ) );
+    element->e = e;
     if ( list->l ) {
-        element->e = e;
         element->p = list->l;
         list->l->n = element;
-        list->l = element;
     }
     else {
         list->f = element;
-        list->l = element;
     }
-    list->len++;
+    list->l = element;
+    if( list->len ) list->len++;
 }
 
 /*
