@@ -270,3 +270,12 @@ LinkedList * ll_get_by_cond( LinkedList * list, int(*cnd)(void*) ) {
     }
     return new;
 }
+
+void ll_for_each_element_do( LinkedList * list, bool (*func)(void*) ) {
+    LinkedListElement *curr = list->first;
+    bool lastresult = true; 
+    while(lastresult) {
+        lastresult = func(curr->e);
+        curr = curr->next; 
+    }
+}

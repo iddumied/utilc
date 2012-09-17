@@ -58,4 +58,6 @@ LinkedList * ll_sort( LinkedList *, signed int (*)(void*,void*) );
  */
 LinkedList * ll_get_by_cond( LinkedList * l, int(*cnd)(void*) );
 
+void ll_for_each_element_do( LinkedList*, bool (*func)(void*) );
+
 #endif
