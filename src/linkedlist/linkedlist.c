@@ -250,21 +250,16 @@ static LinkedList * quicksort( LinkedList * list, signed int (*cmpfunc)( void* a
 }
 
 LinkedList * ll_get_by_cond( LinkedList * list, int(*cnd)(void*) ) {
-    LinkedList *new;
-    LinkedListElement *c = list->first;
-
-    if( (cnd)(list->first->e) )
-        new = linkedlist(list->first->e);
-    else
-        new = NULL;
-
-    while( c = c->next ) {
-        if( (cnd)(c->e) ) {
-            if( new == NULL ) 
+    LinkedList * new;
+    LinkedListElement * c = list->first;
+    while(c) {
+        if( cnd(c->e) ) {
+            if(!new) {
                 new = linkedlist(c->e);
-            else
-                ll_push(new, c->e);
+            }
+            ll_push(new, c->e);
         }
+        c = c->next;
     }
     return new;
 }
