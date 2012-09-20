@@ -1,18 +1,27 @@
 #include "linkedlist/linkedlist.h"
 
+static LinkedListElement * new_linkedlistelement();
 static LinkedListElement * linkedlistelement_at( LinkedList *, unsigned int );
 static void savdeclen( LinkedList * );
 static void savinclen( LinkedList * );
 static LinkedList * quicksort( LinkedList*, signed int (*)(void(*), void(*)) );
 
 LinkedList * linkedlist( void *e ) {
-    LinkedListElement *el = (LinkedListElement*) malloc( sizeof( LinkedListElement ) );
+    LinkedListElement *el = new_linkedlistelement(); 
     LinkedList *l = (LinkedList*) malloc( sizeof( LinkedList ) );
     el->e = e;
     el->next = el->prev = NULL;
 
     l->first = l->last = el;
     return l;
+}
+
+static LinkedListElement* new_linkedlistelement() {
+    LinkedListElement *ll_element = (LinkedListElement*) malloc(sizeof(LinkedListElement));
+    ll_element->e = NULL;
+    ll_element->next = NULL;
+    ll_element->prev = NULL;
+    return ll_element;
 }
 
 /*
@@ -91,7 +100,7 @@ void * ll_pop( LinkedList * list ) {
 } 
 
 void ll_push( LinkedList * list, void * e ) {
-    LinkedListElement * element = (LinkedListElement*) malloc( sizeof( LinkedListElement ) );
+    LinkedListElement * element = new_linkedlistelement(); 
     element->e = e;
     if ( list->last ) {
         element->prev = list->last;
