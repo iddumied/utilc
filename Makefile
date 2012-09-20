@@ -36,16 +36,29 @@ CFLAGS += -c
 #
 # Some variables
 #
-HEADER_SEARCH_DIR = -I./src/
+HEADERS = -I./src/
 
 LL = ./src/linkedlist/linkedlist.c
 LL_OUT = ./bin/linkedlist
+
+LL_TEST = ./tests/ll_test.c
+LL_TEST_OUT = ./bin/ll_test
+
+DEBUG = -g
 
 #
 # just do it...
 #
 
-all: ll 
+all: ll tests 
 
 ll:
-	${CC} ${HEADER_SEARCH_DIR} ${CFLAGS} ${LL} -o ${LL_OUT}
+	${CC} ${HEADERS} ${CFLAGS} ${LL} -o ${LL_OUT}.o
+
+tests: ll_test link_tests
+
+ll_test:
+	${CC} ${HEADERS} ${CFLAGS} ${DEBUG} ${LL_TEST} -o ${LL_TEST_OUT}.o 
+
+link_tests:
+	${CC} ${LL_OUT}.o ${LL_TEST_OUT}.o -o ${LL_TEST_OUT}
