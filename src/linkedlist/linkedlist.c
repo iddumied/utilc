@@ -264,6 +264,12 @@ LinkedList * ll_get_by_cond( LinkedList * list, int(*cnd)(void*) ) {
     return new;
 }
 
+/*
+ * Executes for each element in the list the passed function, by passing the
+ * element to the function.
+ * If the function returns false, the execution is completely stopped and 
+ * there is no function call for any other element from the list.
+ */
 void ll_for_each_element_do( LinkedList * list, bool (*func)(void*) ) {
     LinkedListElement *curr = list->first;
     bool lastresult = true; 
@@ -273,6 +279,13 @@ void ll_for_each_element_do( LinkedList * list, bool (*func)(void*) ) {
     }
 }
 
+/*
+ * Executes for each element the cond function. If the return value is true, 
+ * the func function is called with the value. So if the func function is very 
+ * complex, the condition-function can control, which elements are processed
+ * by the func function.
+ * Anyway, if the func function returns false, the whole process is aborted.
+ */
 void ll_for_each_element_by_condition_do( LinkedList * list, bool (*cond)(void*), bool (*func)(void*) ) {
     LinkedListElement *curr = list->first;
     bool lastresult = true; 
@@ -284,6 +297,13 @@ void ll_for_each_element_by_condition_do( LinkedList * list, bool (*cond)(void*)
 
 /*
  * Easy join function. 
+ * The ll_join function joins two LinkedLists together by allocating mem for a 
+ * new LinkedList and running through every element of the passed lists and 
+ * appending them. 
+ * So the expense of this function is O(n^2)
+ *
+ * Notice: The function does not take every value one time. It really just joins
+ * two lists.
  */
 LinkedList * ll_join( LinkedList *list1, LinkedList *list2 ) {
     LinkedList * result = linkedlist(list1->first->e);
