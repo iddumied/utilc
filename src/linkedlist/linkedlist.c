@@ -133,12 +133,9 @@ void * ll_destroy_by_element( LinkedList * list, LinkedListElement * listelement
         }
     }
     // else {}
-
     el = listelement->e; // save element value
     free( listelement );
-
     savdeclen(list);
-
     return el;
 }
 
@@ -185,7 +182,8 @@ LinkedList * ll_dump( LinkedList *list ) {
 LinkedList * ll_sort( LinkedList * list, signed int (*cmpfunc)( void *a, void *b ) ) {
     LinkedList * sorted;
     if( !list->length ) ll_len(list, false);
-    if( list->length > 10 ) sorted = quicksort(list, cmpfunc );
+    /*if( list->length > 10 )*/ // currently, there is no other sorting algo.
+        sorted = quicksort(list, cmpfunc );
 
     return sorted;
 }
