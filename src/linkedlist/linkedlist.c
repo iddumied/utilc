@@ -101,7 +101,7 @@ void ll_push( LinkedList * list, void * e ) {
         list->first = element;
     }
     list->last = element;
-    if( list->length ) list->length++;
+    savinclen(list);
 }
 
 /*
