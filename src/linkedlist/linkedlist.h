@@ -24,7 +24,7 @@ LinkedList * linkedlist( void(*) );
 /*
  * Get info about the LinkedList
  */
-unsigned int ll_len( LinkedList * );
+unsigned int ll_len( LinkedList *, bool);
 void * ll_last( LinkedList * );
 void * ll_first( LinkedList * );
 

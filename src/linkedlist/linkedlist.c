@@ -23,7 +23,7 @@ LinkedList * linkedlist( void *e ) {
 static LinkedListElement * linkedlistelement_at( LinkedList * list, unsigned int i ) {
     LinkedListElement * c = list->first;
     unsigned int j;
-    if (!list->length) ll_len(list);
+    if (!list->length) ll_len(list, true);
     for( j = 0 ; j < list->length && j != i  ; j++ ) {
         if ( c->next ) c = c->next; 
         else {
@@ -55,8 +55,8 @@ static void savinclen( LinkedList * list ) {
  * afterwards it will take O(1)
  *
  */
-unsigned int ll_len( LinkedList * list ) {
-    if( list->length ) 
+unsigned int ll_len( LinkedList * list, bool force_recalc ) {
+    if( list->length && !force_recalc ) 
         return list->length;
 
     unsigned int i = 0;
@@ -184,7 +184,7 @@ LinkedList * ll_dump( LinkedList *list ) {
 
 LinkedList * ll_sort( LinkedList * list, signed int (*cmpfunc)( void *a, void *b ) ) {
     LinkedList * sorted;
-    if( !list->length ) ll_len(list);
+    if( !list->length ) ll_len(list, false);
     if( list->length > 10 ) sorted = quicksort(list, cmpfunc );
 
     return sorted;
