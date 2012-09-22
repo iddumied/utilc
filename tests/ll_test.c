@@ -16,8 +16,8 @@ static bool test_pushing(void);
 static bool test_poping(void);
 static bool test_get_first(void);
 static bool test_get_last(void);
-/*
 static bool test_get_by_index(void);
+/*
 static bool test_destroy_by_index(void);
 static bool test_destroy_by_element(void);
 static bool test_element_in_list(void);
@@ -41,6 +41,7 @@ Test tests[] = {
     {"Poping",              true,   test_poping},
     {"get first",           false,  test_get_first},
     {"get last",            false,  test_get_last},
+    {"get by index",        false,  test_get_by_index},
     {NULL, NULL, NULL},
 };
 
@@ -102,10 +103,29 @@ static bool test_get_last() {
     double value2 = 6.00;
     LinkedList *l = linkedlist(&value1);
     ll_push(l, &value2);
-    double *res = (double*) ll_last(l);
+    double *poped_ptr = (double*) ll_last(l);
+    cleanup(l); // does not affect the poped_ptr
+    return poped_ptr == &value2;
+}
 
-    cleanup(l);
-    return res == &value2;
+static bool test_get_by_index() {
+    bool worked = true;
+    double ary[] = { 1.0, 2.0, 3.5, 4.9, 5.5 };
+    int i;
+    LinkedList *list = linkedlist(&ary[0]);
+    for( i = 1 ; ary[i]; i++) {
+        ll_push( list, &ary[i] );
+    }
+
+    double *a, *b;
+    for( i = 0; ary[i] && worked; i++) {
+        a = (double*)ll_element(list, i);
+        b = &ary[i];
+        worked = a == b;
+    }
+
+    cleanup(list);
+    return worked;
 }
 
 /*
