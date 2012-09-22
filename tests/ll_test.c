@@ -85,16 +85,16 @@ static bool test_poping() {
     ll_push(l, &value2);
     double *poped_ptr = ((double*) ll_pop(l));
 
-    cleanup(l);
+    cleanup(l); // does not affect the poped_ptr
     return poped_ptr == &value1;
 }
 
 static bool test_get_first() {
     double value = 5.00;
     LinkedList *l = linkedlist(&value);
-    double *res = (double*) ll_first(l);
-    cleanup(l);
-    return res == &value;
+    double *poped_ptr = (double*) ll_first(l);
+    cleanup(l); // does not affect the poped_ptr
+    return poped_ptr == &value;
 }
 
 static bool test_get_last() {
