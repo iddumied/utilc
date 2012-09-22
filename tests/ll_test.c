@@ -28,101 +28,84 @@ static bool test_for_each(void);
 static bool test_for_each_by_cond(void);
 static bool test_join(void);
 */
+
+typedef struct {
+    char *desc;
+    bool strict;
+    bool (*testfunc)();
+} Test;
+
+Test tests[] = {
+    {"Creating/Deleting",   true,   test_creating_and_removing},
+    {"Pushing",             true,   test_pushing},
+    {"Poping",              true,   test_poping},
+    {"get first",           false,  test_get_first},
+    {"get last",            false,  test_get_last},
+    {NULL, NULL, NULL},
+};
+
 /*
  * Prototypes : Helper functions 
  */
 static void testing(char*);
 static void success(char*);
-static void failure(char*);
+static void failure(char*, bool);
 static void cleanup(LinkedList*);
+static bool test_exec(char*, bool, bool (*func)());
 
 /*
  * function definitions : testing functions
  */
 
 static bool test_creating_and_removing() {
-    testing("Creating");
     double value = 5.00;
     LinkedList *list = linkedlist( &value );
-    success("Creating");
 
-    testing("Deleting");
     ll_destroy(list);
-    success("Deleting");
-    printf("\n");
     return true;
 }
 
 static bool test_pushing() {
-    testing("Pushing a value");
+    bool res;
     double value1 = 5.00;
     double value2 = 6.00;
     LinkedList *list = linkedlist( &value1 );
     ll_push(list, &value2);
-    success("Pushing a value");
+    res = ((double*)list->first->e == &value1 && 
+            (double*)list->first->next->e == &value2);
     cleanup(list);
 
-    return true;
+    return res;
 }
 
 static bool test_poping() {
-    char *desc = "Poping a value";
-    testing(desc);
     double value1 = 5.00;
     double value2 = 6.00;
     LinkedList *l = linkedlist(&value1);
     ll_push(l, &value2);
     double *poped_ptr = ((double*) ll_pop(l));
 
-    if( poped_ptr == &value1 ) {
-        success(desc);
-        cleanup(l);
-        return true;
-    }
-    else {
-        failure(desc);
-        cleanup(l);
-        return false;
-    }
+    cleanup(l);
+    return poped_ptr == &value1;
 }
 
 static bool test_get_first() {
-    char *desc = "get first";
-    testing(desc);
     double value = 5.00;
     LinkedList *l = linkedlist(&value);
     double *res = (double*) ll_first(l);
-    if( res == &value ) {
-        success(desc);
-        cleanup(l);
-        return true;
-    }
-    else {
-        failure(desc);
-        cleanup(l);
-        return false;
-    }
+    cleanup(l);
+    return res == &value;
 }
 
 static bool test_get_last() {
-    char *desc = "get last";
-    testing(desc);
     double value1 = 5.00;
     double value2 = 6.00;
     LinkedList *l = linkedlist(&value1);
     ll_push(l, &value2);
     double *res = (double*) ll_last(l);
 
-    if( res == &value2 ) {
-        success(desc);
-        cleanup(l);
-        return true;
-    }
-    else {
-        failure(desc);
-        cleanup(l);
-        return false;
-    }
+    cleanup(l);
+    return res == &value2;
 }
 
 /*
@@ -137,8 +120,11 @@ static void success(char* desc) {
     printf( "\t- success: %s\n", desc);
 }
 
-static void failure(char* desc) {
-    printf( "\t- FAIL: %s\n", desc);
+static void failure(char* desc, bool strict) {
+    if (strict)
+        printf("\t- STRICT FAILED: %s\n", desc );
+    else
+        printf( "\t- FAIL: %s\n", desc);
 }
 
 static void cleanup(LinkedList *l) {
@@ -146,20 +132,25 @@ static void cleanup(LinkedList *l) {
     ll_destroy(l);
     printf("\n");
 }
+
 /*
  * Main
  */
 
+static bool test_exec(char *desc, bool strict, bool (*func)() ) {
+    testing(desc);
+    bool res = func();
+    if (res)
+        success(desc);
+    else
+        failure(desc, strict);
+    return res;
+}
+
 int main( int argc, char ** argv ) {
-    bool create_remove, push, pop, getf, getl;
-    if( create_remove = test_creating_and_removing() ) {
-        push = test_pushing();
-        pop = test_poping();
-        getf = test_get_first();
-        getl = test_get_last();
-    }
-    else {
-        printf("Creating and removing linkedlist does not work,\naborting.\n");
-        return 1; 
+    int i;
+    bool worked = true;
+    for( i = 0; tests[i].desc && worked; i++ ) {
+        worked = test_exec( tests[i].desc, tests[i].strict, tests[i].testfunc );
     }
 }
