@@ -173,7 +173,7 @@ static bool test_destroy_by_index() {
     return worked;
 }
 
-static bool test_in_list() {
+static bool test_element_in_list() {
     double value1 = 5.0;
     double value2 = 6.0;
     LinkedList *list = linkedlist(&value1);
