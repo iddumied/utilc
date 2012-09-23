@@ -313,18 +313,18 @@ static bool test_join() {
  */
 
 static void testing(char* desc) {
-    printf( "linkedlist-test: %s\n", desc);
+    printf( "linkedlist-test: %s", desc);
 }
 
 static void success(char* desc) {
-    printf( "\t- success: %s\n", desc);
+    printf( "\t[success]\n");
 }
 
 static void failure(char* desc, bool strict) {
     if (strict)
-        printf("\t- STRICT FAILED: %s\n", desc );
+        printf("\t-[STRICT FAILED]\n");
     else
-        printf( "\t- FAIL: %s\n", desc);
+        printf( "\t[FAIL]\n");
 }
 
 static void cleanup(LinkedList *l) {
