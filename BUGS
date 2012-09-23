@@ -2,3 +2,5 @@
 	Allocating new LinkedListElement types should ensure that the variables 
 	inside the struct are set to NULL.
 
+2) 
+	Test does result in a memory access violation
