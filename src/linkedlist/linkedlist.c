@@ -258,7 +258,7 @@ static LinkedList * quicksort( LinkedList * list, signed int (*cmpfunc)( void* a
     return list;
 }
 
-LinkedList * ll_get_by_cond( LinkedList * list, int(*cnd)(void*) ) {
+LinkedList * ll_get_by_cond( LinkedList * list, bool(*cnd)(void*) ) {
     LinkedList * new;
     LinkedListElement * c = list->first;
     while(c) {

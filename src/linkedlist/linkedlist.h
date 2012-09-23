@@ -56,7 +56,7 @@ LinkedList * ll_sort( LinkedList *, signed int (*)(void*,void*) );
 /*
  * Get stuff as LinkedList from a LinkedList by condition
  */
-LinkedList * ll_get_by_cond( LinkedList * l, int(*cnd)(void*) );
+LinkedList * ll_get_by_cond( LinkedList * l, bool(*cnd)(void*) );
 
 void ll_for_each_element_do( LinkedList*, bool (*func)(void*) );
 void ll_for_each_element_by_condition_do( LinkedList*, bool (*cond)(void*), bool (*func)(void*) );
