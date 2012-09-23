@@ -8,6 +8,8 @@
 #include <stdio.h>
 #include <stdbool.h>
 
+#define len(x) (sizeof(x)/sizeof(x[0]))
+
 /*
  * Prototypes : Testing functions
  */
@@ -41,7 +43,7 @@ Test tests[] = {
     {"get last",            false,  test_get_last},
     {"get by index",        false,  test_get_by_index},
     {"destroy by element",  false,  test_destroy_by_element},
-    {"destroy by element",  false,  test_destroy_by_index},
+    {"destroy by index",    false,  test_destroy_by_index},
     {"element in list",     false,  test_element_in_list},
     {"dump",                false,  test_dump},
     {"sort",                false,  test_sort},
@@ -122,12 +124,12 @@ static bool test_get_by_index() {
     double ary[] = { 1.0, 2.0, 3.5, 4.9, 5.5 };
     int i;
     LinkedList *list = linkedlist(&ary[0]);
-    for( i = 1 ; ary[i]; i++) {
+    for( i = 1 ; i<len(ary); i++) {
         ll_push( list, &ary[i] );
     }
 
     double *a, *b;
-    for( i = 0; ary[i] && worked; i++) {
+    for( i = 0; i<len(ary) && worked; i++) {
         a = (double*)ll_element(list, i);
         b = &ary[i];
         worked = a == b;
@@ -142,12 +144,12 @@ static bool test_destroy_by_element() {
     double ary[] = { 1.0, 2.0, 3.5, 4.9, 5.5 };
     int i;
     LinkedList *list = linkedlist(&ary[0]);
-    for( i = 1 ; ary[i] ; i++ ) {
+    for( i = 1 ; i<len(ary) ; i++ ) {
         ll_push( list, &ary[i] );
     }
 
     double *a, *b;
-    for( i = 0; ary[i] && worked; i++ ) {
+    for( i = 0; i<len(ary) && worked; i++ ) {
         a = (double*)ll_destroy_by_element(list, list->first);
         b = &ary[i];
         worked = a == b;
@@ -160,12 +162,12 @@ static bool test_destroy_by_index() {
     double ary[] = { 1.0, 2.0, 3.5, 4.9, 5.5 };
     int i;
     LinkedList *list = linkedlist(&ary[0]);
-    for( i = 1 ; ary[i] ; i++ ) {
+    for( i = 1 ; i<len(ary) ; i++ ) {
         ll_push( list, &ary[i] );
     }
 
     double *a, *b;
-    for( i = 0; ary[i] && worked; i++ ) {
+    for( i = 0; i<len(ary) && worked; i++ ) {
         a = (double*)ll_destroy_by_index(list, 0);
         b = &ary[i];
         worked = a == b;
@@ -186,13 +188,13 @@ static bool test_dump() {
     double ary[] = { 1.0, 2.0, 3.5, 4.9, 5.5 };
     LinkedList *list = linkedlist(&ary[0]);
     int i;
-    for( i = 1; ary[i]; i++ ) {
+    for( i = 1; i<len(ary); i++ ) {
         ll_push(list, &ary[i] );
     }
     LinkedList *dump = ll_dump(list);
 
     double *a;
-    for( i = 0; ary[i] && worked; i++) {
+    for( i = 0; i<len(ary) && worked; i++) {
         a = (double*)ll_element(dump,i);
         worked = a == &ary[i];
     }
@@ -205,13 +207,13 @@ static bool test_sort() {
     double ary2[] = { 1.0, 2.0, 3.5, 4.9, 5.5 };
     LinkedList *list = linkedlist(&ary1[0]);
     int i;
-    for( i = 1; ary1[i]; i++ ) {
+    for( i = 1; i<len(ary1); i++ ) {
         ll_push(list, &ary1[i] );
     }
     ll_sort(list, comparefunction);
 
     double *a;
-    for( i = 0 ; ary1[1]; i++ ) {
+    for( i = 0 ; i<len(ary1); i++ ) {
         a = (double*) ll_element( list, i );
         worked = a == &ary2[i];
     }
@@ -226,15 +228,15 @@ static bool test_get_by_cond(void){
     LinkedList *list = linkedlist(&ary1[0]);
     LinkedList *cmpList = linkedlist(&ary2[0]);
     int i;
-    for( i = 1; ary1[i]; i++ ) {
+    for( i = 1; i<len(ary1); i++ ) {
         ll_push(list, &ary1[i] );
     }
-    for( i = 0; ary2[i]; i++ ) {
+    for( i = 0; i<len(ary2); i++ ) {
         ll_push(list, &ary2[i] );
     }
     LinkedList *new = ll_get_by_cond(list, condition_is_bigger_three);
 
-    for( i = 0 ; ary2[i]; i++ ) {
+    for( i = 0 ; i<len(ary2); i++ ) {
         worked = &ary2[i] == (double*)ll_element(new,i);
     }
     return worked;
@@ -249,7 +251,7 @@ static bool test_for_each_do() {
     ll_for_each_element_do(list, do_foreach_inc );
     int i;
     double *a, *b;
-    for( i = 0 ; ary2[i] ; i++ ) {
+    for( i = 0 ; i<len(ary2); i++ ) {
         a = &ary2[i];
         b = (double*)ll_element(list, i);
         worked = a == b; 
@@ -263,13 +265,13 @@ static bool test_for_each_by_cond() {
     double ary2[] = { 1.0, 2.0, 4.5, 5.9, 6.5 };
     LinkedList *list = linkedlist(&ary1[0]);
     int i;
-    for( i = 0 ; ary1[i]; i++ ) {
+    for( i = 0 ; i<len(ary1); i++ ) {
         ll_push(list,&ary1[i]);
     }
 
     ll_for_each_element_by_condition_do(list, condition_is_bigger_three, do_foreach_inc );
     double *a, *b;
-    for( i = 0 ; ary2[i] ; i++ ) {
+    for( i = 0 ; i<len(ary2) ; i++ ) {
         a = &ary2[i];
         b = (double*)ll_element(list, i);
         worked = a == b; 
@@ -289,17 +291,17 @@ static bool test_join() {
     LinkedList *res_list;
 
     int i;
-    for( i = 0; ary1[i]; i++ ) {
+    for( i = 0; i<len(ary1); i++ ) {
         ll_push(list1, &ary1[i]);
     }
-    for( i = 0; ary2[i]; i++ ){
+    for( i = 0; i<len(ary2); i++ ){
         ll_push(list2, &ary2[i]);
     }
 
     res_list = ll_join(list1,list2);
     double *a, *b;
 
-    for( i = 0 ; res[i] ; i++ ) {
+    for( i = 0 ; i<len(res); i++ ) {
         a = (double*) ll_element(res_list, i);
         b = &res[i];
         worked = a == b;
@@ -313,7 +315,7 @@ static bool test_join() {
  */
 
 static void testing(char* desc) {
-    printf( "linkedlist-test: %s", desc);
+    printf( "linkedlist-test: %s\t\t", desc);
 }
 
 static void success(char* desc) {
@@ -328,9 +330,7 @@ static void failure(char* desc, bool strict) {
 }
 
 static void cleanup(LinkedList *l) {
-    printf("Cleanup.\n");
     ll_destroy(l);
-    printf("\n");
 }
 
 /*
