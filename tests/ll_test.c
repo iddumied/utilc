@@ -179,8 +179,11 @@ static bool test_element_in_list() {
     double value1 = 5.0;
     double value2 = 6.0;
     LinkedList *list = linkedlist(&value1);
+    ll_push(list, &value2);
+    bool a = ll_element_in_list(list, &value1);
+    bool b = !ll_element_in_list(list, &value2);
 
-    return (ll_element_in_list(list, &value1) && !ll_element_in_list(list, &value2));
+    return (a&&b);
 }
 
 static bool test_dump() {
