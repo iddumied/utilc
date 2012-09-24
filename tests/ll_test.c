@@ -315,7 +315,7 @@ static bool test_join() {
  */
 
 static void testing(char* desc) {
-    printf( "linkedlist-test: %s\t\t", desc);
+    printf( "\n\n\t:: linkedlist-test: %s\n", desc);
 }
 
 static void success(char* desc) {

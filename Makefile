@@ -33,6 +33,9 @@ CFLAGS += -std=c99
 # Do not link
 CFLAGS += -c
 
+# Debug output please!
+CFLAGS += -D DEBUG
+
 #
 # Some variables
 #
