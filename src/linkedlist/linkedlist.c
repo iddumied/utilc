@@ -214,7 +214,7 @@ bool ll_element_in_list( LinkedList * list, void * el ) {
     LinkedListElement * curr = list->first;
     bool found = false;
 
-    while( !found ) {
+    while( !found && curr->next ) {
         found = curr->e == el;
         curr = curr->next;
     }
