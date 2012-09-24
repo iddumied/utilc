@@ -7,6 +7,9 @@ static void savinclen( LinkedList * );
 static LinkedList * quicksort( LinkedList*, signed int (*)(void(*), void(*)) );
 
 LinkedList * linkedlist( void *e ) {
+#ifdef DEBUG
+    printf("::ll : linkedlist created\n");
+#endif
     LinkedListElement *el = new_linkedlistelement(); 
     LinkedList *l = (LinkedList*) malloc( sizeof( LinkedList ) );
     el->e = e;
@@ -17,6 +20,9 @@ LinkedList * linkedlist( void *e ) {
 }
 
 static LinkedListElement* new_linkedlistelement() {
+#ifdef DEBUG
+    printf("::ll : linkedlist element created\n");
+#endif
     LinkedListElement *ll_element = (LinkedListElement*) malloc(sizeof(LinkedListElement));
     ll_element->e = NULL;
     ll_element->next = NULL;
@@ -30,6 +36,9 @@ static LinkedListElement* new_linkedlistelement() {
  * void* to the real element!
  */
 static LinkedListElement * linkedlistelement_at( LinkedList * list, unsigned int i ) {
+#ifdef DEBUG
+    printf("::ll : linkedlist_element_at\n");
+#endif
     LinkedListElement * c = list->first;
     unsigned int j;
     if (!list->length) ll_len(list, true);
@@ -65,6 +74,9 @@ static void savinclen( LinkedList * list ) {
  *
  */
 unsigned int ll_len( LinkedList * list, bool force_recalc ) {
+#ifdef DEBUG
+    printf("::ll : ll_len");
+#endif
     if( list->length && !force_recalc ) 
         return list->length;
 
@@ -72,14 +84,23 @@ unsigned int ll_len( LinkedList * list, bool force_recalc ) {
     LinkedListElement * c = list->first;
     while( c = c->next ) i++;
     list->length = i;
+#ifdef DEBUG
+    printf("%i\n",i);
+#endif
     return i;
 }
 
 void * ll_last( LinkedList * list ) {
+#ifdef DEBUG
+    printf("::ll : ll_last\n");
+#endif
     return list->last->e;
 }
 
 void * ll_first( LinkedList * list ) {
+#ifdef DEBUG
+    printf("::ll : ll_first\n");
+#endif
     return list->first->e;
 }
 
@@ -88,6 +109,9 @@ void * ll_first( LinkedList * list ) {
  */
 
 void * ll_element( LinkedList * l , unsigned int i ) {
+#ifdef DEBUG
+    printf("::ll : ll_element\n");
+#endif
     LinkedListElement * listelement = linkedlistelement_at( l, i );
     if( listelement ) 
         return listelement->e;
@@ -96,10 +120,16 @@ void * ll_element( LinkedList * l , unsigned int i ) {
 }
 
 void * ll_pop( LinkedList * list ) {
+#ifdef DEBUG
+    printf("::ll : ll_pop\n");
+#endif
     return ll_destroy_by_element( list, list->first );
 } 
 
 void ll_push( LinkedList * list, void * e ) {
+#ifdef DEBUG
+    printf("::ll : ll_push\n");
+#endif
     LinkedListElement * element = new_linkedlistelement(); 
     element->e = e;
     if ( list->last ) {
@@ -118,6 +148,9 @@ void ll_push( LinkedList * list, void * e ) {
  */
 
 void * ll_destroy_by_element( LinkedList * list, LinkedListElement * listelement ) {
+#ifdef DEBUG
+    printf("::ll : ll_destroy_by_element\n");
+#endif
     void *el;
 
     if ( !listelement )
@@ -149,11 +182,17 @@ void * ll_destroy_by_element( LinkedList * list, LinkedListElement * listelement
 }
 
 void * ll_destroy_by_index( LinkedList * list, unsigned int i ){
+#ifdef DEBUG
+    printf("::ll : ll_destroy_by_index\n");
+#endif
     LinkedListElement * e = linkedlistelement_at( list, i );
     return ll_destroy_by_element( list, e );
 }  
 
 void ll_destroy( LinkedList * list ) {
+#ifdef DEBUG
+    printf("::ll : ll_destroy\n");
+#endif
     LinkedListElement * curr = list->first;
 
     while( curr->next ) {
@@ -169,6 +208,9 @@ void ll_destroy( LinkedList * list ) {
  */
 
 bool ll_element_in_list( LinkedList * list, void * el ) {
+#ifdef DEBUG
+    printf("::ll : ll_element_in_list\n");
+#endif
     LinkedListElement * curr = list->first;
     bool found = false;
 
@@ -180,6 +222,9 @@ bool ll_element_in_list( LinkedList * list, void * el ) {
 }
 
 LinkedList * ll_dump( LinkedList *list ) {
+#ifdef DEBUG
+    printf("::ll : ll_dump\n");
+#endif
     LinkedList * new = linkedlist( list->first->e ); 
     LinkedListElement * c = list->first;
     while( c = c->next ) // O(n)
@@ -189,6 +234,9 @@ LinkedList * ll_dump( LinkedList *list ) {
 }
 
 LinkedList * ll_sort( LinkedList * list, signed int (*cmpfunc)( void *a, void *b ) ) {
+#ifdef DEBUG
+    printf("::ll : ll_sort\n");
+#endif
     LinkedList * sorted;
     if( !list->length ) ll_len(list, false);
     /*if( list->length > 10 )*/ // currently, there is no other sorting algo.
@@ -198,6 +246,9 @@ LinkedList * ll_sort( LinkedList * list, signed int (*cmpfunc)( void *a, void *b
 }
 
 static LinkedList * quicksort( LinkedList * list, signed int (*cmpfunc)( void* a, void* b ) ) {
+#ifdef DEBUG
+    printf("::ll : quicksort\n");
+#endif
     if( list->first == list->last ) return list;
 
     LinkedListElement * pivot = list->first;
@@ -259,6 +310,9 @@ static LinkedList * quicksort( LinkedList * list, signed int (*cmpfunc)( void* a
 }
 
 LinkedList * ll_get_by_cond( LinkedList * list, bool(*cnd)(void*) ) {
+#ifdef DEBUG
+    printf("::ll : ll_get_by_cond\n");
+#endif
     LinkedList * new;
     LinkedListElement * c = list->first;
     while(c) {
@@ -280,6 +334,9 @@ LinkedList * ll_get_by_cond( LinkedList * list, bool(*cnd)(void*) ) {
  * there is no function call for any other element from the list.
  */
 void ll_for_each_element_do( LinkedList * list, bool (*func)(void*) ) {
+#ifdef DEBUG
+    printf("::ll : ll_for_each_element_do\n");
+#endif
     LinkedListElement *curr = list->first;
     bool lastresult = true; 
     while(lastresult) {
@@ -296,6 +353,9 @@ void ll_for_each_element_do( LinkedList * list, bool (*func)(void*) ) {
  * Anyway, if the func function returns false, the whole process is aborted.
  */
 void ll_for_each_element_by_condition_do( LinkedList * list, bool (*cond)(void*), bool (*func)(void*) ) {
+#ifdef DEBUG
+    printf("::ll : ll_for_each_element_by_condition_do\n");
+#endif
     LinkedListElement *curr = list->first;
     bool lastresult = true; 
     while(lastresult) {
@@ -315,6 +375,9 @@ void ll_for_each_element_by_condition_do( LinkedList * list, bool (*cond)(void*)
  * two lists.
  */
 LinkedList * ll_join( LinkedList *list1, LinkedList *list2 ) {
+#ifdef DEBUG
+    printf("::ll : ll_join\n");
+#endif
     LinkedList * result = linkedlist(list1->first->e);
 
     LinkedListElement *curr = list1->first;
