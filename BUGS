@@ -7,3 +7,6 @@
 
 3) 
 	Test does result in memory access violation at quicksort
+
+4) 
+	ll_get_by_cond runs endless
