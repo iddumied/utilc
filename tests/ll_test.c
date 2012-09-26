@@ -33,24 +33,25 @@ typedef struct {
     char *desc;
     bool strict;
     bool (*testfunc)();
+    bool result;
 } Test;
 
 Test tests[] = {
-    {"Creating/Deleting",   true,   test_creating_and_removing},
-    {"Pushing",             true,   test_pushing},
-    {"Poping",              true,   test_poping},
-    {"get first",           false,  test_get_first},
-    {"get last",            false,  test_get_last},
-    {"get by index",        false,  test_get_by_index},
-    {"destroy by element",  false,  test_destroy_by_element},
-    {"destroy by index",    false,  test_destroy_by_index},
-    {"element in list",     false,  test_element_in_list},
-    {"dump",                false,  test_dump},
-    {"sort",                false,  test_sort},
-    {"get by condition",    false,  test_get_by_cond},
-    {"for each do",         false,  test_for_each_do},
-    {"for each by cond do", false,  test_for_each_by_cond},
-    {"join",                false,  test_join},
+    {"Creating/Deleting",   true,   test_creating_and_removing, false },
+    {"Pushing",             true,   test_pushing,               false },
+    {"Poping",              true,   test_poping,                false },
+    {"get first",           false,  test_get_first,             false },
+    {"get last",            false,  test_get_last,              false },
+    {"get by index",        false,  test_get_by_index,          false },
+    {"destroy by element",  false,  test_destroy_by_element,    false },
+    {"destroy by index",    false,  test_destroy_by_index,      false },
+    {"element in list",     false,  test_element_in_list,       false },
+    {"dump",                false,  test_dump,                  false },
+    {"sort",                false,  test_sort,                  false },
+    {"get by condition",    false,  test_get_by_cond,           false },
+    {"for each do",         false,  test_for_each_do,           false },
+    {"for each by cond do", false,  test_for_each_by_cond,      false },
+    {"join",                false,  test_join,                  false },
     {NULL, NULL, NULL},
 };
 
@@ -61,7 +62,8 @@ static void testing(char*);
 static void success(char*);
 static void failure(char*, bool);
 static void cleanup(LinkedList*);
-static bool test_exec(char*, bool, bool (*func)());
+static bool test_exec(Test*);
+static bool depends(bool (*)(void) );
 int comparefunction(void*, void*);
 bool condition_is_bigger_three(void*);
 bool do_foreach_inc(void*);
@@ -336,6 +338,16 @@ static void cleanup(LinkedList *l) {
     ll_destroy(l);
 }
 
+static bool depends(bool (*other)(void) ) {
+    int i;
+    bool res = false;
+    for( i = 0 ; tests[i].desc && !res ; i++ ) {
+        if( tests[i].testfunc == other )
+            res = tests[i].result;
+    }
+    return res;
+} 
+
 /*
  * Compare function for sort testing
  */
@@ -375,13 +387,15 @@ bool do_foreach_inc( void *value ) {
  * Main
  */
 
-static bool test_exec(char *desc, bool strict, bool (*func)() ) {
-    testing(desc);
-    bool res = func();
+static bool test_exec( Test *test ) {
+    testing(test->desc);
+    bool res = test->testfunc();
     if (res)
-        success(desc);
+        success(test->desc);
     else
-        failure(desc, strict);
+        failure(test->desc, test->strict);
+
+    test->result = res;
     return res;
 }
 
@@ -389,6 +403,6 @@ int main( int argc, char ** argv ) {
     int i;
     bool worked = true;
     for( i = 0; tests[i].desc && worked; i++ ) {
-        worked = test_exec( tests[i].desc, tests[i].strict, tests[i].testfunc );
+        test_exec( &tests[i] );
     }
 }
