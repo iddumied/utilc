@@ -27,7 +27,7 @@ static LinkedListElement * linkedlistelement_at( LinkedList * list, unsigned int
     unsigned int j;
     if (!list->length) ll_len(list, true);
     for( j = 0 ; j < list->length && j != i  ; j++ ) {
-        if ( c->next ) c = c->next; 
+        if ( c->next ) c = next(c); 
         else {
             j = i; // abort the iteration the easy way.
             c = NULL; // but ensure there is NULLtype returned
@@ -72,7 +72,7 @@ unsigned int ll_len( LinkedList * list, bool force_recalc ) {
 
     unsigned int i = 0;
     LinkedListElement * c = list->first;
-    while( c = c->next ) i++;
+    while( c = next(c) ) i++;
     list->length = i;
     return i;
 }
@@ -130,17 +130,17 @@ void * ll_destroy_by_element( LinkedList * list, LinkedListElement * listelement
         if ( list->first == listelement ) {
             // listelement is first
             list->first->next->prev = NULL; // before 2nd there will be nothing
-            list->first = listelement->next;
+            list->first = next(listelement);
         }
         else if ( list->last == listelement ) {
             // listelement is last
             list->last->prev->next = NULL; // after 2nd-last there will be nothing
-            list->last = listelement->prev;
+            list->last = previous(listelement);
         }
         else {
             // listelement is inside the list 
-            listelement->prev->next = listelement->next;
-            listelement->next->prev = listelement->prev;
+            listelement->prev->next = next(listelement);
+            listelement->next->prev = previous(listelement);
         }
     }
     // else {}
@@ -159,8 +159,8 @@ void ll_destroy( LinkedList * list ) {
     LinkedListElement * curr = list->first;
 
     while( curr->next ) {
-        curr = curr->next;
-        ll_destroy_by_element( list, curr->prev );
+        curr = next(curr);
+        ll_destroy_by_element( list, previous(curr) );
     }
     ll_destroy_by_element( list, list->last );
     free( list );
@@ -176,7 +176,7 @@ bool ll_element_in_list( LinkedList * list, void * el ) {
 
     while( !found ) {
         found = curr->e == el;
-        curr = curr->next;
+        curr = next(curr);
     }
     return found;
 }
@@ -184,7 +184,7 @@ bool ll_element_in_list( LinkedList * list, void * el ) {
 LinkedList * ll_dump( LinkedList *list ) {
     LinkedList * new = linkedlist( list->first->e ); 
     LinkedListElement * c = list->first;
-    while( c = c->next ) // O(n)
+    while( c = next(c) ) // O(n)
         ll_push( new, c->e );
 
     return new;
@@ -212,12 +212,12 @@ static LinkedList * quicksort( LinkedList * list, signed int (*cmpfunc)( void* a
         cmp = (*cmpfunc)( pivot->e, curr->e );
         curr = curr->next;
         if( cmp > 0 ) { //  curr->previous is > than pivot, bring it on right side
-            stash = ll_destroy_by_element( list, curr->prev );
+            stash = ll_destroy_by_element( list, previous(curr) );
             ll_push( list, stash ); 
         }
     }
 
-    if( pivot->prev ) {
+    if( previous(pivot) ) {
         // generate a new LinkedList for the left side, sort it with qs and merge
         // it with this LinkedList
         //
@@ -227,7 +227,7 @@ static LinkedList * quicksort( LinkedList * list, signed int (*cmpfunc)( void* a
         //
         LinkedList * left = (LinkedList*) malloc( sizeof( LinkedList ) );
         left->last = list->last;
-        left->first = pivot->prev;
+        left->first = previous(pivot);
         left->first->next = NULL;
         
         left = quicksort( left, cmpfunc );
@@ -237,7 +237,7 @@ static LinkedList * quicksort( LinkedList * list, signed int (*cmpfunc)( void* a
 
     }
 
-    if( pivot->next ) {
+    if( next(pivot) ) {
         // generate a new LinkedList for the right side, sort it with qs and merge
         // it with this LinkedList
         //
@@ -246,7 +246,7 @@ static LinkedList * quicksort( LinkedList * list, signed int (*cmpfunc)( void* a
         // LinkedList by repairing the pointers.
         //
         LinkedList * right = (LinkedList*) malloc( sizeof( LinkedList ) );
-        right->last = pivot->next;
+        right->last = next(pivot);
         right->last->prev = NULL;
         right->first = list->first;
 
@@ -270,7 +270,7 @@ LinkedList * ll_get_by_cond( LinkedList * list, int(*cnd)(void*) ) {
             }
             ll_push(new, c->e);
         }
-        c = c->next;
+        c = next(c);
     }
     return new;
 }
@@ -286,7 +286,7 @@ void ll_for_each_element_do( LinkedList * list, bool (*func)(void*) ) {
     bool lastresult = true; 
     while(lastresult) {
         lastresult = func(curr->e);
-        curr = curr->next; 
+        curr = next(curr); 
     }
 }
 
@@ -302,7 +302,7 @@ void ll_for_each_element_by_condition_do( LinkedList * list, bool (*cond)(void*)
     bool lastresult = true; 
     while(lastresult) {
         if( cond(curr->e) ) lastresult = func(curr->e);
-        curr = curr->next;
+        curr = next(curr);
     }
 }
 
@@ -320,12 +320,12 @@ LinkedList * ll_join( LinkedList *list1, LinkedList *list2 ) {
     LinkedList * result = linkedlist(list1->first->e);
 
     LinkedListElement *curr = list1->first;
-    while( curr = curr->next ) {
+    while( curr = next(curr) ) {
         ll_push( result, curr->e );
     }
     curr = list2->first;
     ll_push( result, list2->first->e );
-    while( curr = curr->next ) {
+    while( curr = next(curr) ) {
         ll_push( result, curr->e );
     }
     return result;
