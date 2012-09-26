@@ -3,6 +3,8 @@
 static LinkedListElement * linkedlistelement_at( LinkedList *, unsigned int );
 static void savdeclen( LinkedList * );
 static void savinclen( LinkedList * );
+static LinkedListElement * next(LinkedListElement*);
+static LinkedListElement * previous(LinkedListElement*);
 static LinkedList * quicksort( LinkedList*, signed int (*)(void(*), void(*)) );
 
 LinkedList * linkedlist( void *e ) {
@@ -42,6 +44,15 @@ static void savdeclen( LinkedList * list ) {
 static void savinclen( LinkedList * list ) {
     if( list->length ) list->length++;
 }
+
+static LinkedListElement * next(LinkedListElement *curr) {
+    return curr->next;
+}
+
+static LinkedListElement * previous(LinkedListElement *curr) {
+    return curr->prev;
+}
+
 
 /*
  * Get info about the LinkedList
