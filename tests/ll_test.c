@@ -234,9 +234,6 @@ static bool test_get_by_cond(void){
     for( i = 1; i<len(ary1); i++ ) {
         ll_push(list, &ary1[i] );
     }
-    for( i = 0; i<len(ary2); i++ ) {
-        ll_push(list, &ary2[i] );
-    }
     LinkedList *new = ll_get_by_cond(list, condition_is_bigger_three);
 
     for( i = 0 ; i<len(ary2); i++ ) {
