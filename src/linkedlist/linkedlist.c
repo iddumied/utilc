@@ -284,7 +284,7 @@ LinkedList * ll_get_by_cond( LinkedList * list, int(*cnd)(void*) ) {
 void ll_for_each_element_do( LinkedList * list, bool (*func)(void*) ) {
     LinkedListElement *curr = list->first;
     bool lastresult = true; 
-    while(lastresult) {
+    while(lastresult && next(curr)) {
         lastresult = func(curr->e);
         curr = next(curr); 
     }
@@ -300,7 +300,7 @@ void ll_for_each_element_do( LinkedList * list, bool (*func)(void*) ) {
 void ll_for_each_element_by_condition_do( LinkedList * list, bool (*cond)(void*), bool (*func)(void*) ) {
     LinkedListElement *curr = list->first;
     bool lastresult = true; 
-    while(lastresult) {
+    while(lastresult && next(curr)) {
         if( cond(curr->e) ) lastresult = func(curr->e);
         curr = next(curr);
     }
