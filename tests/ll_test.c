@@ -247,9 +247,12 @@ static bool test_for_each_do() {
     double ary1[] = { 1.0, 2.0, 3.5, 4.9, 5.5 };
     double ary2[] = { 2.0, 3.0, 4.5, 5.9, 6.5 };
     LinkedList *list = linkedlist(&ary1[0]);
+    int i;
+    for( i = 0; i<len(ary1); i++ ) {
+        ll_push(list, &ary1[i]);
+    }
 
     ll_for_each_element_do(list, do_foreach_inc );
-    int i;
     double *a, *b;
     for( i = 0 ; i<len(ary2); i++ ) {
         a = &ary2[i];
