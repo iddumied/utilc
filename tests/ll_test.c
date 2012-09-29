@@ -84,6 +84,7 @@ static bool test_creating_and_removing() {
 static bool test_pushing() {
     bool d = depends( test_creating_and_removing );
     if (!d) return false;
+
     bool res;
     double value1 = 5.00;
     double value2 = 6.00;
@@ -97,6 +98,10 @@ static bool test_pushing() {
 }
 
 static bool test_poping() {
+    bool d = depends( test_creating_and_removing );
+    d = d && depends( test_pushing );
+    if (!d) return false;
+
     double value1 = 5.00;
     double value2 = 6.00;
     LinkedList *l = linkedlist(&value1);
@@ -108,6 +113,9 @@ static bool test_poping() {
 }
 
 static bool test_get_first() {
+    bool d = depends( test_creating_and_removing );
+    if (!d) return false;
+
     double value = 5.00;
     LinkedList *l = linkedlist(&value);
     double *poped_ptr = (double*) ll_first(l);
@@ -116,6 +124,10 @@ static bool test_get_first() {
 }
 
 static bool test_get_last() {
+    bool d = depends( test_creating_and_removing );
+    d = d && depends( test_pushing );
+    if (!d) return false;
+
     double value1 = 5.00;
     double value2 = 6.00;
     LinkedList *l = linkedlist(&value1);
@@ -126,6 +138,10 @@ static bool test_get_last() {
 }
 
 static bool test_get_by_index() {
+    bool d = depends( test_creating_and_removing );
+    d = d && depends( test_pushing );
+    if (!d) return false;
+
     bool worked = true;
     double ary[] = { 1.0, 2.0, 3.5, 4.9, 5.5 };
     int i;
@@ -146,6 +162,10 @@ static bool test_get_by_index() {
 }
 
 static bool test_destroy_by_element() {
+    bool d = depends( test_creating_and_removing );
+    d = d && depends( test_pushing );
+    if (!d) return false;
+
     bool worked = true;
     double ary[] = { 1.0, 2.0, 3.5, 4.9, 5.5 };
     int i;
@@ -164,6 +184,10 @@ static bool test_destroy_by_element() {
 }
 
 static bool test_destroy_by_index() {
+    bool d = depends( test_creating_and_removing );
+    d = d && depends( test_pushing );
+    if (!d) return false;
+
     bool worked = true;
     double ary[] = { 1.0, 2.0, 3.5, 4.9, 5.5 };
     int i;
@@ -182,6 +206,10 @@ static bool test_destroy_by_index() {
 }
 
 static bool test_element_in_list() {
+    bool d = depends( test_creating_and_removing );
+    d = d && depends( test_pushing );
+    if (!d) return false;
+
     double value1 = 5.0;
     double value2 = 6.0;
     LinkedList *list = linkedlist(&value1);
@@ -193,6 +221,11 @@ static bool test_element_in_list() {
 }
 
 static bool test_dump() {
+    bool d = depends( test_creating_and_removing );
+    d = d && depends( test_pushing );
+    d = d && depends( test_get_by_index );
+    if (!d) return false;
+
     bool worked = true;
     double ary[] = { 1.0, 2.0, 3.5, 4.9, 5.5 };
     LinkedList *list = linkedlist(&ary[0]);
@@ -211,6 +244,11 @@ static bool test_dump() {
 }
 
 static bool test_sort() {
+    bool d = depends( test_creating_and_removing );
+    d = d && depends( test_pushing );
+    d = d && depends( test_get_by_index );
+    if (!d) return false;
+
     bool worked = true;
     double ary1[] = { 2.0, 5.5, 2.0, 4.9, 1.0 };
     double ary2[] = { 1.0, 2.0, 3.5, 4.9, 5.5 };
@@ -231,6 +269,11 @@ static bool test_sort() {
 }
 
 static bool test_get_by_cond(void){
+    bool d = depends( test_creating_and_removing );
+    d = d && depends( test_pushing );
+    d = d && depends( test_get_by_index );
+    if (!d) return false;
+
     bool worked = true;
     double ary1[] = { 1.0, 2.0, 3.5, 4.9, 5.5 };
     double ary2[] = { 3.5, 4.9, 5.5 };
@@ -249,6 +292,11 @@ static bool test_get_by_cond(void){
 }
 
 static bool test_for_each_do() {
+    bool d = depends( test_creating_and_removing );
+    d = d && depends( test_pushing );
+    d = d && depends( test_get_by_index );
+    if (!d) return false;
+
     bool worked = true;
     double ary1[] = { 1.0, 2.0, 3.5, 4.9, 5.5 };
     double ary2[] = { 2.0, 3.0, 4.5, 5.9, 6.5 };
@@ -269,6 +317,11 @@ static bool test_for_each_do() {
 }
 
 static bool test_for_each_by_cond() {
+    bool d = depends( test_creating_and_removing );
+    d = d && depends( test_pushing );
+    d = d && depends( test_get_by_index );
+    if (!d) return false;
+
     bool worked = true;
     double ary1[] = { 1.0, 2.0, 3.5, 4.9, 5.5 };
     double ary2[] = { 1.0, 2.0, 4.5, 5.9, 6.5 };
@@ -289,6 +342,11 @@ static bool test_for_each_by_cond() {
 }
 
 static bool test_join() {
+    bool d = depends( test_creating_and_removing );
+    d = d && depends( test_pushing );
+    d = d && depends( test_get_by_index );
+    if (!d) return false;
+
     bool worked = true;
     double ary1[] = { 1.0, 2.0, 3.5, 4.9, 5.5 };
     double ary2[] = { 1.0, 2.0, 4.5, 5.9, 6.5 };
