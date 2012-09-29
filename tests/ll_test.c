@@ -10,6 +10,8 @@
 
 #define len(x) (sizeof(x)/sizeof(x[0]))
 
+#define depends(x) __depends(__func__, x )
+
 /*
  * Prototypes : Testing functions
  */
@@ -63,7 +65,7 @@ static void success(char*);
 static void failure(char*, bool);
 static void cleanup(LinkedList*);
 static bool test_exec(Test*);
-static bool depends(bool (*)(void) );
+static bool __depends(const char*, bool (*)(void));
 int comparefunction(void*, void*);
 bool condition_is_bigger_three(void*);
 bool do_foreach_inc(void*);
@@ -80,6 +82,8 @@ static bool test_creating_and_removing() {
 }
 
 static bool test_pushing() {
+    bool d = depends( test_creating_and_removing );
+    if (!d) return false;
     bool res;
     double value1 = 5.00;
     double value2 = 6.00;
@@ -338,12 +342,16 @@ static void cleanup(LinkedList *l) {
     ll_destroy(l);
 }
 
-static bool depends(bool (*other)(void) ) {
+static bool __depends(const char *func, bool (*other)(void) ) {
     int i;
     bool res = false;
     for( i = 0 ; tests[i].desc && !res ; i++ ) {
         if( tests[i].testfunc == other )
             res = tests[i].result;
+    }
+
+    if (!res) {
+        printf( "%s has dependencies which are not working!\n", func );
     }
     return res;
 } 
@@ -405,4 +413,5 @@ int main( int argc, char ** argv ) {
     for( i = 0; tests[i].desc && worked; i++ ) {
         test_exec( &tests[i] );
     }
+    return worked;
 }
