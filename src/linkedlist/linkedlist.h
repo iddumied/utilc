@@ -23,6 +23,8 @@ struct linked_list {
 };
 
 LinkedList * linkedlist( void(*) );
+LinkedList * empty_linkedlist(void);
+
 
 /*
  * Get info about the LinkedList
