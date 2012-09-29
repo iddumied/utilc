@@ -49,7 +49,7 @@ Test tests[] = {
     {"destroy by index",    false,  test_destroy_by_index,      false },
     {"element in list",     false,  test_element_in_list,       false },
     {"dump",                false,  test_dump,                  false },
-    {"sort",                false,  test_sort,                  false },
+    //{"sort",                false,  test_sort,                  false },
     {"get by condition",    false,  test_get_by_cond,           false },
     {"for each do",         false,  test_for_each_do,           false },
     {"for each by cond do", false,  test_for_each_by_cond,      false },
