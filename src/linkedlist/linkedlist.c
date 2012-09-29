@@ -359,12 +359,12 @@ void ll_for_each_element_do( LinkedList * list, bool (*func)(void*) ) {
 #ifdef DEBUG
     printf("::ll : ll_for_each_element_do\n");
 #endif
-    LinkedListElement *curr = list->first;
-    bool lastresult = true; 
-    while(lastresult && next(curr)) {
-        lastresult = func(curr->e);
-        curr = next(curr); 
+    bool __continue = func(list->first->e);
+    LinkedListElement *current = list->first;
+    while( (current = current->next) && __continue ) {
+        __continue = func(current->e);
     }
+
 }
 
 /*
