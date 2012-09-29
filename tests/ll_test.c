@@ -286,7 +286,7 @@ static bool test_get_by_cond(void){
     LinkedList *new = ll_get_by_cond(list, condition_is_bigger_three);
 
     for( i = 0 ; i<len(ary2); i++ ) {
-        worked = &ary2[i] == (double*)ll_element(new,i);
+        worked = ary2[i] == *((double*)ll_element(new,i));
     }
     return worked;
 }
@@ -435,17 +435,14 @@ int comparefunction(void *a, void *b) {
  * - for each by condition do
  */ 
 bool condition_is_bigger_three( void* value ) {
-    double a = 3;
-    double *aptr = &a;
-    return ((double*)value)>aptr;
+    return ( (*(double*)value) > 3 );
 }
 
 /*
  * do for each function for testing for each and for each by cond function
  */
 bool do_foreach_inc( void *value ) {
-    double double_value = *((double*)value);
-    double_value++;
+    (*(double*)value)++;
     return true;
 };
 
