@@ -48,7 +48,7 @@ static LinkedListElement* new_linkedlistelement() {
  */
 static LinkedListElement * linkedlistelement_at( LinkedList * list, unsigned int i ) {
 #ifdef DEBUG
-    printf("::ll : linkedlist_element_at\n");
+    printf("::ll : linkedlist_element_at %i\n", i);
 #endif
     LinkedListElement * c = list->first;
     unsigned int j;
@@ -96,21 +96,21 @@ unsigned int ll_len( LinkedList * list, bool force_recalc ) {
     while( c = c->next ) i++;
     list->length = i;
 #ifdef DEBUG
-    printf("%i\n",i);
+    printf(" %i\n",i);
 #endif
     return i;
 }
 
 void * ll_last( LinkedList * list ) {
 #ifdef DEBUG
-    printf("::ll : ll_last\n");
+    printf("::ll : ll_last: %p\n",list->last->e);
 #endif
     return list->last->e;
 }
 
 void * ll_first( LinkedList * list ) {
 #ifdef DEBUG
-    printf("::ll : ll_first\n");
+    printf("::ll : ll_first: %p\n",list->first->e);
 #endif
     return list->first->e;
 }
@@ -324,17 +324,17 @@ LinkedList * ll_get_by_cond( LinkedList * list, bool(*cnd)(void*) ) {
 #ifdef DEBUG
     printf("::ll : ll_get_by_cond\n");
 #endif
-    LinkedList * new;
-    LinkedListElement * c = list->first;
-    while(c) {
-        if( cnd(c->e) ) {
-            if(!new) {
-                new = linkedlist(c->e);
-            }
-            ll_push(new, c->e);
-        }
-        c = c->next;
-    }
+    LinkedList * new = empty_linkedlist();
+    LinkedListElement *current = list->first;
+    
+    if( cnd(list->first->e ) )
+       ll_push(new, list->first->e);
+
+    while( current = current->next ) {
+        if( cnd(current->e ) )
+            ll_push(new, current->e);
+    } 
+
     return new;
 }
 
