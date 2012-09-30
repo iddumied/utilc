@@ -18,6 +18,7 @@
 static bool test_creating_and_removing(void);
 static bool test_pushing(void);
 static bool test_poping(void);
+static bool test_length(void);
 static bool test_get_first(void);
 static bool test_get_last(void);
 static bool test_get_by_index(void);
@@ -42,6 +43,7 @@ Test tests[] = {
     {"Creating/Deleting",   true,   test_creating_and_removing, false },
     {"Pushing",             true,   test_pushing,               false },
     {"Poping",              true,   test_poping,                false },
+    {"Length",              true,   test_length,                false },
     {"get first",           false,  test_get_first,             false },
     {"get last",            false,  test_get_last,              false },
     {"get by index",        false,  test_get_by_index,          false },
@@ -111,6 +113,24 @@ static bool test_poping() {
 
     cleanup(l); // does not affect the poped_ptr
     return (poped_ptr == &value1) && poped_away;
+}
+
+static bool test_length() {
+    bool d = depends(test_creating_and_removing);
+    d = d && depends(test_pushing);
+    if (!d ) return false;
+
+    bool result = false;
+    int i;
+    double ary[] = { 1.0, 2.0, 3.0, 4.0 };
+    LinkedList *l = empty_linkedlist();
+
+    for( i = 0 ; i<len(ary) ; i++ ) {
+        result = i == ll_len(l, true);
+        ll_push(l, &ary[i]);
+    }
+
+    return result;
 }
 
 static bool test_get_first() {
