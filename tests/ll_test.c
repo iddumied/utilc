@@ -324,15 +324,15 @@ static bool test_for_each_do() {
     double ary2[] = { 2.0, 3.0, 4.5, 5.9, 6.5 };
     LinkedList *list = linkedlist(&ary1[0]);
     int i;
-    for( i = 0; i<len(ary1); i++ ) {
+    for( i = 1; i<len(ary1); i++ ) {
         ll_push(list, &ary1[i]);
     }
 
     ll_for_each_element_do(list, do_foreach_inc );
-    double *a, *b;
+    double a, b;
     for( i = 0 ; i<len(ary2); i++ ) {
-        a = &ary2[i];
-        b = (double*)ll_element(list, i);
+        a = ary2[i];
+        b = *((double*)ll_element(list, i));
         worked = a == b; 
     }
     return worked;
@@ -342,6 +342,7 @@ static bool test_for_each_by_cond() {
     bool d = depends( test_creating_and_removing );
     d = d && depends( test_pushing );
     d = d && depends( test_get_by_index );
+    d = d && depends( test_for_each_do );
     if (!d) return false;
 
     bool worked = true;
@@ -349,15 +350,17 @@ static bool test_for_each_by_cond() {
     double ary2[] = { 1.0, 2.0, 4.5, 5.9, 6.5 };
     LinkedList *list = linkedlist(&ary1[0]);
     int i;
-    for( i = 0 ; i<len(ary1); i++ ) {
-        ll_push(list,&ary1[i]);
+    for( i = 1 ; i<len(ary1); i++ ) {
+        ll_push(list, &ary1[i]);
     }
 
     ll_for_each_element_by_condition_do(list, condition_is_bigger_three, do_foreach_inc );
-    double *a, *b;
+
+    double a, b;
     for( i = 0 ; i<len(ary2) ; i++ ) {
-        a = &ary2[i];
-        b = (double*)ll_element(list, i);
+        a = ary2[i];
+        b = *((double*)ll_element(list, i));
+        printf( "Compare: %f == %f\n", a, b );
         worked = a == b; 
     }
     return worked;
@@ -370,13 +373,13 @@ static bool test_join() {
     if (!d) return false;
 
     bool worked = true;
-    double ary1[] = { 1.0, 2.0, 3.5, 4.9, 5.5 };
-    double ary2[] = { 1.0, 2.0, 4.5, 5.9, 6.5 };
-    double res[] = { 1.0, 2.0, 3.5, 4.9, 5.5, 
-                     1.0, 2.0, 4.5, 5.9, 6.5 };
+    double ary1[] = { 1.0, 2.0, 3.0, 4.0, 5.0 };
+    double ary2[] = { 6.0, 7.0, 8.0, 9.0, 10.0 };
+    double res[] =  { 1.0, 2.0, 3.0, 4.0, 5.0, 
+                      6.0, 7.0, 8.0, 9.0, 10.0 };
 
-    LinkedList *list1 = linkedlist(&ary1[0]);
-    LinkedList *list2 = linkedlist(&ary2[0]);
+    LinkedList *list1 = empty_linkedlist();
+    LinkedList *list2 = empty_linkedlist();
     LinkedList *res_list;
 
     int i;
@@ -388,12 +391,14 @@ static bool test_join() {
     }
 
     res_list = ll_join(list1,list2);
-    double *a, *b;
+    double a, b;
 
     for( i = 0 ; i<len(res); i++ ) {
-        a = (double*) ll_element(res_list, i);
-        b = &res[i];
+        printf( "[%i] ", i );
+        a = *((double*) ll_element(res_list, i));
+        b = res[i];
         worked = a == b;
+        printf( "Compare: %f == %f\n\n", i, a, b);
     }
 
     return worked;
