@@ -467,7 +467,7 @@ int main( int argc, char ** argv ) {
     int i;
     bool worked = true;
     for( i = 0; tests[i].desc && worked; i++ ) {
-        test_exec( &tests[i] );
+        worked = test_exec( &tests[i] );
     }
     return worked;
 }
