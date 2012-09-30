@@ -107,9 +107,10 @@ static bool test_poping() {
     LinkedList *l = linkedlist(&value1);
     ll_push(l, &value2);
     double *poped_ptr = ((double*) ll_pop(l));
+    bool poped_away = poped_ptr != l->first->e;
 
     cleanup(l); // does not affect the poped_ptr
-    return poped_ptr == &value1;
+    return (poped_ptr == &value1) && poped_away;
 }
 
 static bool test_get_first() {
