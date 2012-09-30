@@ -90,7 +90,8 @@ static bool test_pushing() {
     bool res;
     double value1 = 5.00;
     double value2 = 6.00;
-    LinkedList *list = linkedlist( &value1 );
+    LinkedList *list = empty_linkedlist();
+    ll_push(list, &value1);
     ll_push(list, &value2);
     res = ((double*)list->first->e == &value1 && 
             (double*)list->first->next->e == &value2);
