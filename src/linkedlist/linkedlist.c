@@ -400,16 +400,22 @@ LinkedList * ll_join( LinkedList *list1, LinkedList *list2 ) {
 #ifdef DEBUG
     printf("::ll : ll_join\n");
 #endif
-    LinkedList * result = linkedlist(list1->first->e);
+    LinkedList * result = empty_linkedlist();
 
-    LinkedListElement *curr = list1->first;
-    while( curr = next(curr) ) {
-        ll_push( result, curr->e );
+    LinkedListElement *current = list1->first;
+
+    ll_push( result, current->e );
+    while( current && (current = current->next)) {
+        ll_push(result, current->e);
     }
-    curr = list2->first;
-    ll_push( result, list2->first->e );
-    while( curr = next(curr) ) {
-        ll_push( result, curr->e );
+    
+    /* for second list, do the stuff again */
+    current = list2->first;
+
+    ll_push( result, current->e );
+    while( current && (current = current->next)) {
+        ll_push(result, current->e);
     }
+
     return result;
 }
