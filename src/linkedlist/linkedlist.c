@@ -379,10 +379,10 @@ void ll_for_each_element_by_condition_do( LinkedList * list, bool (*cond)(void*)
     printf("::ll : ll_for_each_element_by_condition_do\n");
 #endif
     LinkedListElement *curr = list->first;
-    bool lastresult = true; 
-    while(lastresult && next(curr)) {
-        if( cond(curr->e) ) lastresult = func(curr->e);
-        curr = next(curr);
+    bool lastresult = true;
+    if ( cond(curr->e) ) lastresult = func(curr->e); 
+    while( lastresult && (curr = curr->next) && curr ) {
+        if(cond(curr->e)) lastresult = func(curr->e);
     }
 }
 
