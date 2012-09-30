@@ -52,18 +52,17 @@ static LinkedListElement * linkedlistelement_at( LinkedList * list, unsigned int
 #ifdef DEBUG
     printf("::ll : linkedlist_element_at %i\n", i);
 #endif
-    LinkedListElement * c = list->first;
-    unsigned int j;
-    if (!list->length) ll_len(list, true);
-    for( j = 0 ; j < list->length && j != i  ; j++ ) {
-        if ( c->next ) c = next(c); 
-        else {
-            j = i; // abort the iteration the easy way.
-            c = NULL; // but ensure there is NULLtype returned
-        }
-    }
+    LinkedListElement *current = list->first;
+    int j, length;
 
-    return c; 
+    if( i == 0 ) return current;
+    length = ll_len(list, true);
+    if( i > length ) return NULL;
+    while( j != i ) {
+        current = current->next;
+        j++;
+    }
+    return current;
 }
 
 static void savdeclen( LinkedList * list ) {
