@@ -11,9 +11,9 @@ Implement a dynamical array (linked list) in C with all functionality required b
 - push values
 - pop values
 - dump it
-- sort it 
-- permutation (nobody needs it... but it's cool)
-- iteration
+- sort it (will be in v2.0.0)
+- permutation (will be in v2.0.0)
+- iteration 
 - take values from it by condition
 
 To sort it is the hard part: 
@@ -21,3 +21,11 @@ Sort it with the fastest algorithm available for the problem size. As you all kn
 quicksort is not the fastest sorting algorithm for problems (arrays) with len < 10
 (or nearly sorted arrays, but I do not know how to check this...)
 It's also complicated because there are not just numbers in the array... 
+
+Version 1.0.0 is released
+-------------------------
+See the similar named tag. The tests are running, the stuff is working. If there
+are any problems, please let me know / send a pull request! I would be pleased!
+
+If you want to add functionality to the linkedlist, do it! I would love to see 
+your ideas!
