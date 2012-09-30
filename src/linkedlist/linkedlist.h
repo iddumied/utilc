@@ -55,8 +55,12 @@ LinkedList * ll_dump( LinkedList * );
 
 /*
  * Sort the LinkedList
+ *
+ * Note:
+ * Currenty, the sort functionality is commented out. This is because Sorting 
+ * does not work. Anyway, all other functionality works.
  */
-LinkedList * ll_sort( LinkedList *, signed int (*)(void*,void*) );
+/*LinkedList * ll_sort( LinkedList *, signed int (*)(void*,void*) );*/
 
 /*
  * Get stuff as LinkedList from a LinkedList by condition

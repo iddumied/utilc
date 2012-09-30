@@ -26,7 +26,7 @@ static bool test_destroy_by_element(void);
 static bool test_destroy_by_index(void);
 static bool test_element_in_list(void);
 static bool test_dump(void);
-static bool test_sort(void);
+//static bool test_sort(void); // no sorting in version 1
 static bool test_get_by_cond(void);
 static bool test_for_each_do(void);
 static bool test_for_each_by_cond(void);
@@ -265,6 +265,7 @@ static bool test_dump() {
     return (worked && list != dump);
 }
 
+/*
 static bool test_sort() {
     bool d = depends( test_creating_and_removing );
     d = d && depends( test_pushing );
@@ -289,6 +290,7 @@ static bool test_sort() {
 
     return worked;
 }
+*/
 
 static bool test_get_by_cond(void){
     bool d = depends( test_creating_and_removing );

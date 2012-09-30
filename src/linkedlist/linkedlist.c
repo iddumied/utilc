@@ -6,7 +6,8 @@ static void savdeclen( LinkedList * );
 static void savinclen( LinkedList * );
 static LinkedListElement * next(LinkedListElement*);
 static LinkedListElement * previous(LinkedListElement*);
-static LinkedList * quicksort( LinkedList*, signed int (*)(void(*), void(*)) );
+
+/*static LinkedList * quicksort( LinkedList*, signed int (*)(void(*), void(*)) );*/
 
 LinkedList * linkedlist( void *e ) {
 #ifdef DEBUG
@@ -255,18 +256,26 @@ LinkedList * ll_dump( LinkedList *list ) {
     return new;
 }
 
+/*
+ * No sorting in Version 1.
+ * Sorting will be implemented for version 2 or so.
+ */
+
+/*
 LinkedList * ll_sort( LinkedList * list, signed int (*cmpfunc)( void *a, void *b ) ) {
 #ifdef DEBUG
     printf("::ll : ll_sort\n");
 #endif
     LinkedList * sorted;
     if( !list->length ) ll_len(list, false);
-    /*if( list->length > 10 )*/ // currently, there is no other sorting algo.
+    if( list->length > 10 ) // currently, there is no other sorting algo.
         sorted = quicksort(list, cmpfunc );
 
     return sorted;
 }
+*/
 
+/*
 static LinkedList * quicksort( LinkedList * list, signed int (*cmpfunc)( void* a, void* b ) ) {
 #ifdef DEBUG
     printf("::ll : quicksort\n");
@@ -330,6 +339,7 @@ static LinkedList * quicksort( LinkedList * list, signed int (*cmpfunc)( void* a
 
     return list;
 }
+*/
 
 LinkedList * ll_get_by_cond( LinkedList * list, bool(*cnd)(void*) ) {
 #ifdef DEBUG
