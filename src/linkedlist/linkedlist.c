@@ -19,11 +19,14 @@ LinkedList * linkedlist( void *e ) {
 #endif
     LinkedListElement *el = new_linkedlistelement(); 
     LinkedList *l = (LinkedList*) malloc( sizeof( LinkedList ) );
-    el->e = e;
-    el->next = el->prev = NULL;
-    
-    l->first = l->last = el;
-    l->length = 1;
+
+    if(l) { // if malloc failed, don't do something
+        el->e = e;
+        el->next = el->prev = NULL;
+        
+        l->first = l->last = el;
+        l->length = 1;
+    }
     return l;
 }
 
@@ -32,8 +35,10 @@ LinkedList * empty_linkedlist() {
     printf("::ll : linkedlist created (empty)\n");
 #endif
     LinkedList *list = (LinkedList*) malloc(sizeof(LinkedList));
-    list->first = list->last = NULL;
-    list->length = 0;
+    if (list) {
+        list->first = list->last = NULL;
+        list->length = 0;
+    }
     return list;
 }
 
@@ -42,9 +47,11 @@ static LinkedListElement* new_linkedlistelement() {
     printf("::ll : linkedlist element created\n");
 #endif
     LinkedListElement *ll_element = (LinkedListElement*) malloc(sizeof(LinkedListElement));
-    ll_element->e = NULL;
-    ll_element->next = NULL;
-    ll_element->prev = NULL;
+    if (ll_element) {
+        ll_element->e = NULL;
+        ll_element->next = NULL;
+        ll_element->prev = NULL;
+    }
     return ll_element;
 }
 
