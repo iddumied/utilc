@@ -261,12 +261,12 @@ LinkedList * ll_dump( LinkedList *list ) {
 #ifdef DEBUG
     printf("::ll : ll_dump\n");
 #endif
-    LinkedList * new = linkedlist( list->first->e ); 
+    LinkedList * newlist = linkedlist( list->first->e ); 
     LinkedListElement * c = list->first;
     while( c = next(c) ) // O(n)
-        ll_push( new, c->e );
+        ll_push( newlist, c->e );
 
-    return new;
+    return newlist;
 }
 
 /*
@@ -358,18 +358,18 @@ LinkedList * ll_get_by_cond( LinkedList * list, int(*cnd)(void*) ) {
 #ifdef DEBUG
     printf("::ll : ll_get_by_cond\n");
 #endif
-    LinkedList * new = empty_linkedlist();
+    LinkedList * newlist = empty_linkedlist();
     LinkedListElement *current = list->first;
     
     if( cnd(list->first->e ) )
-       ll_push(new, list->first->e);
+       ll_push(newlist, list->first->e);
 
     while( current = current->next ) {
         if( cnd(current->e ) )
-            ll_push(new, current->e);
+            ll_push(newlist, current->e);
     } 
 
-    return new;
+    return newlist;
 }
 
 /*
