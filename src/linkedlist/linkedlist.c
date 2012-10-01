@@ -106,17 +106,23 @@ unsigned int ll_len( LinkedList * list, int force_recalc ) {
 #ifdef DEBUG
     printf("::ll : ll_len");
 #endif
+    unsigned int i;
+    LinkedListElement *c;
+
     if( list->length && !force_recalc ) 
         return list->length;
 
-    unsigned int i = 0;
-    LinkedListElement * c = list->first;
+    i = 0;
+    c = list->first;
+
     if(c) i++;
     while(c && (c = next(c)) ) i++;
     list->length = i;
+
 #ifdef DEBUG
     printf(" %i\n",i);
 #endif
+
     return i;
 }
 
