@@ -61,7 +61,7 @@ static LinkedListElement * linkedlistelement_at( LinkedList * list, unsigned int
     int j, length;
 
     if( i == 0 ) return current;
-    length = ll_len(list, true);
+    length = ll_len(list, 1);
     if( i > length ) return NULL;
     while( j != i ) {
         current = current->next;
@@ -99,7 +99,7 @@ static LinkedListElement * previous(LinkedListElement *curr) {
  * afterwards it will take O(1)
  *
  */
-unsigned int ll_len( LinkedList * list, bool force_recalc ) {
+unsigned int ll_len( LinkedList * list, int force_recalc ) {
 #ifdef DEBUG
     printf("::ll : ll_len");
 #endif
@@ -234,12 +234,12 @@ void ll_destroy( LinkedList * list ) {
  * Other functionality
  */
 
-bool ll_element_in_list( LinkedList *list, void *el ) {
+int ll_element_in_list( LinkedList *list, void *el ) {
 #ifdef DEBUG
     printf("::ll : ll_element_in_list\n");
 #endif
     LinkedListElement * curr = list->first;
-    bool found = false;
+    int found = 0;
 
     while( !found && curr->next ) {
         found = curr->e == el;
@@ -271,7 +271,7 @@ LinkedList * ll_sort( LinkedList * list, signed int (*cmpfunc)( void *a, void *b
     printf("::ll : ll_sort\n");
 #endif
     LinkedList * sorted;
-    if( !list->length ) ll_len(list, false);
+    if( !list->length ) ll_len(list, 0);
     if( list->length > 10 ) // currently, there is no other sorting algo.
         sorted = quicksort(list, cmpfunc );
 
@@ -345,7 +345,7 @@ static LinkedList * quicksort( LinkedList * list, signed int (*cmpfunc)( void* a
 }
 */
 
-LinkedList * ll_get_by_cond( LinkedList * list, bool(*cnd)(void*) ) {
+LinkedList * ll_get_by_cond( LinkedList * list, int(*cnd)(void*) ) {
 #ifdef DEBUG
     printf("::ll : ll_get_by_cond\n");
 #endif
@@ -366,14 +366,14 @@ LinkedList * ll_get_by_cond( LinkedList * list, bool(*cnd)(void*) ) {
 /*
  * Executes for each element in the list the passed function, by passing the
  * element to the function.
- * If the function returns false, the execution is completely stopped and 
+ * If the function returns 0, the execution is completely stopped and 
  * there is no function call for any other element from the list.
  */
-void ll_for_each_element_do( LinkedList * list, bool (*func)(void*) ) {
+void ll_for_each_element_do( LinkedList * list, int (*func)(void*) ) {
 #ifdef DEBUG
     printf("::ll : ll_for_each_element_do\n");
 #endif
-    bool __continue = func(list->first->e);
+    int __continue = func(list->first->e);
     LinkedListElement *current = list->first;
     while( (current = current->next) && __continue ) {
         __continue = func(current->e);
@@ -382,18 +382,18 @@ void ll_for_each_element_do( LinkedList * list, bool (*func)(void*) ) {
 }
 
 /*
- * Executes for each element the cond function. If the return value is true, 
+ * Executes for each element the cond function. If the return value is 1, 
  * the func function is called with the value. So if the func function is very 
  * complex, the condition-function can control, which elements are processed
  * by the func function.
- * Anyway, if the func function returns false, the whole process is aborted.
+ * Anyway, if the func function returns 0, the whole process is aborted.
  */
-void ll_for_each_element_by_condition_do( LinkedList *list, bool (*cond)(void*), bool (*func)(void*) ) {
+void ll_for_each_element_by_condition_do( LinkedList *list, int (*cond)(void*), int (*func)(void*) ) {
 #ifdef DEBUG
     printf("::ll : ll_for_each_element_by_condition_do\n");
 #endif
     LinkedListElement *curr = list->first;
-    bool lastresult = true;
+    int lastresult = 1;
     if ( cond(curr->e) ) lastresult = func(curr->e); 
     while( lastresult && (curr = curr->next) && curr ) {
         if(cond(curr->e)) lastresult = func(curr->e);

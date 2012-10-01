@@ -6,7 +6,6 @@
 
 #include <stdlib.h>
 #include <stdio.h>
-#include <stdbool.h>
 
 #define len(x) (sizeof(x)/sizeof(x[0]))
 
@@ -15,47 +14,47 @@
 /*
  * Prototypes : Testing functions
  */
-static bool test_creating_and_removing(void);
-static bool test_pushing(void);
-static bool test_poping(void);
-static bool test_length(void);
-static bool test_get_first(void);
-static bool test_get_last(void);
-static bool test_get_by_index(void);
-static bool test_destroy_by_element(void);
-static bool test_destroy_by_index(void);
-static bool test_element_in_list(void);
-static bool test_dump(void);
-//static bool test_sort(void); // no sorting in version 1
-static bool test_get_by_cond(void);
-static bool test_for_each_do(void);
-static bool test_for_each_by_cond(void);
-static bool test_join(void);
+static int test_creating_and_removing(void);
+static int test_pushing(void);
+static int test_poping(void);
+static int test_length(void);
+static int test_get_first(void);
+static int test_get_last(void);
+static int test_get_by_index(void);
+static int test_destroy_by_element(void);
+static int test_destroy_by_index(void);
+static int test_element_in_list(void);
+static int test_dump(void);
+//static int test_sort(void); // no sorting in version 1
+static int test_get_by_cond(void);
+static int test_for_each_do(void);
+static int test_for_each_by_cond(void);
+static int test_join(void);
 
 typedef struct {
     char *desc;
-    bool strict;
-    bool (*testfunc)();
-    bool result;
+    int strict;
+    int (*testfunc)();
+    int result;
 } Test;
 
 Test tests[] = {
-    {"Creating/Deleting",   true,   test_creating_and_removing, false },
-    {"Pushing",             true,   test_pushing,               false },
-    {"Poping",              true,   test_poping,                false },
-    {"Length",              true,   test_length,                false },
-    {"get first",           false,  test_get_first,             false },
-    {"get last",            false,  test_get_last,              false },
-    {"get by index",        false,  test_get_by_index,          false },
-    {"destroy by element",  false,  test_destroy_by_element,    false },
-    {"destroy by index",    false,  test_destroy_by_index,      false },
-    {"element in list",     false,  test_element_in_list,       false },
-    {"dump",                false,  test_dump,                  false },
-    //{"sort",                false,  test_sort,                  false },
-    {"get by condition",    false,  test_get_by_cond,           false },
-    {"for each do",         false,  test_for_each_do,           false },
-    {"for each by cond do", false,  test_for_each_by_cond,      false },
-    {"join",                false,  test_join,                  false },
+    {"Creating/Deleting",   1,   test_creating_and_removing, 0 },
+    {"Pushing",             1,   test_pushing,               0 },
+    {"Poping",              1,   test_poping,                0 },
+    {"Length",              1,   test_length,                0 },
+    {"get first",           0,  test_get_first,             0 },
+    {"get last",            0,  test_get_last,              0 },
+    {"get by index",        0,  test_get_by_index,          0 },
+    {"destroy by element",  0,  test_destroy_by_element,    0 },
+    {"destroy by index",    0,  test_destroy_by_index,      0 },
+    {"element in list",     0,  test_element_in_list,       0 },
+    {"dump",                0,  test_dump,                  0 },
+    //{"sort",                0,  test_sort,                  0 },
+    {"get by condition",    0,  test_get_by_cond,           0 },
+    {"for each do",         0,  test_for_each_do,           0 },
+    {"for each by cond do", 0,  test_for_each_by_cond,      0 },
+    {"join",                0,  test_join,                  0 },
     {NULL, NULL, NULL},
 };
 
@@ -64,30 +63,30 @@ Test tests[] = {
  */
 static void testing(char*);
 static void success(char*);
-static void failure(char*, bool);
+static void failure(char*, int);
 static void cleanup(LinkedList*);
-static bool test_exec(Test*);
-static bool __depends(const char*, bool (*)(void));
+static int test_exec(Test*);
+static int __depends(const char*, int (*)(void));
 int comparefunction(void*, void*);
-bool condition_is_bigger_three(void*);
-bool do_foreach_inc(void*);
+int condition_is_bigger_three(void*);
+int do_foreach_inc(void*);
 /*
  * function definitions : testing functions
  */
 
-static bool test_creating_and_removing() {
+static int test_creating_and_removing() {
     double value = 5.00;
     LinkedList *list = linkedlist( &value );
 
     ll_destroy(list);
-    return true;
+    return 1;
 }
 
-static bool test_pushing() {
-    bool d = depends( test_creating_and_removing );
-    if (!d) return false;
+static int test_pushing() {
+    int d = depends( test_creating_and_removing );
+    if (!d) return 0;
 
-    bool res;
+    int res;
     double value1 = 5.00;
     double value2 = 6.00;
     LinkedList *list = empty_linkedlist();
@@ -100,43 +99,43 @@ static bool test_pushing() {
     return res;
 }
 
-static bool test_poping() {
-    bool d = depends( test_creating_and_removing );
+static int test_poping() {
+    int d = depends( test_creating_and_removing );
     d = d && depends( test_pushing );
-    if (!d) return false;
+    if (!d) return 0;
 
     double value1 = 5.00;
     double value2 = 6.00;
     LinkedList *l = linkedlist(&value1);
     ll_push(l, &value2);
     double *poped_ptr = ((double*) ll_pop(l));
-    bool poped_away = poped_ptr != l->first->e;
+    int poped_away = poped_ptr != l->first->e;
 
     cleanup(l); // does not affect the poped_ptr
     return (poped_ptr == &value1) && poped_away;
 }
 
-static bool test_length() {
-    bool d = depends(test_creating_and_removing);
+static int test_length() {
+    int d = depends(test_creating_and_removing);
     d = d && depends(test_pushing);
-    if (!d ) return false;
+    if (!d ) return 0;
 
-    bool result = false;
+    int result = 0;
     int i;
     double ary[] = { 1.0, 2.0, 3.0, 4.0 };
     LinkedList *l = empty_linkedlist();
 
     for( i = 0 ; i<len(ary) ; i++ ) {
-        result = i == ll_len(l, true);
+        result = i == ll_len(l, 1);
         ll_push(l, &ary[i]);
     }
 
     return result;
 }
 
-static bool test_get_first() {
-    bool d = depends( test_creating_and_removing );
-    if (!d) return false;
+static int test_get_first() {
+    int d = depends( test_creating_and_removing );
+    if (!d) return 0;
 
     double value = 5.00;
     LinkedList *l = linkedlist(&value);
@@ -145,10 +144,10 @@ static bool test_get_first() {
     return poped_ptr == &value;
 }
 
-static bool test_get_last() {
-    bool d = depends( test_creating_and_removing );
+static int test_get_last() {
+    int d = depends( test_creating_and_removing );
     d = d && depends( test_pushing );
-    if (!d) return false;
+    if (!d) return 0;
 
     double value1 = 5.00;
     double value2 = 6.00;
@@ -159,12 +158,12 @@ static bool test_get_last() {
     return poped_ptr == &value2;
 }
 
-static bool test_get_by_index() {
-    bool d = depends( test_creating_and_removing );
+static int test_get_by_index() {
+    int d = depends( test_creating_and_removing );
     d = d && depends( test_pushing );
-    if (!d) return false;
+    if (!d) return 0;
 
-    bool worked = true;
+    int worked = 1;
     double ary[] = { 1.0, 2.0, 3.5, 4.9, 5.5 };
     int i;
     LinkedList *list = linkedlist(&ary[0]);
@@ -183,12 +182,12 @@ static bool test_get_by_index() {
     return worked;
 }
 
-static bool test_destroy_by_element() {
-    bool d = depends( test_creating_and_removing );
+static int test_destroy_by_element() {
+    int d = depends( test_creating_and_removing );
     d = d && depends( test_pushing );
-    if (!d) return false;
+    if (!d) return 0;
 
-    bool worked = true;
+    int worked = 1;
     double ary[] = { 1.0, 2.0, 3.5, 4.9, 5.5 };
     int i;
     LinkedList *list = linkedlist(&ary[0]);
@@ -205,12 +204,12 @@ static bool test_destroy_by_element() {
     return worked;
 }
 
-static bool test_destroy_by_index() {
-    bool d = depends( test_creating_and_removing );
+static int test_destroy_by_index() {
+    int d = depends( test_creating_and_removing );
     d = d && depends( test_pushing );
-    if (!d) return false;
+    if (!d) return 0;
 
-    bool worked = true;
+    int worked = 1;
     double ary[] = { 1.0, 2.0, 3.5, 4.9, 5.5 };
     int i;
     LinkedList *list = linkedlist(&ary[0]);
@@ -227,28 +226,28 @@ static bool test_destroy_by_index() {
     return worked;
 }
 
-static bool test_element_in_list() {
-    bool d = depends( test_creating_and_removing );
+static int test_element_in_list() {
+    int d = depends( test_creating_and_removing );
     d = d && depends( test_pushing );
-    if (!d) return false;
+    if (!d) return 0;
 
     double value1 = 5.0;
     double value2 = 6.0;
     LinkedList *list = linkedlist(&value1);
     ll_push(list, &value2);
-    bool a = ll_element_in_list(list, &value1);
-    bool b = !ll_element_in_list(list, &value2);
+    int a = ll_element_in_list(list, &value1);
+    int b = !ll_element_in_list(list, &value2);
 
     return (a&&b);
 }
 
-static bool test_dump() {
-    bool d = depends( test_creating_and_removing );
+static int test_dump() {
+    int d = depends( test_creating_and_removing );
     d = d && depends( test_pushing );
     d = d && depends( test_get_by_index );
-    if (!d) return false;
+    if (!d) return 0;
 
-    bool worked = true;
+    int worked = 1;
     double ary[] = { 1.0, 2.0, 3.5, 4.9, 5.5 };
     LinkedList *list = linkedlist(&ary[0]);
     int i;
@@ -266,13 +265,13 @@ static bool test_dump() {
 }
 
 /*
-static bool test_sort() {
-    bool d = depends( test_creating_and_removing );
+static int test_sort() {
+    int d = depends( test_creating_and_removing );
     d = d && depends( test_pushing );
     d = d && depends( test_get_by_index );
-    if (!d) return false;
+    if (!d) return 0;
 
-    bool worked = true;
+    int worked = 1;
     double ary1[] = { 2.0, 5.5, 2.0, 4.9, 1.0 };
     double ary2[] = { 1.0, 2.0, 3.5, 4.9, 5.5 };
     LinkedList *list = linkedlist(&ary1[0]);
@@ -292,13 +291,13 @@ static bool test_sort() {
 }
 */
 
-static bool test_get_by_cond(void){
-    bool d = depends( test_creating_and_removing );
+static int test_get_by_cond(void){
+    int d = depends( test_creating_and_removing );
     d = d && depends( test_pushing );
     d = d && depends( test_get_by_index );
-    if (!d) return false;
+    if (!d) return 0;
 
-    bool worked = true;
+    int worked = 1;
     double ary1[] = { 1.0, 2.0, 3.5, 4.9, 5.5 };
     double ary2[] = { 3.5, 4.9, 5.5 };
     LinkedList *list = linkedlist(&ary1[0]);
@@ -315,13 +314,13 @@ static bool test_get_by_cond(void){
     return worked;
 }
 
-static bool test_for_each_do() {
-    bool d = depends( test_creating_and_removing );
+static int test_for_each_do() {
+    int d = depends( test_creating_and_removing );
     d = d && depends( test_pushing );
     d = d && depends( test_get_by_index );
-    if (!d) return false;
+    if (!d) return 0;
 
-    bool worked = true;
+    int worked = 1;
     double ary1[] = { 1.0, 2.0, 3.5, 4.9, 5.5 };
     double ary2[] = { 2.0, 3.0, 4.5, 5.9, 6.5 };
     LinkedList *list = linkedlist(&ary1[0]);
@@ -340,14 +339,14 @@ static bool test_for_each_do() {
     return worked;
 }
 
-static bool test_for_each_by_cond() {
-    bool d = depends( test_creating_and_removing );
+static int test_for_each_by_cond() {
+    int d = depends( test_creating_and_removing );
     d = d && depends( test_pushing );
     d = d && depends( test_get_by_index );
     d = d && depends( test_for_each_do );
-    if (!d) return false;
+    if (!d) return 0;
 
-    bool worked = true;
+    int worked = 1;
     double ary1[] = { 1.0, 2.0, 3.5, 4.9, 5.5 };
     double ary2[] = { 1.0, 2.0, 4.5, 5.9, 6.5 };
     LinkedList *list = linkedlist(&ary1[0]);
@@ -368,13 +367,13 @@ static bool test_for_each_by_cond() {
     return worked;
 }
 
-static bool test_join() {
-    bool d = depends( test_creating_and_removing );
+static int test_join() {
+    int d = depends( test_creating_and_removing );
     d = d && depends( test_pushing );
     d = d && depends( test_get_by_index );
-    if (!d) return false;
+    if (!d) return 0;
 
-    bool worked = true;
+    int worked = 1;
     double ary1[] = { 1.0, 2.0, 3.0, 4.0, 5.0 };
     double ary2[] = { 6.0, 7.0, 8.0, 9.0, 10.0 };
     double res[] =  { 1.0, 2.0, 3.0, 4.0, 5.0, 
@@ -418,7 +417,7 @@ static void success(char* desc) {
     printf( "\t[success]\n");
 }
 
-static void failure(char* desc, bool strict) {
+static void failure(char* desc, int strict) {
     if (strict)
         printf("\t-[STRICT FAILED]\n");
     else
@@ -429,9 +428,9 @@ static void cleanup(LinkedList *l) {
     ll_destroy(l);
 }
 
-static bool __depends(const char *func, bool (*other)(void) ) {
+static int __depends(const char *func, int (*other)(void) ) {
     int i;
-    bool res = false;
+    int res = 0;
     for( i = 0 ; tests[i].desc && !res ; i++ ) {
         if( tests[i].testfunc == other )
             res = tests[i].result;
@@ -463,25 +462,25 @@ int comparefunction(void *a, void *b) {
  * - get by condition
  * - for each by condition do
  */ 
-bool condition_is_bigger_three( void* value ) {
+int condition_is_bigger_three( void* value ) {
     return ( (*(double*)value) > 3 );
 }
 
 /*
  * do for each function for testing for each and for each by cond function
  */
-bool do_foreach_inc( void *value ) {
+int do_foreach_inc( void *value ) {
     (*(double*)value)++;
-    return true;
+    return 1;
 };
 
 /*
  * Main
  */
 
-static bool test_exec( Test *test ) {
+static int test_exec( Test *test ) {
     testing(test->desc);
-    bool res = test->testfunc();
+    int res = test->testfunc();
     if (res)
         success(test->desc);
     else
@@ -493,7 +492,7 @@ static bool test_exec( Test *test ) {
 
 int main( int argc, char ** argv ) {
     int i;
-    bool worked = true;
+    int worked = 1;
     for( i = 0; tests[i].desc && worked; i++ ) {
         worked = test_exec( &tests[i] );
     }

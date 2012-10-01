@@ -2,7 +2,6 @@
 #define __D_ARRAY__H__
 
 #include <stdlib.h>
-#include <stdbool.h>
 
 typedef struct linked_list_element  LinkedListElement;
 typedef struct linked_list          LinkedList;
@@ -26,7 +25,7 @@ LinkedList * empty_linkedlist(void);
 /*
  * Get info about the LinkedList
  */
-unsigned int ll_len( LinkedList *list, bool force_recalc);
+unsigned int ll_len( LinkedList *list, int force_recalc);
 void * ll_last( LinkedList *list );
 void * ll_first( LinkedList *list );
 
@@ -47,7 +46,7 @@ void ll_destroy( LinkedList *list );
 /*
  * Other functionality 
  */
-bool ll_element_in_list( LinkedList *list, void *el );
+int ll_element_in_list( LinkedList *list, void *el );
 LinkedList * ll_dump( LinkedList *list );
 
 /*
@@ -62,11 +61,11 @@ LinkedList * ll_dump( LinkedList *list );
 /*
  * Get stuff as LinkedList from a LinkedList by condition
  */
-LinkedList * ll_get_by_cond( LinkedList *list, bool(*cnd)(void*) );
+LinkedList * ll_get_by_cond( LinkedList *list, int(*cnd)(void*) );
 
-void ll_for_each_element_do( LinkedList *list, bool (*func)(void*) );
+void ll_for_each_element_do( LinkedList *list, int (*func)(void*) );
 void ll_for_each_element_by_condition_do( LinkedList *list, 
-        bool (*cond)(void*), bool (*func)(void*) );
+        int (*cond)(void*), int (*func)(void*) );
 
 LinkedList * ll_join( LinkedList *list1, LinkedList *list2 );
 #endif
