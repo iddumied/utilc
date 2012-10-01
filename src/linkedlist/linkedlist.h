@@ -19,36 +19,36 @@ struct linked_list {
     unsigned int length;
 };
 
-LinkedList * linkedlist( void(*) );
+LinkedList * linkedlist( void *e );
 LinkedList * empty_linkedlist(void);
 
 
 /*
  * Get info about the LinkedList
  */
-unsigned int ll_len( LinkedList *, bool);
-void * ll_last( LinkedList * );
-void * ll_first( LinkedList * );
+unsigned int ll_len( LinkedList *list, bool force_recalc);
+void * ll_last( LinkedList *list );
+void * ll_first( LinkedList *list );
 
 /*
  * Work with elements of the LinkedList 
  */
-void * ll_element( LinkedList *, unsigned int );
-void * ll_pop( LinkedList* );
-void ll_push( LinkedList *, void (*) );  
+void * ll_element( LinkedList *list, unsigned int i);
+void * ll_pop( LinkedList *list );
+void ll_push( LinkedList *list, void *e );  
 
 /*
  * Remove elements or the LinkedList from memory
  */
-void * ll_destroy_by_element( LinkedList *, LinkedListElement * );
-void * ll_destroy_by_index( LinkedList *, unsigned int );
-void ll_destroy( LinkedList * );
+void * ll_destroy_by_element( LinkedList *list, LinkedListElement *listelement );
+void * ll_destroy_by_index( LinkedList *list, unsigned int i );
+void ll_destroy( LinkedList *list );
 
 /*
  * Other functionality 
  */
-bool ll_element_in_list( LinkedList*, void* );
-LinkedList * ll_dump( LinkedList * );
+bool ll_element_in_list( LinkedList *list, void *el );
+LinkedList * ll_dump( LinkedList *list );
 
 /*
  * Sort the LinkedList
@@ -62,9 +62,11 @@ LinkedList * ll_dump( LinkedList * );
 /*
  * Get stuff as LinkedList from a LinkedList by condition
  */
-LinkedList * ll_get_by_cond( LinkedList * l, bool(*cnd)(void*) );
+LinkedList * ll_get_by_cond( LinkedList *list, bool(*cnd)(void*) );
 
-void ll_for_each_element_do( LinkedList*, bool (*func)(void*) );
-void ll_for_each_element_by_condition_do( LinkedList*, bool (*cond)(void*), bool (*func)(void*) );
+void ll_for_each_element_do( LinkedList *list, bool (*func)(void*) );
+void ll_for_each_element_by_condition_do( LinkedList *list, 
+        bool (*cond)(void*), bool (*func)(void*) );
+
 LinkedList * ll_join( LinkedList *list1, LinkedList *list2 );
 #endif

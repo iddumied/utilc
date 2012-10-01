@@ -153,7 +153,7 @@ void * ll_pop( LinkedList * list ) {
     return ll_destroy_by_element( list, list->first );
 } 
 
-void ll_push( LinkedList * list, void * e ) {
+void ll_push( LinkedList *list, void *e ) {
 #ifdef DEBUG
     printf("::ll : ll_push\n");
 #endif
@@ -234,7 +234,7 @@ void ll_destroy( LinkedList * list ) {
  * Other functionality
  */
 
-bool ll_element_in_list( LinkedList * list, void * el ) {
+bool ll_element_in_list( LinkedList *list, void *el ) {
 #ifdef DEBUG
     printf("::ll : ll_element_in_list\n");
 #endif
@@ -388,7 +388,7 @@ void ll_for_each_element_do( LinkedList * list, bool (*func)(void*) ) {
  * by the func function.
  * Anyway, if the func function returns false, the whole process is aborted.
  */
-void ll_for_each_element_by_condition_do( LinkedList * list, bool (*cond)(void*), bool (*func)(void*) ) {
+void ll_for_each_element_by_condition_do( LinkedList *list, bool (*cond)(void*), bool (*func)(void*) ) {
 #ifdef DEBUG
     printf("::ll : ll_for_each_element_by_condition_do\n");
 #endif
