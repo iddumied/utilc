@@ -65,15 +65,11 @@ static LinkedListElement * linkedlistelement_at( LinkedList * list, unsigned int
     printf("::ll : linkedlist_element_at %i\n", i);
 #endif
     LinkedListElement *current = list->first;
-    int j, length;
+    int j;
+    for(j = 0; j != i && current && (current = next(current)); j++) {
 
-    if( i == 0 ) return current;
-    length = ll_len(list, 1);
-    if( i > length ) return NULL;
-    while( j != i ) {
-        current = current->next;
-        j++;
     }
+    if ( j != i ) return NULL;
     return current;
 }
 
