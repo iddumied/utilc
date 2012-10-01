@@ -4,7 +4,7 @@ Mainly to work with C, Pointer stuff and memory handling. Learning-by-doing stuf
 you know?
 
 First goal is:
-Implement a dynamical array (linked list) in C with all functionality required by an array:
+Implement a linked list in C with as much functionality as possible:
 
 - init with a value
 - get length of it
@@ -16,12 +16,6 @@ Implement a dynamical array (linked list) in C with all functionality required b
 - iteration 
 - take values from it by condition
 
-To sort it is the hard part: 
-Sort it with the fastest algorithm available for the problem size. As you all know,
-quicksort is not the fastest sorting algorithm for problems (arrays) with len < 10
-(or nearly sorted arrays, but I do not know how to check this...)
-It's also complicated because there are not just numbers in the array... 
-
 Version 1.0.0 is released
 -------------------------
 See the similar named tag. The tests are running, the stuff is working. If there
@@ -29,3 +23,15 @@ are any problems, please let me know / send a pull request! I would be pleased!
 
 If you want to add functionality to the linkedlist, do it! I would love to see 
 your ideas!
+
+Next steps (looking forward to v2.0.0)
+--------------------------------------
+There were some really nice feedbacks on the reddit I posted and some very detailed
+feedback-emails. I will do both style and feature-fixes.
+
+Fixes todo
+----------
+* convention / variable naming fixes 
+* portability fixes
+* speed fixes 
+* store real data, not only pointers
