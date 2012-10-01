@@ -382,10 +382,10 @@ void ll_for_each_element_do( LinkedList * list, int (*func)(void*) ) {
 #ifdef DEBUG
     printf("::ll : ll_for_each_element_do\n");
 #endif
-    int __continue = func(list->first->e);
+    int go = func(list->first->e);
     LinkedListElement *current = list->first;
-    while( (current = current->next) && __continue ) {
-        __continue = func(current->e);
+    while( (current = current->next) && go ) {
+        go = func(current->e);
     }
 
 }
