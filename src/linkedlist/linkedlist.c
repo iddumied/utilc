@@ -1,5 +1,9 @@
 #include "linkedlist/linkedlist.h"
 
+#ifdef DEBUG
+#include <stdio.h>
+#endif
+
 static LinkedListElement * new_linkedlistelement();
 static LinkedListElement * linkedlistelement_at( LinkedList *, unsigned int );
 static void savdeclen( LinkedList * );

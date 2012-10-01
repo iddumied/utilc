@@ -3,9 +3,6 @@
 
 #include <stdlib.h>
 #include <stdbool.h>
-#ifdef DEBUG
-#include <stdio.h>
-#endif
 
 typedef struct linked_list_element  LinkedListElement;
 typedef struct linked_list          LinkedList;
