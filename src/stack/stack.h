@@ -6,8 +6,8 @@
 
 struct stack_element {
    struct stack_element *next;
-   long long int data_size;
-   char data[]; 
+   size_t data_size;
+   char data[]; /* data, multible of 1 byte */
 };
 typedef struct stack_element StackElement;
 
@@ -16,6 +16,7 @@ typedef struct {
 } Stack;
 
 Stack * empty_stack(void);
-void stackpush(Stack *stack, long long int data_size, void *data);
+void stackpush(Stack *stack, size_t data_size, void *data);
+void * stackpop(Stack *stack);
 
 #endif
