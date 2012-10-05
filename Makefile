@@ -47,6 +47,10 @@ LL_OUT = ./bin/linkedlist
 LL_TEST = ./tests/ll_test.c
 LL_TEST_OUT = ./bin/ll_test
 
+STACK = ${SRC}/stack/stack.c
+STACKTEST = ./tests/stack_tests.c
+STACKTEST_OUT = ${BUILD_DIR}/stack
+
 DEBUG = -g
 
 #
@@ -54,6 +58,9 @@ DEBUG = -g
 #
 
 all: ll tests 
+
+stacktest:
+	${CC} ${HEADERS} ${CFLAGS} ${STACKTEST} -o ${STACKTEST_OUT}.o
 
 ll:
 	${CC} ${HEADERS} ${CFLAGS} ${LL} -o ${LL_OUT}.o
