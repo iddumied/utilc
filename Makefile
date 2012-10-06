@@ -76,10 +76,11 @@ testutils:
 stack:
 	${CC} ${HEADERS} ${CFLAGS} ${STACK} -o ${STACK_OUT}.o
 
-stacktest: stack
+stacktest: stack testutils
+	@echo "Compiling test files"
 	${CC}  ${HEADERS} ${TESTHEADERS} ${CFLAGS} ${STACKTEST} -o ${STACKTEST_OUT}.o
-
-link_stacktest: testutils stack stacktest
+	@echo ""
+	@echo "Linking test files"
 	${CC} ${TESTUTILS_OUT}.o ${STACK_OUT}.o ${STACKTEST_OUT}.o -o ${STACKTEST_OUT}
 
 #
@@ -89,8 +90,9 @@ link_stacktest: testutils stack stacktest
 ll:
 	${CC} ${HEADERS} ${CFLAGS} ${LL} -o ${LL_OUT}.o
 
-ll_test:
+ll_test: ll testutils
+	@echo "Compiling test files"
 	${CC} ${HEADERS} ${TESTHEADERS} ${CFLAGS} ${DEBUG} ${LL_TEST} -o ${LL_TEST_OUT}.o 
-
-link_ll_test: testutils ll ll_test
+	@echo ""
+	@echo "Linking test files"
 	${CC} ${TESTUTILS_OUT}.o ${LL_OUT}.o ${LL_TEST_OUT}.o -o ${LL_TEST_OUT}
