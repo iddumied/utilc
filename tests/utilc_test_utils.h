@@ -22,4 +22,5 @@ void testing(char*);
 void success(char*);
 void failure(char*, bool);
 bool __depends(const char*, bool (*)(void));
+bool test_exists(Test *test);
 bool test_exec(Test *test);
