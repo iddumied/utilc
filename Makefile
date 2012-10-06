@@ -1,5 +1,5 @@
-SOURCE_DIR = src
-BUILD_DIR = bin
+SRC = ./src
+BIN = ./bin
 
 CC = /usr/bin/gcc
 
@@ -48,8 +48,10 @@ LL_TEST = ./tests/ll_test.c
 LL_TEST_OUT = ./bin/ll_test
 
 STACK = ${SRC}/stack/stack.c
+STACK_OUT = ${BIN}/stack
+
 STACKTEST = ./tests/stack_test.c
-STACKTEST_OUT = ${BUILD_DIR}/stack
+STACKTEST_OUT = ${BIN}/stacktest
 
 DEBUG = -g
 
@@ -57,18 +59,28 @@ DEBUG = -g
 # just do it...
 #
 
-all: ll tests 
+#
+# stack stuff
+#
 
-stacktest:
+stack:
+	${CC} ${HEADERS} ${CFLAGS} ${STACK} -o ${STACK_OUT}.o
+
+stacktest: stack
 	${CC} ${HEADERS} ${CFLAGS} ${STACKTEST} -o ${STACKTEST_OUT}.o
+
+link_stacktest: stack stacktest
+	${CC} ${STACK_OUT}.o ${STACKTEST_OUT}.o -o ${STACKTEST_OUT}
+
+#
+# linkedlist stuff
+#
 
 ll:
 	${CC} ${HEADERS} ${CFLAGS} ${LL} -o ${LL_OUT}.o
 
-tests: ll_test link_tests
-
 ll_test:
 	${CC} ${HEADERS} ${CFLAGS} ${DEBUG} ${LL_TEST} -o ${LL_TEST_OUT}.o 
 
-link_tests:
+link_ll_tests:
 	${CC} ${LL_OUT}.o ${LL_TEST_OUT}.o -o ${LL_TEST_OUT}
