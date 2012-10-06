@@ -3,14 +3,19 @@
  */
 
 #include "linkedlist/linkedlist.h"
+#include "utilc_test_utils.h"
 
 #include <stdlib.h>
 #include <stdio.h>
 #include <stdbool.h>
 
-#define len(x) (sizeof(x)/sizeof(x[0]))
-
-#define depends(x) __depends(__func__, x )
+/*
+ * Helper functions
+ */ 
+static void cleanup(LinkedList*);
+bool do_foreach_inc(void *value);
+bool condition_is_bigger_three(void *value);
+int comparefunction(void *a, void *b);
 
 /*
  * Prototypes : Testing functions
@@ -32,13 +37,6 @@ static bool test_for_each_do(void);
 static bool test_for_each_by_cond(void);
 static bool test_join(void);
 
-typedef struct {
-    char *desc;
-    bool strict;
-    bool (*testfunc)();
-    bool result;
-} Test;
-
 Test tests[] = {
     {"Creating/Deleting",   true,   test_creating_and_removing, false },
     {"Pushing",             true,   test_pushing,               false },
@@ -56,21 +54,9 @@ Test tests[] = {
     {"for each do",         false,  test_for_each_do,           false },
     {"for each by cond do", false,  test_for_each_by_cond,      false },
     {"join",                false,  test_join,                  false },
-    {NULL, NULL, NULL},
+    {NULL, NULL, NULL, NULL},
 };
 
-/*
- * Prototypes : Helper functions 
- */
-static void testing(char*);
-static void success(char*);
-static void failure(char*, bool);
-static void cleanup(LinkedList*);
-static bool test_exec(Test*);
-static bool __depends(const char*, bool (*)(void));
-int comparefunction(void*, void*);
-bool condition_is_bigger_three(void*);
-bool do_foreach_inc(void*);
 /*
  * function definitions : testing functions
  */
@@ -122,7 +108,7 @@ static bool test_length() {
     if (!d ) return false;
 
     bool result = false;
-    int i;
+    unsigned int i;
     double ary[] = { 1.0, 2.0, 3.0, 4.0 };
     LinkedList *l = empty_linkedlist();
 
@@ -166,7 +152,7 @@ static bool test_get_by_index() {
 
     bool worked = true;
     double ary[] = { 1.0, 2.0, 3.5, 4.9, 5.5 };
-    int i;
+    unsigned int i;
     LinkedList *list = linkedlist(&ary[0]);
     for( i = 1 ; i<len(ary); i++) {
         ll_push( list, &ary[i] );
@@ -190,7 +176,7 @@ static bool test_destroy_by_element() {
 
     bool worked = true;
     double ary[] = { 1.0, 2.0, 3.5, 4.9, 5.5 };
-    int i;
+    unsigned int i;
     LinkedList *list = linkedlist(&ary[0]);
     for( i = 1 ; i<len(ary) ; i++ ) {
         ll_push( list, &ary[i] );
@@ -212,7 +198,7 @@ static bool test_destroy_by_index() {
 
     bool worked = true;
     double ary[] = { 1.0, 2.0, 3.5, 4.9, 5.5 };
-    int i;
+    unsigned int i;
     LinkedList *list = linkedlist(&ary[0]);
     for( i = 1 ; i<len(ary) ; i++ ) {
         ll_push( list, &ary[i] );
@@ -251,7 +237,7 @@ static bool test_dump() {
     bool worked = true;
     double ary[] = { 1.0, 2.0, 3.5, 4.9, 5.5 };
     LinkedList *list = linkedlist(&ary[0]);
-    int i;
+    unsigned int i;
     for( i = 1; i<len(ary); i++ ) {
         ll_push(list, &ary[i] );
     }
@@ -302,8 +288,7 @@ static bool test_get_by_cond(void){
     double ary1[] = { 1.0, 2.0, 3.5, 4.9, 5.5 };
     double ary2[] = { 3.5, 4.9, 5.5 };
     LinkedList *list = linkedlist(&ary1[0]);
-    LinkedList *cmpList = linkedlist(&ary2[0]);
-    int i;
+    unsigned int i;
     for( i = 1; i<len(ary1); i++ ) {
         ll_push(list, &ary1[i] );
     }
@@ -325,7 +310,7 @@ static bool test_for_each_do() {
     double ary1[] = { 1.0, 2.0, 3.5, 4.9, 5.5 };
     double ary2[] = { 2.0, 3.0, 4.5, 5.9, 6.5 };
     LinkedList *list = linkedlist(&ary1[0]);
-    int i;
+    unsigned int i;
     for( i = 1; i<len(ary1); i++ ) {
         ll_push(list, &ary1[i]);
     }
@@ -351,7 +336,7 @@ static bool test_for_each_by_cond() {
     double ary1[] = { 1.0, 2.0, 3.5, 4.9, 5.5 };
     double ary2[] = { 1.0, 2.0, 4.5, 5.9, 6.5 };
     LinkedList *list = linkedlist(&ary1[0]);
-    int i;
+    unsigned int i;
     for( i = 1 ; i<len(ary1); i++ ) {
         ll_push(list, &ary1[i]);
     }
@@ -384,7 +369,7 @@ static bool test_join() {
     LinkedList *list2 = empty_linkedlist();
     LinkedList *res_list;
 
-    int i;
+    unsigned int i;
     for( i = 0; i<len(ary1); i++ ) {
         ll_push(list1, &ary1[i]);
     }
@@ -400,48 +385,11 @@ static bool test_join() {
         a = *((double*) ll_element(res_list, i));
         b = res[i];
         worked = a == b;
-        printf( "Compare: %f == %f\n\n", i, a, b);
+        printf( "Compare: %f == %f\n\n", a, b);
     }
 
     return worked;
 }
-
-/*
- * function definitions : helper functions
- */
-
-static void testing(char* desc) {
-    printf( "\n\n\t:: linkedlist-test: %s\n", desc);
-}
-
-static void success(char* desc) {
-    printf( "\t[success]\n");
-}
-
-static void failure(char* desc, bool strict) {
-    if (strict)
-        printf("\t-[STRICT FAILED]\n");
-    else
-        printf( "\t[FAIL]\n");
-}
-
-static void cleanup(LinkedList *l) {
-    ll_destroy(l);
-}
-
-static bool __depends(const char *func, bool (*other)(void) ) {
-    int i;
-    bool res = false;
-    for( i = 0 ; tests[i].desc && !res ; i++ ) {
-        if( tests[i].testfunc == other )
-            res = tests[i].result;
-    }
-
-    if (!res) {
-        printf( "%s has dependencies which are not working!\n", func );
-    }
-    return res;
-} 
 
 /*
  * Compare function for sort testing
@@ -476,22 +424,18 @@ bool do_foreach_inc( void *value ) {
 };
 
 /*
+ * Helper functions
+ */
+static void cleanup(LinkedList *l) {
+    ll_destroy(l);
+}
+
+
+/*
  * Main
  */
 
-static bool test_exec( Test *test ) {
-    testing(test->desc);
-    bool res = test->testfunc();
-    if (res)
-        success(test->desc);
-    else
-        failure(test->desc, test->strict);
-
-    test->result = res;
-    return res;
-}
-
-int main( int argc, char ** argv ) {
+int main(void) {
     int i;
     bool worked = true;
     for( i = 0; tests[i].desc && worked; i++ ) {

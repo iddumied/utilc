@@ -1,5 +1,6 @@
 SRC = ./src
 BIN = ./bin
+TESTS= ./tests
 
 CC = /usr/bin/gcc
 
@@ -40,6 +41,10 @@ CFLAGS += -D DEBUG
 # Some variables
 #
 HEADERS = -I./src/
+TESTHEADERS = -I./tests/
+
+TESTUTILS=${TESTS}/utilc_test_utils.c
+TESTUTILS_OUT=${BIN}/utilc_test_utils
 
 LL = ./src/linkedlist/linkedlist.c
 LL_OUT = ./bin/linkedlist
@@ -58,6 +63,11 @@ DEBUG = -g
 #
 # just do it...
 #
+clean:
+	@rm ${BIN}/*
+
+testutils:
+	${CC} ${CFLAGS} ${HEADERS} ${TESTHEADERS} ${TESTUTILS} -o ${TESTUTILS_OUT}.o
 
 #
 # stack stuff
@@ -67,10 +77,10 @@ stack:
 	${CC} ${HEADERS} ${CFLAGS} ${STACK} -o ${STACK_OUT}.o
 
 stacktest: stack
-	${CC} ${HEADERS} ${CFLAGS} ${STACKTEST} -o ${STACKTEST_OUT}.o
+	${CC}  ${HEADERS} ${TESTHEADERS} ${CFLAGS} ${STACKTEST} -o ${STACKTEST_OUT}.o
 
-link_stacktest: stack stacktest
-	${CC} ${STACK_OUT}.o ${STACKTEST_OUT}.o -o ${STACKTEST_OUT}
+link_stacktest: testutils stack stacktest
+	${CC} ${TESTUTILS_OUT}.o ${STACK_OUT}.o ${STACKTEST_OUT}.o -o ${STACKTEST_OUT}
 
 #
 # linkedlist stuff
@@ -80,7 +90,7 @@ ll:
 	${CC} ${HEADERS} ${CFLAGS} ${LL} -o ${LL_OUT}.o
 
 ll_test:
-	${CC} ${HEADERS} ${CFLAGS} ${DEBUG} ${LL_TEST} -o ${LL_TEST_OUT}.o 
+	${CC} ${HEADERS} ${TESTHEADERS} ${CFLAGS} ${DEBUG} ${LL_TEST} -o ${LL_TEST_OUT}.o 
 
-link_ll_tests:
-	${CC} ${LL_OUT}.o ${LL_TEST_OUT}.o -o ${LL_TEST_OUT}
+link_ll_test: testutils ll ll_test
+	${CC} ${TESTUTILS_OUT}.o ${LL_OUT}.o ${LL_TEST_OUT}.o -o ${LL_TEST_OUT}
