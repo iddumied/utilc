@@ -12,7 +12,7 @@ Test tests[] = {
     {"Pushing", true, test_pushing, false },
     {"Poping",  true, test_poping,  false },
     {NULL, NULL, NULL, NULL}
-}
+};
 
 static bool test_pushing() {
     Stack *stack = empty_stack();
@@ -56,7 +56,7 @@ static void cleanup(Stack *stack) {
 
 static void cleanup_element(StackElement *ste) {
     if( ste->next )
-        cleanup(ste->next);
+        cleanup_element(ste->next);
     else
         free(ste);
 }
@@ -64,8 +64,8 @@ static void cleanup_element(StackElement *ste) {
 int main(void) {
     unsigned int i;
     bool worked = true;
-    for( i = 0; test_exists(tests[i]) && worked; i++ ) {
-        worked = test_exec(tests[i]);
+    for( i = 0; test_exists(&tests[i]) && worked; i++ ) {
+        worked = test_exec(&tests[i]);
     }
 
     return worked;
