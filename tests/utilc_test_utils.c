@@ -32,9 +32,11 @@ bool __depends(const char *func, bool (*other)(void) ) {
     return res;
 } 
 
+/*
+ * Test exists, if description and function exists
+ */
 bool test_exists(Test *test) {
-    return (test->desc!=NULL && test->strict!=NULL && 
-            test->testfunc!=NULL && test->result!=NULL);
+    return (test->desc != NULL && test->testfunc != NULL);
 }
 
 bool test_exec( Test *test ) {

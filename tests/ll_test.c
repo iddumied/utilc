@@ -438,7 +438,8 @@ static void cleanup(LinkedList *l) {
 int main(void) {
     int i;
     bool worked = true;
-    for( i = 0; test_exists(tests[i]) && worked; i++ ) {
+    for( i = 0; test_exists(&tests[i]) && worked; i++ ) {
+        printf("[%i]:\n",i);
         worked = test_exec( &tests[i] );
     }
     return worked;
