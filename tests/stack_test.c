@@ -22,7 +22,7 @@ static bool test_pushing() {
     stackpush(stack, sizeof(topush), &topush);
     result =    (stack->first->next == NULL) && 
                 (stack->first->data_size == sizeof(topush)) &&
-                (stack->first->data == topush);
+                ((int)*stack->first->data == topush);
 
     cleanup(stack);
     return result;
