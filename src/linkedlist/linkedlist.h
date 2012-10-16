@@ -32,6 +32,15 @@ void * ll_last( LinkedList *list );
 void * ll_first( LinkedList *list );
 
 /*
+ * Get datasizes
+ */
+size_t ll_datasize_last( LinkedList *list );
+size_t ll_datasize_first( LinkedList *list );
+size_t ll_datasize_by_index( LinkedList *list, unsigned int index);
+size_t ll_datasize_list( LinkedList *list );
+
+
+/*
  * Work with elements of the LinkedList 
  */
 void * ll_element( LinkedList *list, unsigned int i);

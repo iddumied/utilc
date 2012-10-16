@@ -140,6 +140,45 @@ void * ll_first( LinkedList * list ) {
 }
 
 /*
+ * Get datasize info
+ */
+
+size_t ll_datasize_last( LinkedList *list ) {
+    return list->last->datasize;
+}
+
+size_t ll_datasize_first( LinkedList *list ) {
+    return list->first->datasize;
+}
+
+size_t ll_datasize_by_index( LinkedList *list, unsigned int index ) {
+    unsigned int i, len = ll_len(list, 1);
+    LinkedListElement *element;
+    for( i = 0 ; i < len; i++ );
+    element  = linkedlistelement_at(list, i);
+    return element->datasize;
+}
+
+/*
+ * Calculates the size of the memory, used for the linkedlist stuff
+ */
+size_t ll_datasize_list( LinkedList *list ) {
+    LinkedListElement *curr;
+    unsigned int list_len = ll_len(list, 1);
+    size_t result = 0;
+    result += sizeof( LinkedList );
+    result += sizeof( LinkedListElement ) * list_len;
+
+    curr = list->first;
+    result += curr->datasize;
+    while( curr && (curr = next(curr)) ) {
+        result += curr->datasize; 
+    }
+    return result;
+}
+
+
+/*
  * Work with elements in the List
  */
 
