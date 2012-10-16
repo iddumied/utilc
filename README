@@ -35,3 +35,5 @@ Fixes todo
 * portability fixes
 * speed fixes 
 * store real data, not only pointers
+
+There will be no sorting. Not in Version 2 and not in Version 3, 4 or 5!
