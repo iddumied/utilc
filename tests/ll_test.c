@@ -78,15 +78,15 @@ static void cleanup(LinkedList*);
 static int test_exec(Test*);
 static int __depends(const char*, int (*)(void));
 int comparefunction(void*, void*);
-int condition_is_bigger_three(void*);
-int do_foreach_inc(void*);
+int condition_is_bigger_three(void*, size_t);
+int do_foreach_inc(void*, size_t);
 /*
  * function definitions : testing functions
  */
 
 static int test_creating_and_removing() {
     double value = 5.00;
-    LinkedList *list = linkedlist( &value );
+    LinkedList *list = linkedlist( &value, sizeof(value) );
 
     ll_destroy(list);
     return 1;
@@ -100,8 +100,8 @@ static int test_pushing() {
     double value1 = 5.00;
     double value2 = 6.00;
     LinkedList *list = empty_linkedlist();
-    ll_push(list, &value1);
-    ll_push(list, &value2);
+    ll_push(list, &value1, sizeof(value1));
+    ll_push(list, &value2, sizeof(value2));
     res = ((double*)list->first->data == &value1 && 
             (double*)list->first->next->data == &value2);
     cleanup(list);
@@ -116,10 +116,10 @@ static int test_poping() {
 
     double value1 = 5.00;
     double value2 = 6.00;
-    LinkedList *l = linkedlist(&value1);
-    ll_push(l, &value2);
+    LinkedList *l = linkedlist(&value1, sizeof(value1));
+    ll_push(l, &value2, sizeof(value2));
     double *poped_ptr = ((double*) ll_pop(l));
-    int poped_away = poped_ptr != l->first->e;
+    int poped_away = poped_ptr != l->first->data;
 
     cleanup(l); // does not affect the poped_ptr
     return (poped_ptr == &value1) && poped_away;
@@ -137,7 +137,7 @@ static int test_length() {
 
     for( i = 0 ; i<len(ary) ; i++ ) {
         result = i == ll_len(l, 1);
-        ll_push(l, &ary[i]);
+        ll_push(l, &ary[i], sizeof(ary[i]));
     }
 
     return result;
@@ -148,7 +148,7 @@ static int test_get_first() {
     if (!d) return 0;
 
     double value = 5.00;
-    LinkedList *l = linkedlist(&value);
+    LinkedList *l = linkedlist(&value, sizeof(value));
     double *poped_ptr = (double*) ll_first(l);
     cleanup(l); // does not affect the poped_ptr
     return poped_ptr == &value;
@@ -161,8 +161,8 @@ static int test_get_last() {
 
     double value1 = 5.00;
     double value2 = 6.00;
-    LinkedList *l = linkedlist(&value1);
-    ll_push(l, &value2);
+    LinkedList *l = linkedlist(&value1, sizeof(value1));
+    ll_push(l, &value2, sizeof(value2));
     double *poped_ptr = (double*) ll_last(l);
     cleanup(l); // does not affect the poped_ptr
     return poped_ptr == &value2;
@@ -176,9 +176,9 @@ static int test_get_by_index() {
     int worked = 1;
     double ary[] = { 1.0, 2.0, 3.5, 4.9, 5.5 };
     int i;
-    LinkedList *list = linkedlist(&ary[0]);
+    LinkedList *list = linkedlist(&ary[0], sizeof(ary[0]));
     for( i = 1 ; i<len(ary); i++) {
-        ll_push( list, &ary[i] );
+        ll_push( list, &ary[i], sizeof(ary[i]) );
     }
 
     double *a, *b;
@@ -200,9 +200,9 @@ static int test_destroy_by_element() {
     int worked = 1;
     double ary[] = { 1.0, 2.0, 3.5, 4.9, 5.5 };
     int i;
-    LinkedList *list = linkedlist(&ary[0]);
+    LinkedList *list = linkedlist(&ary[0], sizeof(ary[0]));
     for( i = 1 ; i<len(ary) ; i++ ) {
-        ll_push( list, &ary[i] );
+        ll_push( list, &ary[i], sizeof(ary[i]) );
     }
 
     double *a, *b;
@@ -222,9 +222,9 @@ static int test_destroy_by_index() {
     int worked = 1;
     double ary[] = { 1.0, 2.0, 3.5, 4.9, 5.5 };
     int i;
-    LinkedList *list = linkedlist(&ary[0]);
+    LinkedList *list = linkedlist(&ary[0], sizeof(ary[0]));
     for( i = 1 ; i<len(ary) ; i++ ) {
-        ll_push( list, &ary[i] );
+        ll_push( list, &ary[i], sizeof(ary[i]) );
     }
 
     double *a, *b;
@@ -243,10 +243,10 @@ static int test_element_in_list() {
 
     double value1 = 5.0;
     double value2 = 6.0;
-    LinkedList *list = linkedlist(&value1);
-    ll_push(list, &value2);
-    int a = ll_element_in_list(list, &value1);
-    int b = !ll_element_in_list(list, &value2);
+    LinkedList *list = linkedlist(&value1, sizeof(value1));
+    ll_push(list, &value2, sizeof(value2));
+    int a = ll_element_in_list(list, &value1, sizeof(value1));
+    int b = !ll_element_in_list(list, &value2, sizeof(value2));
 
     return (a&&b);
 }
@@ -259,10 +259,10 @@ static int test_dump() {
 
     int worked = 1;
     double ary[] = { 1.0, 2.0, 3.5, 4.9, 5.5 };
-    LinkedList *list = linkedlist(&ary[0]);
+    LinkedList *list = linkedlist(&ary[0], sizeof(ary[0]));
     int i;
     for( i = 1; i<len(ary); i++ ) {
-        ll_push(list, &ary[i] );
+        ll_push(list, &ary[i], sizeof(ary[i]) );
     }
     LinkedList *dump = ll_dump(list);
 
@@ -310,11 +310,11 @@ static int test_get_by_cond(void){
     int worked = 1;
     double ary1[] = { 1.0, 2.0, 3.5, 4.9, 5.5 };
     double ary2[] = { 3.5, 4.9, 5.5 };
-    LinkedList *list = linkedlist(&ary1[0]);
-    LinkedList *cmpList = linkedlist(&ary2[0]);
+    LinkedList *list = linkedlist(&ary1[0], sizeof(ary1[0]));
+    LinkedList *cmpList = linkedlist(&ary2[0], sizeof(ary2[0]));
     int i;
     for( i = 1; i<len(ary1); i++ ) {
-        ll_push(list, &ary1[i] );
+        ll_push(list, &ary1[i], sizeof(ary1[i]) );
     }
     LinkedList *new = ll_get_by_cond(list, condition_is_bigger_three);
 
@@ -333,10 +333,10 @@ static int test_for_each_do() {
     int worked = 1;
     double ary1[] = { 1.0, 2.0, 3.5, 4.9, 5.5 };
     double ary2[] = { 2.0, 3.0, 4.5, 5.9, 6.5 };
-    LinkedList *list = linkedlist(&ary1[0]);
+    LinkedList *list = linkedlist(&ary1[0], sizeof(ary1[0]));
     int i;
     for( i = 1; i<len(ary1); i++ ) {
-        ll_push(list, &ary1[i]);
+        ll_push(list, &ary1[i], sizeof(ary1[i]));
     }
 
     ll_for_each_element_do(list, do_foreach_inc );
@@ -359,10 +359,10 @@ static int test_for_each_by_cond() {
     int worked = 1;
     double ary1[] = { 1.0, 2.0, 3.5, 4.9, 5.5 };
     double ary2[] = { 1.0, 2.0, 4.5, 5.9, 6.5 };
-    LinkedList *list = linkedlist(&ary1[0]);
+    LinkedList *list = linkedlist(&ary1[0], sizeof(ary1[0]));
     int i;
     for( i = 1 ; i<len(ary1); i++ ) {
-        ll_push(list, &ary1[i]);
+        ll_push(list, &ary1[i], sizeof(ary1[i]));
     }
 
     ll_for_each_element_by_condition_do(list, condition_is_bigger_three, do_foreach_inc );
@@ -395,10 +395,10 @@ static int test_join() {
 
     int i;
     for( i = 0; i<len(ary1); i++ ) {
-        ll_push(list1, &ary1[i]);
+        ll_push(list1, &ary1[i], sizeof(ary1[0]));
     }
     for( i = 0; i<len(ary2); i++ ){
-        ll_push(list2, &ary2[i]);
+        ll_push(list2, &ary2[i], sizeof(ary2[0]));
     }
 
     res_list = ll_join(list1,list2);
@@ -422,14 +422,14 @@ static int test_datasize_of_first() {
     int d = depends(test_creating_and_removing);
     d = d && depends(test_pushing);
 
-    bool result;
-    Linkedlist *list1 = empty_linkedlist();
-    Linkedlist *list2 = empty_linkedlist();
+    int result;
+    LinkedList *list1 = empty_linkedlist();
+    LinkedList *list2 = empty_linkedlist();
     double d_data = 5.0;
     int i_data = 1;
 
-    ll_push(list1, d_data, sizeof( d_data ) );
-    ll_push(list2, i_data, sizeof( i_data ) );
+    ll_push(list1, &d_data, sizeof( d_data ) );
+    ll_push(list2, &i_data, sizeof( i_data ) );
 
     result = (sizeof(d_data) == ll_datasize_first(list1));
     result = result && (sizeof(i_data) == ll_datasize_first(list2));
@@ -443,11 +443,11 @@ static int test_datasize_of_last() {
 
     int result;
     int i;
-    Linkedlist *list = empty_linkedlist();
+    LinkedList *list = empty_linkedlist();
     double data[] = { 1.0, 2.0, 3.0 };
 
     for( i = 0 ; i < len(data) ; i++ )
-        ll_push( list, data[i], sizeof(data[i]) );
+        ll_push( list, &data[i], sizeof(data[i]) );
 
     return ( sizeof(data[2]) == ll_datasize_last(list) );
 }
@@ -456,16 +456,16 @@ static int test_datasize_of_element() {
     int d = depends(test_creating_and_removing);
     d = d && depends(test_pushing);
 
-    int result = true;
+    int result = 1;
     int i;
-    Linkedlist *list = empty_linkedlist();
+    LinkedList *list = empty_linkedlist();
     double data[] = { 1.0, 2.0, 3.0 };
 
     for( i = 0 ; i < len(data) ; i++ )
-        ll_push( list, data[i], sizeof(data[i]) );
+        ll_push( list, &data[i], sizeof(data[i]) );
 
     for( i = 0 ; i < len(data) ; i++ )
-        result = result && ll_datasize_element(list,i) == sizeof(data[i]);
+        result = result && ll_datasize_by_index(list,i) == sizeof(data[i]);
 
     return result;
 }
@@ -474,14 +474,14 @@ static int test_datasize_of_list() {
     int d = depends(test_creating_and_removing);
     d = d && depends(test_pushing);
 
-    int result = true;
+    int result = 1;
     size_t expected_size;
     int i;
-    Linkedlist *list = empty_linkedlist();
+    LinkedList *list = empty_linkedlist();
     double data[] = { 1.0, 2.0, 3.0 };
 
     for( i = 0 ; i < len(data) ; i++ )
-        ll_push( list, data[i], sizeof(data[i]) );
+        ll_push( list, &data[i], sizeof(data[i]) );
 
     expected_size = sizeof(LinkedList) + 
         (sizeof(LinkedListElement)+sizeof(double)) * 3;
@@ -546,14 +546,14 @@ int comparefunction(void *a, void *b) {
  * - get by condition
  * - for each by condition do
  */ 
-int condition_is_bigger_three( void* value ) {
+int condition_is_bigger_three( void* value, size_t size ) {
     return ( (*(double*)value) > 3 );
 }
 
 /*
  * do for each function for testing for each and for each by cond function
  */
-int do_foreach_inc( void *value ) {
+int do_foreach_inc( void *value, size_t size) {
     (*(double*)value)++;
     return 1;
 };
