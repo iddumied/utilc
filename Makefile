@@ -1,6 +1,6 @@
 SRC = src
 BIN = bin
-TESTS = test
+TESTS = tests
 
 CC = /usr/bin/gcc
 
