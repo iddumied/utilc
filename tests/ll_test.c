@@ -31,6 +31,11 @@ static int test_for_each_do(void);
 static int test_for_each_by_cond(void);
 static int test_join(void);
 
+static int test_datasize_of_first(void);
+static int test_datasize_of_last(void);
+static int test_datasize_of_element(void);
+static int test_datasize_of_list(void);
+
 typedef struct {
     char *desc;
     int strict;
@@ -55,6 +60,11 @@ Test tests[] = {
     {"for each do",         0,  test_for_each_do,           0 },
     {"for each by cond do", 0,  test_for_each_by_cond,      0 },
     {"join",                0,  test_join,                  0 },
+
+    {"datasize: first",     0,  test_datasize_of_first,     0 },
+    {"datasize: last",      0,  test_datasize_of_last,      0 },
+    {"datasize: element",   0,  test_datasize_of_element,   0 },
+    {"datasize: list",      0,  test_datasize_of_list,      0 },
     {NULL, NULL, NULL},
 };
 
@@ -403,6 +413,80 @@ static int test_join() {
     }
 
     return worked;
+}
+
+/*
+ * Datasize tests:
+ */
+static int test_datasize_of_first() {
+    int d = depends(test_creating_and_removing);
+    d = d && depends(test_pushing);
+
+    bool result;
+    Linkedlist *list1 = empty_linkedlist();
+    Linkedlist *list2 = empty_linkedlist();
+    double d_data = 5.0;
+    int i_data = 1;
+
+    ll_push(list1, d_data, sizeof( d_data ) );
+    ll_push(list2, i_data, sizeof( i_data ) );
+
+    result = (sizeof(d_data) == ll_datasize_first(list1));
+    result = result && (sizeof(i_data) == ll_datasize_first(list2));
+
+    return result;
+}
+
+static int test_datasize_of_last() { 
+    int d = depends(test_creating_and_removing);
+    d = d && depends(test_pushing);
+
+    int result;
+    int i;
+    Linkedlist *list = empty_linkedlist();
+    double data[] = { 1.0, 2.0, 3.0 };
+
+    for( i = 0 ; i < len(data) ; i++ )
+        ll_push( list, data[i], sizeof(data[i]) );
+
+    return ( sizeof(data[2]) == ll_datasize_last(list) );
+}
+
+static int test_datasize_of_element() {
+    int d = depends(test_creating_and_removing);
+    d = d && depends(test_pushing);
+
+    int result = true;
+    int i;
+    Linkedlist *list = empty_linkedlist();
+    double data[] = { 1.0, 2.0, 3.0 };
+
+    for( i = 0 ; i < len(data) ; i++ )
+        ll_push( list, data[i], sizeof(data[i]) );
+
+    for( i = 0 ; i < len(data) ; i++ )
+        result = result && ll_datasize_element(list,i) == sizeof(data[i]);
+
+    return result;
+}
+
+static int test_datasize_of_list() {
+    int d = depends(test_creating_and_removing);
+    d = d && depends(test_pushing);
+
+    int result = true;
+    size_t expected_size;
+    int i;
+    Linkedlist *list = empty_linkedlist();
+    double data[] = { 1.0, 2.0, 3.0 };
+
+    for( i = 0 ; i < len(data) ; i++ )
+        ll_push( list, data[i], sizeof(data[i]) );
+
+    expected_size = sizeof(LinkedList) + 
+        (sizeof(LinkedListElement)+sizeof(double)) * 3;
+
+    return ( ll_datasize_list(list) == expected_size );
 }
 
 /*
