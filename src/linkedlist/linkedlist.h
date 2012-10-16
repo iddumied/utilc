@@ -2,14 +2,16 @@
 #define __D_ARRAY__H__
 
 #include <stdlib.h>
+#include <string.h>
 
 typedef struct linked_list_element  LinkedListElement;
 typedef struct linked_list          LinkedList;
 
 struct linked_list_element {
-    void * e;
     LinkedListElement * next;
     LinkedListElement * prev;
+    size_t datasize;
+    char data[];
 };
 
 struct linked_list {
@@ -18,7 +20,7 @@ struct linked_list {
     unsigned int length;
 };
 
-LinkedList * linkedlist( void *e );
+LinkedList * linkedlist( void *data, size_t datasize );
 LinkedList * empty_linkedlist(void);
 
 
@@ -34,7 +36,7 @@ void * ll_first( LinkedList *list );
  */
 void * ll_element( LinkedList *list, unsigned int i);
 void * ll_pop( LinkedList *list );
-void ll_push( LinkedList *list, void *e );  
+void ll_push( LinkedList *list, void *data, size_t datasize );  
 
 /*
  * Remove elements or the LinkedList from memory
@@ -46,7 +48,7 @@ void ll_destroy( LinkedList *list );
 /*
  * Other functionality 
  */
-int ll_element_in_list( LinkedList *list, void *el );
+int ll_element_in_list( LinkedList *list, void *data, size_t datasize );
 LinkedList * ll_dump( LinkedList *list );
 
 /*
@@ -63,9 +65,9 @@ LinkedList * ll_dump( LinkedList *list );
  */
 LinkedList * ll_get_by_cond( LinkedList *list, int(*cnd)(void*) );
 
-void ll_for_each_element_do( LinkedList *list, int (*func)(void*) );
+void ll_for_each_element_do( LinkedList *list, int (*func)(void*, size_t) );
 void ll_for_each_element_by_condition_do( LinkedList *list, 
-        int (*cond)(void*), int (*func)(void*) );
+        int (*cond)(void*, size_t), int (*func)(void*, size_t) );
 
 LinkedList * ll_join( LinkedList *list1, LinkedList *list2 );
 #endif

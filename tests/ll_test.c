@@ -92,8 +92,8 @@ static int test_pushing() {
     LinkedList *list = empty_linkedlist();
     ll_push(list, &value1);
     ll_push(list, &value2);
-    res = ((double*)list->first->e == &value1 && 
-            (double*)list->first->next->e == &value2);
+    res = ((double*)list->first->data == &value1 && 
+            (double*)list->first->next->data == &value2);
     cleanup(list);
 
     return res;
