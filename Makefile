@@ -66,6 +66,9 @@ DEBUG = -g
 clean:
 	@rm ${BIN}/*
 
+clean_outs:
+	@rm ${BIN}/*.o
+
 testutils:
 	${CC} ${CFLAGS} ${HEADERS} ${TESTHEADERS} ${TESTUTILS} -o ${TESTUTILS_OUT}.o
 
