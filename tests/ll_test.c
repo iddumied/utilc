@@ -55,7 +55,6 @@ Test tests[] = {
     {"destroy by index",    0,  test_destroy_by_index,      0 },
     {"element in list",     0,  test_element_in_list,       0 },
     {"dump",                0,  test_dump,                  0 },
-    //{"sort",                0,  test_sort,                  0 },
     {"get by condition",    0,  test_get_by_cond,           0 },
     {"for each do",         0,  test_for_each_do,           0 },
     {"for each by cond do", 0,  test_for_each_by_cond,      0 },
@@ -65,7 +64,7 @@ Test tests[] = {
     {"datasize: last",      0,  test_datasize_of_last,      0 },
     {"datasize: element",   0,  test_datasize_of_element,   0 },
     {"datasize: list",      0,  test_datasize_of_list,      0 },
-    {NULL, NULL, NULL},
+    { NULL, NULL, NULL, NULL},
 };
 
 /*
@@ -102,8 +101,9 @@ static int test_pushing() {
     LinkedList *list = empty_linkedlist();
     ll_push(list, &value1, sizeof(value1));
     ll_push(list, &value2, sizeof(value2));
-    res = ((double*)list->first->data == &value1 && 
-            (double*)list->first->next->data == &value2);
+    
+    res = ( (0 == memcmp(list->first->data, &value1, sizeof(double)))
+        &&  (0 == memcmp(list->first->next->data, &value2, sizeof(double))));
     cleanup(list);
 
     return res;
@@ -118,11 +118,11 @@ static int test_poping() {
     double value2 = 6.00;
     LinkedList *l = linkedlist(&value1, sizeof(value1));
     ll_push(l, &value2, sizeof(value2));
-    double *poped_ptr = ((double*) ll_pop(l));
-    int poped_away = poped_ptr != l->first->data;
+    void *poped_ptr = ll_pop(l);
+    int res = memcmp( (double*)poped_ptr, &value1, sizeof(double)) == 0;
 
     cleanup(l); // does not affect the poped_ptr
-    return (poped_ptr == &value1) && poped_away;
+    return res;
 }
 
 static int test_length() {
@@ -150,8 +150,10 @@ static int test_get_first() {
     double value = 5.00;
     LinkedList *l = linkedlist(&value, sizeof(value));
     double *poped_ptr = (double*) ll_first(l);
+    int res = 0 == memcmp(poped_ptr, &value, sizeof(double));
+
     cleanup(l); // does not affect the poped_ptr
-    return poped_ptr == &value;
+    return res;
 }
 
 static int test_get_last() {
@@ -164,8 +166,10 @@ static int test_get_last() {
     LinkedList *l = linkedlist(&value1, sizeof(value1));
     ll_push(l, &value2, sizeof(value2));
     double *poped_ptr = (double*) ll_last(l);
+
+    int res = 0 == memcmp(poped_ptr, &value2, sizeof(double));
     cleanup(l); // does not affect the poped_ptr
-    return poped_ptr == &value2;
+    return res;
 }
 
 static int test_get_by_index() {
@@ -185,7 +189,7 @@ static int test_get_by_index() {
     for( i = 0; i<len(ary) && worked; i++) {
         a = (double*)ll_element(list, i);
         b = &ary[i];
-        worked = a == b;
+        worked = 0 == memcmp(a,b, sizeof(double));
     }
 
     cleanup(list);
@@ -209,7 +213,7 @@ static int test_destroy_by_element() {
     for( i = 0; i<len(ary) && worked; i++ ) {
         a = (double*)ll_destroy_by_element(list, list->first);
         b = &ary[i];
-        worked = a == b;
+        worked = 0 == memcmp(a, b, sizeof(double));
     }
     return worked;
 }
@@ -231,7 +235,7 @@ static int test_destroy_by_index() {
     for( i = 0; i<len(ary) && worked; i++ ) {
         a = (double*)ll_destroy_by_index(list, 0);
         b = &ary[i];
-        worked = a == b;
+        worked = 0 == memcmp(a, b, sizeof(double));
     }
     return worked;
 }
@@ -258,48 +262,25 @@ static int test_dump() {
     if (!d) return 0;
 
     int worked = 1;
+    int i;
+
     double ary[] = { 1.0, 2.0, 3.5, 4.9, 5.5 };
     LinkedList *list = linkedlist(&ary[0], sizeof(ary[0]));
-    int i;
-    for( i = 1; i<len(ary); i++ ) {
+    for( i = 1; i<len(ary); i++ )
         ll_push(list, &ary[i], sizeof(ary[i]) );
-    }
+
     LinkedList *dump = ll_dump(list);
 
-    double *a;
+    double *a, *b;
     for( i = 0; i<len(ary) && worked; i++) {
         a = (double*)ll_element(dump,i);
-        worked = a == &ary[i];
+        b = &ary[i];
+        worked = 0 == memcmp(a, b, sizeof(double));
+        if (!worked)
+            printf("NOT WORKING: %f == %f", a, b );
     }
     return (worked && list != dump);
 }
-
-/*
-static int test_sort() {
-    int d = depends( test_creating_and_removing );
-    d = d && depends( test_pushing );
-    d = d && depends( test_get_by_index );
-    if (!d) return 0;
-
-    int worked = 1;
-    double ary1[] = { 2.0, 5.5, 2.0, 4.9, 1.0 };
-    double ary2[] = { 1.0, 2.0, 3.5, 4.9, 5.5 };
-    LinkedList *list = linkedlist(&ary1[0]);
-    int i;
-    for( i = 1; i<len(ary1); i++ ) {
-        ll_push(list, &ary1[i] );
-    }
-    ll_sort(list, comparefunction);
-
-    double *a;
-    for( i = 0 ; i<len(ary1); i++ ) {
-        a = (double*) ll_element( list, i );
-        worked = a == &ary2[i];
-    }
-
-    return worked;
-}
-*/
 
 static int test_get_by_cond(void){
     int d = depends( test_creating_and_removing );
@@ -318,9 +299,9 @@ static int test_get_by_cond(void){
     }
     LinkedList *new = ll_get_by_cond(list, condition_is_bigger_three);
 
-    for( i = 0 ; i<len(ary2); i++ ) {
-        worked = ary2[i] == *((double*)ll_element(new,i));
-    }
+    for( i = 0 ; i<len(ary2); i++ )
+        worked = 0 == memcmp( (double*)ll_element(new,i), &ary2[i], sizeof(double));
+
     return worked;
 }
 
@@ -340,11 +321,11 @@ static int test_for_each_do() {
     }
 
     ll_for_each_element_do(list, do_foreach_inc );
-    double a, b;
+    double *a, *b;
     for( i = 0 ; i<len(ary2); i++ ) {
-        a = ary2[i];
-        b = *((double*)ll_element(list, i));
-        worked = a == b; 
+        a = &ary2[i];
+        b = (double*)ll_element(list, i);
+        worked = 0 == memcmp(a, b, sizeof(double)); 
     }
     return worked;
 }
@@ -367,12 +348,11 @@ static int test_for_each_by_cond() {
 
     ll_for_each_element_by_condition_do(list, condition_is_bigger_three, do_foreach_inc );
 
-    double a, b;
+    double *a, *b;
     for( i = 0 ; i<len(ary2) ; i++ ) {
-        a = ary2[i];
-        b = *((double*)ll_element(list, i));
-        printf( "Compare: %f == %f\n", a, b );
-        worked = a == b; 
+        a = &ary2[i];
+        b = (double*)ll_element(list, i);
+        worked = 0 == memcmp(a, b, sizeof(double)); 
     }
     return worked;
 }
@@ -402,14 +382,12 @@ static int test_join() {
     }
 
     res_list = ll_join(list1,list2);
-    double a, b;
 
+    double *a, *b;
     for( i = 0 ; i<len(res); i++ ) {
-        printf( "[%i] ", i );
-        a = *((double*) ll_element(res_list, i));
-        b = res[i];
-        worked = a == b;
-        printf( "Compare: %f == %f\n\n", i, a, b);
+        a = (double*) ll_element(res_list, i);
+        b = &res[i];
+        worked = 0 == memcmp(a, b, sizeof(double));
     }
 
     return worked;
