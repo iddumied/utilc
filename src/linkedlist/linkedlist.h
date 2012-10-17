@@ -72,7 +72,7 @@ LinkedList * ll_dump( LinkedList *list );
 /*
  * Get stuff as LinkedList from a LinkedList by condition
  */
-LinkedList * ll_get_by_cond( LinkedList *list, int(*cnd)(void*) );
+LinkedList * ll_get_by_cond( LinkedList *list, int(*cnd)(void*, size_t) );
 
 void ll_for_each_element_do( LinkedList *list, int (*func)(void*, size_t) );
 void ll_for_each_element_by_condition_do( LinkedList *list, 

@@ -66,7 +66,7 @@ static LinkedListElement * linkedlistelement_at( LinkedList * list, unsigned int
     printf("::ll : linkedlist_element_at %i\n", i);
 #endif
     LinkedListElement *current = list->first;
-    int j;
+    unsigned int j;
     for(j = 0; j != i && current && (current = next(current)); j++);
     if ( j != i ) return NULL;
     return current;
@@ -153,10 +153,9 @@ size_t ll_datasize_first( LinkedList *list ) {
 
 size_t ll_datasize_by_index( LinkedList *list, unsigned int index ) {
     unsigned int i, len = ll_len(list, 1);
-    LinkedListElement *element;
-    for( i = 0 ; i < len; i++ );
-    element  = linkedlistelement_at(list, i);
-    return element->datasize;
+    LinkedListElement *curr;
+    for( i = 0, curr = list->first; i < len && i != index; i++, (curr=next(curr)) );
+    return curr->datasize;
 }
 
 /*
@@ -188,7 +187,7 @@ void * ll_element( LinkedList * l , unsigned int i ) {
 #endif
     LinkedListElement * listelement = linkedlistelement_at( l, i );
     if( listelement ) 
-        return listelement->data;
+        return &(listelement->data);
     else
         return NULL; // e == NULL
 }
@@ -301,7 +300,7 @@ LinkedList * ll_dump( LinkedList *list ) {
 #endif
     LinkedList * newlist = linkedlist( list->first->data, list->first->datasize ); 
     LinkedListElement * c = list->first;
-    while( c = next(c) ) // O(n)
+    while( (c = next(c)) ) // O(n)
         ll_push( newlist, c->data, c->datasize );
 
     return newlist;
@@ -392,18 +391,18 @@ static LinkedList * quicksort( LinkedList * list, signed int (*cmpfunc)( void* a
 }
 */
 
-LinkedList * ll_get_by_cond( LinkedList * list, int(*cnd)(void*) ) {
+LinkedList * ll_get_by_cond( LinkedList * list, int(*cnd)(void*, size_t) ) {
 #ifdef DEBUG
     printf("::ll : ll_get_by_cond\n");
 #endif
     LinkedList * newlist = empty_linkedlist();
     LinkedListElement *current = list->first;
     
-    if( cnd(list->first->data) )
+    if( cnd(list->first->data, list->first->datasize) )
        ll_push(newlist, list->first->data, list->first->datasize);
 
-    while( current = next(current)) {
-        if( cnd(current->data) )
+    while( (current = next(current)) ) {
+        if( cnd(current->data, current->datasize) )
             ll_push(newlist, current->data, current->datasize);
     } 
 
