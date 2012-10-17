@@ -429,3 +429,16 @@ LinkedList * ll_join( LinkedList *list1, LinkedList *list2 ) {
 
     return result;
 }
+
+#ifdef LL_PRINTABLE
+void ll_print( LinkedList *list, void (*print_element)(void*) ) {
+#ifdef DEBUG
+    printf("::ll : ll_print\n");
+#endif //DEBUG
+
+    LinkedListElement *curr = list->first;
+    print_element(list->first->e);
+    while( (curr = next(curr)) ) 
+        print_element(curr->e);
+}
+#endif //LL_PRINTABLE
