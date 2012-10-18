@@ -267,7 +267,7 @@ static int test_dump() {
     double ary[] = { 1.0, 2.0, 3.5, 4.9, 5.5 };
     LinkedList *list = linkedlist(&ary[0], sizeof(ary[0]));
     for( i = 1; i<len(ary); i++ )
-        ll_push(list, &ary[i], sizeof(ary[i]) );
+        ll_push(list, &ary[i], sizeof(double) );
 
     LinkedList *dump = ll_dump(list);
 
