@@ -64,7 +64,7 @@ Test tests[] = {
     {"datasize: last",      0,  test_datasize_of_last,      0 },
     {"datasize: element",   0,  test_datasize_of_element,   0 },
     {"datasize: list",      0,  test_datasize_of_list,      0 },
-    { NULL, NULL, NULL, NULL},
+    NULL
 };
 
 /*
@@ -265,19 +265,18 @@ static int test_dump() {
     unsigned int i;
 
     double ary[] = { 1.0, 2.0, 3.5, 4.9, 5.5 };
-    LinkedList *list = linkedlist(&ary[0], sizeof(ary[0]));
+    LinkedList *list = linkedlist(&ary[0], sizeof(double));
     for( i = 1; i<len(ary); i++ )
         ll_push(list, &ary[i], sizeof(double) );
 
     LinkedList *dump = ll_dump(list);
 
     double *a, *b;
-    for( i = 0; i<len(ary) && worked; i++) {
+    for( i = 0; (i<len(ary)) && worked; i++) {
         a = (double*)ll_element(dump,i);
         b = &ary[i];
         worked = 0 == memcmp(a, b, sizeof(double));
-        if (!worked)
-            printf("NOT WORKING: %f == %f", a, b );
+        printf("[%u/%lu] : %f == %f, size: %lu\n", i, len(ary), *a, *b, sizeof(double) );
     }
     return (worked && list != dump);
 }
@@ -474,14 +473,14 @@ static void testing(char* desc) {
 }
 
 static void success(char* desc) {
-    printf( "\t[success]\n");
+    printf( "\t[success]: %s\n", desc);
 }
 
 static void failure(char* desc, int strict) {
     if (strict)
-        printf("\t-[STRICT FAILED]\n");
+        printf("\t-[STRICT FAILED]: %s\n", desc);
     else
-        printf( "\t[FAIL]\n");
+        printf( "\t[FAIL]: %s\n", desc);
 }
 
 static void cleanup(LinkedList *l) {
@@ -523,7 +522,8 @@ int comparefunction(void *a, void *b) {
  * - for each by condition do
  */ 
 int condition_is_bigger_three( void* value, size_t size ) {
-    return ( (*(double*)value) > 3 );
+    double three = 3;
+    return memcmp( value, &three, size ) == 0;
 }
 
 /*
