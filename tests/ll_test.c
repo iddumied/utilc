@@ -442,5 +442,6 @@ int main(void) {
         printf("[%i]:\n",i);
         worked = test_exec( &tests[i] );
     }
-    return worked;
+
+    return !worked;
 }
