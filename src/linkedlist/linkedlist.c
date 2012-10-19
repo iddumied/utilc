@@ -45,13 +45,14 @@ LinkedList * empty_linkedlist() {
 
 static LinkedListElement* new_linkedlistelement(size_t datasize) {
 #ifdef DEBUG
-    printf("::ll : linkedlist element created\n");
+    printf("::ll : linkedlist element with size %lu created\n", datasize);
 #endif
     LinkedListElement *ll_element = (LinkedListElement*) malloc(sizeof(LinkedListElement)+datasize);
     if (ll_element) {
         /*ll_element->data = NULL;*/
         ll_element->next = NULL;
         ll_element->prev = NULL;
+        ll_element->datasize = 0;
     }
     return ll_element;
 }
@@ -205,6 +206,7 @@ void ll_push( LinkedList *list, void *data, size_t datasize ) {
 #endif
     LinkedListElement * element = new_linkedlistelement(datasize); 
     memcpy( element->data, data, datasize);
+
     if ( list->last ) {
         element->prev = list->last;
         list->last->next = element;
