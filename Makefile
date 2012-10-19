@@ -66,3 +66,7 @@ ll_test:
 
 link_tests:
 	${CC} ${LL_OUT}.o ${LL_TEST_OUT}.o -o ${LL_TEST_OUT}
+
+testrun: ll ll_test link_tests
+	./bin/ll_test
+
