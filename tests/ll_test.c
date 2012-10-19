@@ -36,6 +36,10 @@ static int test_datasize_of_last(void);
 static int test_datasize_of_element(void);
 static int test_datasize_of_list(void);
 
+#ifdef LL_PRINTABLE
+static int test_print(void);
+#endif //LL_PRINTABLE
+
 typedef struct {
     char *desc;
     int strict;
@@ -64,6 +68,8 @@ Test tests[] = {
     {"datasize: last",      0,  test_datasize_of_last,      0 },
     {"datasize: element",   0,  test_datasize_of_element,   0 },
     {"datasize: list",      0,  test_datasize_of_list,      0 },
+
+    {"list print",          0,  test_print,                 0 },
     { NULL },
 };
 
@@ -79,6 +85,9 @@ static int __depends(const char*, int (*)(void));
 int comparefunction(void*, void*);
 int condition_is_bigger_three(void*, size_t);
 int do_foreach_inc(void*, size_t);
+#ifdef LL_PRINTABLE
+void print_element(void*, size_t);
+#endif //LL_PRINTABLE
 /*
  * function definitions : testing functions
  */
@@ -467,6 +476,24 @@ static int test_datasize_of_list() {
     return ( ll_datasize_list(list) == expected_size );
 }
 
+#ifdef LL_PRINTABLE
+static int test_print() {
+    int d = depends(test_creating_and_removing);
+    d = d && depends(test_pushing);
+    if (!d) return 0;
+
+    unsigned int i;
+    LinkedList *list = empty_linkedlist();
+    double data[] = { 1.0, 2.0, 3.0 };
+    for( i = 0 ; i < len(data) ; i++ )
+        ll_push( list, &data[i], sizeof(double));
+
+    ll_print(list, print_element ); // if no memory corruption, this was right
+    printf("\n");
+    return 1;
+}
+#endif //LL_PRINTABLE
+
 /*
  * function definitions : helper functions
  */
@@ -538,9 +565,17 @@ int condition_is_bigger_three( void* value, size_t size ) {
  * do for each function for testing for each and for each by cond function
  */
 int do_foreach_inc( void *value, size_t size) {
+    printf("using unused parameter 'size': %lu\n", size);
     (*(double*)value)++;
     return 1;
 };
+
+/*
+ * Helper for printing a linkedlist-element
+ */
+void print_element(void* element, size_t datasize) {
+    printf("%f [size: %lu], ", *(double*)element, datasize);
+}
 
 /*
  * Main

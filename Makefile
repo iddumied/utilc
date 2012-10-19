@@ -50,6 +50,8 @@ LL_TEST_OUT = ${BIN}/ll_test
 
 DEBUG = -g
 
+LL_FLAGS = -D LL_PRINTABLE
+
 #
 # just do it...
 #
@@ -57,12 +59,12 @@ DEBUG = -g
 all: ll tests 
 
 ll:
-	${CC} ${HEADERS} ${CFLAGS} ${LL} -o ${LL_OUT}.o
+	${CC} ${HEADERS} ${CFLAGS} ${LL_FLAGS} ${LL} -o ${LL_OUT}.o
 
 tests: ll_test link_tests
 
 ll_test:
-	${CC} ${HEADERS} ${CFLAGS} ${DEBUG} ${LL_TEST} -o ${LL_TEST_OUT}.o 
+	${CC} ${HEADERS} ${CFLAGS} ${DEBUG} ${LL_FLAGS} ${LL_TEST} -o ${LL_TEST_OUT}.o 
 
 link_tests:
 	${CC} ${LL_OUT}.o ${LL_TEST_OUT}.o -o ${LL_TEST_OUT}
