@@ -1,6 +1,6 @@
 #include <stdlib.h>
 #include <string.h>
-#include <stdbool.h>
+#include <stdint.h>
 #include <stdio.h>
 
 #define len(x) (sizeof(x)/sizeof(x[0]))
@@ -8,9 +8,9 @@
 
 typedef struct {
     char *desc;
-    bool strict;
-    bool (*testfunc)(void);
-    bool result;
+    int strict;
+    int (*testfunc)(void);
+    int result;
 } Test;
 
 extern Test tests[];
@@ -20,7 +20,7 @@ extern Test tests[];
  */
 void testing(char*);
 void success(char*);
-void failure(char*, bool);
-bool __depends(const char*, bool (*)(void));
-bool test_exists(Test *test);
-bool test_exec(Test *test);
+void failure(char*, int);
+int __depends(const char*, int (*)(void));
+int test_exists(Test *test);
+int test_exec(Test *test);

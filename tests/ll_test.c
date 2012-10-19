@@ -9,14 +9,6 @@
 #include <stdio.h>
 
 /*
- * Helper functions
- */ 
-static void cleanup(LinkedList*);
-bool do_foreach_inc(void *value);
-bool condition_is_bigger_three(void *value);
-int comparefunction(void *a, void *b);
-
-/*
  * Prototypes : Testing functions
  */
 static int test_creating_and_removing(void);
@@ -67,19 +59,16 @@ Test tests[] = {
     {"datasize: element",   0,  test_datasize_of_element,   0 },
     {"datasize: list",      0,  test_datasize_of_list,      0 },
 
+#ifdef LL_PRINTABLE
     {"list print",          0,  test_print,                 0 },
+#endif //LL_PRINTABLE
     { NULL },
 };
 
 /*
  * Prototypes : Helper functions 
  */
-static void testing(char*);
-static void success(char*);
-static void failure(char*, int);
 static void cleanup(LinkedList*);
-static int test_exec(Test*);
-static int __depends(const char*, int (*)(void));
 int comparefunction(void*, void*);
 int condition_is_bigger_three(void*, size_t);
 int do_foreach_inc(void*, size_t);
@@ -495,43 +484,6 @@ static int test_print() {
 #endif //LL_PRINTABLE
 
 /*
- * function definitions : helper functions
- */
-
-static void testing(char* desc) {
-    printf( "\n\n\t:: linkedlist-test: %s\n", desc);
-}
-
-static void success(char* desc) {
-    printf( "\t[success]: %s\n", desc);
-}
-
-static void failure(char* desc, int strict) {
-    if (strict)
-        printf("\t-[STRICT FAILED]: %s\n", desc);
-    else
-        printf( "\t[FAIL]: %s\n", desc);
-}
-
-static void cleanup(LinkedList *l) {
-    ll_destroy(l);
-}
-
-static int __depends(const char *func, int (*other)(void) ) {
-    unsigned int i;
-    int res = 0;
-    for( i = 0 ; tests[i].desc && !res ; i++ ) {
-        if( tests[i].testfunc == other )
-            res = tests[i].result;
-    }
-
-    if (!res) {
-        printf( "%s has dependencies which are not working!\n", func );
-    }
-    return res;
-} 
-
-/*
  * Compare function for sort testing
  */
 int comparefunction(void *a, void *b) {
@@ -570,27 +522,18 @@ int do_foreach_inc( void *value, size_t size) {
     return 1;
 };
 
-/*
- * Helper for printing a linkedlist-element
- */
-void print_element(void* element, size_t datasize) {
-    printf("%f [size: %lu], ", *(double*)element, datasize);
-}
-
-/*
- * Main
- */
 static void cleanup(LinkedList *l) {
     ll_destroy(l);
 }
 
-static int test_exec( Test *test ) {
-    testing(test->desc);
-    int res = test->testfunc();
-    if (res)
-        success(test->desc);
-    else
-        failure(test->desc, test->strict);
+/*
+ * Helper for printing a linkedlist-element
+ */
+#ifdef LL_PRINTABLE
+void print_element(void* element, size_t datasize) {
+    printf("%f [size: %lu], ", *(double*)element, datasize);
+}
+#endif // LL_PRINTABLE
 
 /*
  * Main

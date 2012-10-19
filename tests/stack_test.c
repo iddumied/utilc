@@ -1,22 +1,22 @@
 #include "stack/stack.h"
 #include "utilc_test_utils.h"
 
-static bool test_pushing(void);
-static bool test_poping(void);
+static int test_pushing(void);
+static int test_poping(void);
 
 static void cleanup(Stack *stack);
 static void cleanup_element(StackElement *ste);
 
-/* desc, strict, bool(*testfunc)(), result*/
+/* desc, strict, int(*testfunc)(), result*/
 Test tests[] = {
-    {"Pushing", true, test_pushing, false },
-    {"Poping",  true, test_poping,  false },
+    {"Pushing", 1, test_pushing, 0 },
+    {"Poping",  1, test_poping,  0 },
     {NULL, NULL, NULL, NULL}
 };
 
-static bool test_pushing() {
+static int test_pushing() {
     Stack *stack = empty_stack();
-    bool result = false;
+    int result = 0;
     int topush = 1;
 
     stackpush(stack, sizeof(topush), &topush);
@@ -28,14 +28,14 @@ static bool test_pushing() {
     return result;
 }
 
-static bool test_poping() {
-    bool d = depends(test_pushing);
-    if (!d) return false;
+static int test_poping() {
+    int d = depends(test_pushing);
+    if (!d) return 0;
 
     Stack *stack = empty_stack();
     int ary[] = { 1, 2, 3, 4, 5 };
     int res[5];
-    bool worked = true;
+    int worked = 1;
 
     unsigned int i, j;
     for( i = 0; i<len(ary); i++ )
@@ -67,7 +67,7 @@ static void cleanup_element(StackElement *ste) {
 
 int main(void) {
     unsigned int i;
-    bool worked = true;
+    int worked = 1;
     for( i = 0; test_exists(&tests[i]) && worked; i++ ) {
         worked = test_exec(&tests[i]);
     }

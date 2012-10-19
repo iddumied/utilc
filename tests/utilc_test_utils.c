@@ -11,16 +11,16 @@ void success(char* desc) {
     printf( "\t[success]: %s\n", desc);
 }
 
-void failure(char* desc, bool strict) {
+void failure(char* desc, int strict) {
     if (strict)
         printf("\t-[STRICT FAILED]: %s\n", desc);
     else
         printf( "\t[FAIL]: %s\n", desc);
 }
 
-bool __depends(const char *func, bool (*other)(void) ) {
+int __depends(const char *func, int (*other)(void) ) {
     int i;
-    bool res = false;
+    int res = 0;
     for( i = 0 ; tests[i].desc && !res ; i++ ) {
         if( tests[i].testfunc == other )
             res = tests[i].result;
@@ -35,13 +35,13 @@ bool __depends(const char *func, bool (*other)(void) ) {
 /*
  * Test exists, if description and function exists
  */
-bool test_exists(Test *test) {
+int test_exists(Test *test) {
     return (test->desc != NULL && test->testfunc != NULL);
 }
 
-bool test_exec( Test *test ) {
+int test_exec( Test *test ) {
     testing(test->desc);
-    bool res = test->testfunc();
+    int res = test->testfunc();
     if (res)
         success(test->desc);
     else
