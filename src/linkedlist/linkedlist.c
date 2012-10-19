@@ -52,7 +52,7 @@ static LinkedListElement* new_linkedlistelement(size_t datasize) {
         /*ll_element->data = NULL;*/
         ll_element->next = NULL;
         ll_element->prev = NULL;
-        ll_element->datasize = 0;
+        ll_element->datasize = datasize;
     }
     return ll_element;
 }
