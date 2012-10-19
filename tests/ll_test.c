@@ -39,7 +39,7 @@ static int test_datasize_of_list(void);
 typedef struct {
     char *desc;
     int strict;
-    int (*testfunc)();
+    int (*testfunc)(void);
     int result;
 } Test;
 
@@ -64,7 +64,7 @@ Test tests[] = {
     {"datasize: last",      0,  test_datasize_of_last,      0 },
     {"datasize: element",   0,  test_datasize_of_element,   0 },
     {"datasize: list",      0,  test_datasize_of_list,      0 },
-    NULL
+    { NULL },
 };
 
 /*
@@ -449,7 +449,6 @@ static int test_datasize_of_list() {
     int d = depends(test_creating_and_removing);
     d = d && depends(test_pushing);
 
-    int result = 1;
     size_t expected_size;
     unsigned int i;
     LinkedList *list = empty_linkedlist();
@@ -550,7 +549,7 @@ static int test_exec( Test *test ) {
     return res;
 }
 
-int main( int argc, char ** argv ) {
+int main(void) {
     unsigned int i;
     int worked = 1;
     for( i = 0; tests[i].desc && worked; i++ ) {
