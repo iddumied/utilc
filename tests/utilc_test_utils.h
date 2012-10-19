@@ -9,7 +9,7 @@
 typedef struct {
     char *desc;
     bool strict;
-    bool (*testfunc)();
+    bool (*testfunc)(void);
     bool result;
 } Test;
 

@@ -37,14 +37,14 @@ static bool test_poping() {
     int res[5];
     bool worked = true;
 
-    int i, j;
+    unsigned int i, j;
     for( i = 0; i<len(ary); i++ )
         stackpush(stack, sizeof(ary[i]), &ary[i] );
 
     for( i = 0 ; i<len(res); i++ )
         res[i] = *(int*)stackpop(stack);
 
-    for( i = 0, j = len(res)-1 ; i<len(res) && j >= 0 && worked; i++, j-- )
+    for( i = 0, j = len(res)-1 ; i<len(res) && j != 0 && worked; i++, j-- )
         worked = res[i] == ary[j];
 
     return worked;
