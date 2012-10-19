@@ -485,3 +485,16 @@ LinkedList * ll_join( LinkedList *list1, LinkedList *list2 ) {
 
     return result;
 }
+
+#ifdef LL_PRINTABLE
+void ll_print( LinkedList *list, void (*print_element)(void*, size_t) ) {
+#ifdef DEBUG
+    printf("::ll : ll_print\n");
+#endif //DEBUG
+
+    LinkedListElement *curr = list->first;
+    print_element(list->first->data, list->first->datasize);
+    while( (curr = next(curr)) ) 
+        print_element(curr->data, curr->datasize);
+}
+#endif //LL_PRINTABLE

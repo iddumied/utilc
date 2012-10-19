@@ -79,4 +79,11 @@ void ll_for_each_element_by_condition_do( LinkedList *list,
         int (*cond)(void*, size_t), int (*func)(void*, size_t) );
 
 LinkedList * ll_join( LinkedList *list1, LinkedList *list2 );
+
+/*
+ * Print functionality. Only if debug flag is set!
+ */
+#ifdef LL_PRINTABLE
+void ll_print(LinkedList *list, void (*print_element)(void*, size_t));
+#endif //LL_PRINTABLE
 #endif
