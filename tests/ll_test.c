@@ -521,8 +521,12 @@ int comparefunction(void *a, void *b) {
  * - for each by condition do
  */ 
 int condition_is_bigger_three( void* value, size_t size ) {
+    // TODO: memcmp function should be used!
+    /*
     double three = 3;
-    return memcmp( value, &three, size ) == 0;
+    return memcmp( value, &three, size ) == 1;
+    */
+    return *(double*)value > 3.0;
 }
 
 /*
