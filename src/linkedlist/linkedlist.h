@@ -61,15 +61,6 @@ int ll_element_in_list( LinkedList *list, void *data, size_t datasize );
 LinkedList * ll_dump( LinkedList *list );
 
 /*
- * Sort the LinkedList
- *
- * Note:
- * Currenty, the sort functionality is commented out. This is because Sorting 
- * does not work. Anyway, all other functionality works.
- */
-/*LinkedList * ll_sort( LinkedList *, signed int (*)(void*,void*) );*/
-
-/*
  * Get stuff as LinkedList from a LinkedList by condition
  */
 LinkedList * ll_get_by_cond( LinkedList *list, int(*cnd)(void*, size_t) );
