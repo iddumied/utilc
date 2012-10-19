@@ -397,6 +397,7 @@ static int test_join() {
 static int test_datasize_of_first() {
     int d = depends(test_creating_and_removing);
     d = d && depends(test_pushing);
+    if (!d) return 0;
 
     int result;
     LinkedList *list1 = empty_linkedlist();
@@ -416,6 +417,7 @@ static int test_datasize_of_first() {
 static int test_datasize_of_last() { 
     int d = depends(test_creating_and_removing);
     d = d && depends(test_pushing);
+    if (!d) return 0;
 
     unsigned int i;
     LinkedList *list = empty_linkedlist();
@@ -430,6 +432,7 @@ static int test_datasize_of_last() {
 static int test_datasize_of_element() {
     int d = depends(test_creating_and_removing);
     d = d && depends(test_pushing);
+    if (!d) return 0;
 
     int result = 1;
     unsigned int i;
@@ -448,6 +451,7 @@ static int test_datasize_of_element() {
 static int test_datasize_of_list() {
     int d = depends(test_creating_and_removing);
     d = d && depends(test_pushing);
+    if (!d) return 0;
 
     size_t expected_size;
     unsigned int i;
@@ -526,6 +530,7 @@ int condition_is_bigger_three( void* value, size_t size ) {
     double three = 3;
     return memcmp( value, &three, size ) == 1;
     */
+    printf("using unused parameter 'size': %lu\n", size);
     return *(double*)value > 3.0;
 }
 
