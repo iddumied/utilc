@@ -11,7 +11,7 @@ static void cleanup_element(StackElement *ste);
 Test tests[] = {
     {"Pushing", 1, test_pushing, 0 },
     {"Poping",  1, test_poping,  0 },
-    {NULL, NULL, NULL, NULL}
+    {NULL}
 };
 
 static int test_pushing() {
