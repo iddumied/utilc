@@ -46,11 +46,11 @@ TESTHEADERS = -I./tests/
 TESTUTILS=${TESTS}/utilc_test_utils.c
 TESTUTILS_OUT=${BIN}/utilc_test_utils
 
-LL = ./src/linkedlist/linkedlist.c
-LL_OUT = ./bin/linkedlist
+LL = ${SRC}/linkedlist/linkedlist.c
+LL_OUT = ${BIN}/linkedlist
 
-LL_TEST = ./tests/ll_test.c
-LL_TEST_OUT = ./bin/ll_test
+LL_TEST = ${TESTS}/ll_test.c
+LL_TEST_OUT = ${BIN}/ll_test
 
 STACK = ${SRC}/stack/stack.c
 STACK_OUT = ${BIN}/stack
@@ -59,6 +59,8 @@ STACKTEST = ./tests/stack_test.c
 STACKTEST_OUT = ${BIN}/stacktest
 
 DEBUG = -g
+
+LL_FLAGS = -D LL_PRINTABLE
 
 #
 # just do it...

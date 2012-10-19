@@ -1,6 +1,10 @@
 #include "linkedlist/linkedlist.h"
 
-static LinkedListElement * new_linkedlistelement();
+#ifdef DEBUG
+#include <stdio.h>
+#endif
+
+static LinkedListElement * new_linkedlistelement(size_t datasize);
 static LinkedListElement * linkedlistelement_at( LinkedList *, unsigned int );
 static void savdeclen( LinkedList * );
 static void savinclen( LinkedList * );
@@ -9,17 +13,21 @@ static LinkedListElement * previous(LinkedListElement*);
 
 /*static LinkedList * quicksort( LinkedList*, signed int (*)(void(*), void(*)) );*/
 
-LinkedList * linkedlist( void *e ) {
+LinkedList * linkedlist( void *data, size_t datasize ) {
 #ifdef DEBUG
     printf("::ll : linkedlist created\n");
 #endif
-    LinkedListElement *el = new_linkedlistelement(); 
+    LinkedListElement *dataelement = new_linkedlistelement(datasize); 
     LinkedList *l = (LinkedList*) malloc( sizeof( LinkedList ) );
-    el->e = e;
-    el->next = el->prev = NULL;
-    
-    l->first = l->last = el;
-    l->length = 1;
+
+    if(l) { // if malloc failed, don't do something
+        memcpy( dataelement->data, data, datasize);
+        dataelement->datasize = datasize;
+        dataelement->next = dataelement->prev = NULL;
+        
+        l->first = l->last = dataelement;
+        l->length = 1;
+    }
     return l;
 }
 
@@ -28,19 +36,24 @@ LinkedList * empty_linkedlist() {
     printf("::ll : linkedlist created (empty)\n");
 #endif
     LinkedList *list = (LinkedList*) malloc(sizeof(LinkedList));
-    list->first = list->last = NULL;
-    list->length = 0;
+    if (list) {
+        list->first = list->last = NULL;
+        list->length = 0;
+    }
     return list;
 }
 
-static LinkedListElement* new_linkedlistelement() {
+static LinkedListElement* new_linkedlistelement(size_t datasize) {
 #ifdef DEBUG
-    printf("::ll : linkedlist element created\n");
+    printf("::ll : linkedlist element with size %lu created\n", datasize);
 #endif
-    LinkedListElement *ll_element = (LinkedListElement*) malloc(sizeof(LinkedListElement));
-    ll_element->e = NULL;
-    ll_element->next = NULL;
-    ll_element->prev = NULL;
+    LinkedListElement *ll_element = (LinkedListElement*) malloc(sizeof(LinkedListElement)+datasize);
+    if (ll_element) {
+        /*ll_element->data = NULL;*/
+        ll_element->next = NULL;
+        ll_element->prev = NULL;
+        ll_element->datasize = datasize;
+    }
     return ll_element;
 }
 
@@ -54,15 +67,9 @@ static LinkedListElement * linkedlistelement_at( LinkedList * list, unsigned int
     printf("::ll : linkedlist_element_at %i\n", i);
 #endif
     LinkedListElement *current = list->first;
-    int j, length;
-
-    if( i == 0 ) return current;
-    length = ll_len(list, true);
-    if( i > length ) return NULL;
-    while( j != i ) {
-        current = current->next;
-        j++;
-    }
+    unsigned int j;
+    for(j = 0; j != i && current && (current = next(current)); j++);
+    if ( j != i ) return NULL;
     return current;
 }
 
@@ -95,37 +102,81 @@ static LinkedListElement * previous(LinkedListElement *curr) {
  * afterwards it will take O(1)
  *
  */
-unsigned int ll_len( LinkedList * list, bool force_recalc ) {
+unsigned int ll_len( LinkedList * list, int force_recalc ) {
 #ifdef DEBUG
     printf("::ll : ll_len");
 #endif
+    unsigned int i;
+    LinkedListElement *c;
+
     if( list->length && !force_recalc ) 
         return list->length;
 
-    unsigned int i = 0;
-    LinkedListElement * c = list->first;
+    i = 0;
+    c = list->first;
+
     if(c) i++;
     while(c && (c = next(c)) ) i++;
     list->length = i;
+
 #ifdef DEBUG
     printf(" %i\n",i);
 #endif
+
     return i;
 }
 
 void * ll_last( LinkedList * list ) {
 #ifdef DEBUG
-    printf("::ll : ll_last: %p\n",list->last->e);
+    printf("::ll : ll_last: %p\n",list->last->data);
 #endif
-    return list->last->e;
+    return list->last->data;
 }
 
 void * ll_first( LinkedList * list ) {
 #ifdef DEBUG
-    printf("::ll : ll_first: %p\n",list->first->e);
+    printf("::ll : ll_first: %p\n",list->first->data);
 #endif
-    return list->first->e;
+    return list->first->data;
 }
+
+/*
+ * Get datasize info
+ */
+
+size_t ll_datasize_last( LinkedList *list ) {
+    return list->last->datasize;
+}
+
+size_t ll_datasize_first( LinkedList *list ) {
+    return list->first->datasize;
+}
+
+size_t ll_datasize_by_index( LinkedList *list, unsigned int index ) {
+    unsigned int i, len = ll_len(list, 1);
+    LinkedListElement *curr;
+    for( i = 0, curr = list->first; i < len && i != index; i++, (curr=next(curr)) );
+    return curr->datasize;
+}
+
+/*
+ * Calculates the size of the memory, used for the linkedlist stuff
+ */
+size_t ll_datasize_list( LinkedList *list ) {
+    LinkedListElement *curr;
+    unsigned int list_len = ll_len(list, 1);
+    size_t result = 0;
+    result += sizeof( LinkedList );
+    result += sizeof( LinkedListElement ) * list_len;
+
+    curr = list->first;
+    result += curr->datasize;
+    while( curr && (curr = next(curr)) ) {
+        result += curr->datasize; 
+    }
+    return result;
+}
+
 
 /*
  * Work with elements in the List
@@ -137,7 +188,7 @@ void * ll_element( LinkedList * l , unsigned int i ) {
 #endif
     LinkedListElement * listelement = linkedlistelement_at( l, i );
     if( listelement ) 
-        return listelement->e;
+        return &(listelement->data);
     else
         return NULL; // e == NULL
 }
@@ -149,12 +200,13 @@ void * ll_pop( LinkedList * list ) {
     return ll_destroy_by_element( list, list->first );
 } 
 
-void ll_push( LinkedList * list, void * e ) {
+void ll_push( LinkedList *list, void *data, size_t datasize ) {
 #ifdef DEBUG
     printf("::ll : ll_push\n");
 #endif
-    LinkedListElement * element = new_linkedlistelement(); 
-    element->e = e;
+    LinkedListElement * element = new_linkedlistelement(datasize); 
+    memcpy( element->data, data, datasize);
+
     if ( list->last ) {
         element->prev = list->last;
         list->last->next = element;
@@ -174,7 +226,7 @@ void * ll_destroy_by_element( LinkedList * list, LinkedListElement * listelement
 #ifdef DEBUG
     printf("::ll : ll_destroy_by_element\n");
 #endif
-    void *el;
+    void *data;
 
     if ( !listelement )
         return NULL;
@@ -198,18 +250,18 @@ void * ll_destroy_by_element( LinkedList * list, LinkedListElement * listelement
         }
     }
     // else {}
-    el = listelement->e; // save element value
+    data = listelement->data; // save element value
     free( listelement );
     savdeclen(list);
-    return el;
+    return data;
 }
 
 void * ll_destroy_by_index( LinkedList * list, unsigned int i ){
 #ifdef DEBUG
     printf("::ll : ll_destroy_by_index\n");
 #endif
-    LinkedListElement * e = linkedlistelement_at( list, i );
-    return ll_destroy_by_element( list, e );
+    LinkedListElement * dataelement = linkedlistelement_at( list, i );
+    return ll_destroy_by_element( list, dataelement );
 }  
 
 void ll_destroy( LinkedList * list ) {
@@ -230,15 +282,15 @@ void ll_destroy( LinkedList * list ) {
  * Other functionality
  */
 
-bool ll_element_in_list( LinkedList * list, void * el ) {
+int ll_element_in_list( LinkedList *list, void *data, size_t datasize ) {
 #ifdef DEBUG
     printf("::ll : ll_element_in_list\n");
 #endif
     LinkedListElement * curr = list->first;
-    bool found = false;
+    int found = 0;
 
     while( !found && curr->next ) {
-        found = curr->e == el;
+        found = memcmp( curr->data, data, datasize ) == 0;
         curr = next(curr);
     }
     return found;
@@ -248,151 +300,70 @@ LinkedList * ll_dump( LinkedList *list ) {
 #ifdef DEBUG
     printf("::ll : ll_dump\n");
 #endif
-    LinkedList * new = linkedlist( list->first->e ); 
+    LinkedList * newlist = linkedlist( list->first->data, list->first->datasize ); 
     LinkedListElement * c = list->first;
-    while( c = next(c) ) // O(n)
-        ll_push( new, c->e );
+    while( (c = next(c)) ) // O(n)
+        ll_push( newlist, c->data, c->datasize );
 
-    return new;
+    return newlist;
 }
 
-/*
- * No sorting in Version 1.
- * Sorting will be implemented for version 2 or so.
- */
-
-/*
-LinkedList * ll_sort( LinkedList * list, signed int (*cmpfunc)( void *a, void *b ) ) {
-#ifdef DEBUG
-    printf("::ll : ll_sort\n");
-#endif
-    LinkedList * sorted;
-    if( !list->length ) ll_len(list, false);
-    if( list->length > 10 ) // currently, there is no other sorting algo.
-        sorted = quicksort(list, cmpfunc );
-
-    return sorted;
-}
-*/
-
-/*
-static LinkedList * quicksort( LinkedList * list, signed int (*cmpfunc)( void* a, void* b ) ) {
-#ifdef DEBUG
-    printf("::ll : quicksort\n");
-#endif
-    if( list->first == list->last ) return list;
-
-    LinkedListElement * pivot = list->first;
-    LinkedListElement * curr = list->last;
-
-    signed int cmp;
-    void *stash;
-
-    while( curr != pivot ) {
-        cmp = (*cmpfunc)( pivot->e, curr->e );
-        curr = curr->next;
-        if( cmp > 0 ) { //  curr->previous is > than pivot, bring it on right side
-            stash = ll_destroy_by_element( list, previous(curr) );
-            ll_push( list, stash ); 
-        }
-    }
-
-    if( previous(pivot) ) {
-        // generate a new LinkedList for the left side, sort it with qs and merge
-        // it with this LinkedList
-        //
-        // This is done by breaking the chain into pieces and use the pieces as
-        // new LinkedList. Then sort it with quicksort and pack it into the old
-        // LinkedList by repairing the pointers.
-        //
-        LinkedList * left = (LinkedList*) malloc( sizeof( LinkedList ) );
-        left->last = list->last;
-        left->first = previous(pivot);
-        left->first->next = NULL;
-        
-        left = quicksort( left, cmpfunc );
-
-        left->first->next = pivot;
-        pivot->prev = left->first;
-
-    }
-
-    if( next(pivot) ) {
-        // generate a new LinkedList for the right side, sort it with qs and merge
-        // it with this LinkedList
-        //
-        // This is done by breaking the chain into pieces and use the pieces as
-        // new LinkedList. Then sort it with quicksort and pack it into the old
-        // LinkedList by repairing the pointers.
-        //
-        LinkedList * right = (LinkedList*) malloc( sizeof( LinkedList ) );
-        right->last = next(pivot);
-        right->last->prev = NULL;
-        right->first = list->first;
-
-        right = quicksort( right, cmpfunc );
-
-        right->last->prev = pivot;
-        pivot->next = right->last;
-        
-    }
-
-    return list;
-}
-*/
-
-LinkedList * ll_get_by_cond( LinkedList * list, bool(*cnd)(void*) ) {
+LinkedList * ll_get_by_cond( LinkedList * list, int(*cnd)(void*, size_t) ) {
 #ifdef DEBUG
     printf("::ll : ll_get_by_cond\n");
 #endif
-    LinkedList * new = empty_linkedlist();
+    LinkedList * newlist = empty_linkedlist();
     LinkedListElement *current = list->first;
     
-    if( cnd(list->first->e ) )
-       ll_push(new, list->first->e);
+    if( cnd(list->first->data, list->first->datasize) )
+       ll_push(newlist, list->first->data, list->first->datasize);
 
-    while( current = current->next ) {
-        if( cnd(current->e ) )
-            ll_push(new, current->e);
+    while( (current = next(current)) ) {
+        if( cnd(current->data, current->datasize) )
+            ll_push(newlist, current->data, current->datasize);
     } 
 
-    return new;
+    return newlist;
 }
 
 /*
  * Executes for each element in the list the passed function, by passing the
  * element to the function.
- * If the function returns false, the execution is completely stopped and 
+ * If the function returns 0, the execution is completely stopped and 
  * there is no function call for any other element from the list.
  */
-void ll_for_each_element_do( LinkedList * list, bool (*func)(void*) ) {
+void ll_for_each_element_do( LinkedList * list, int (*func)(void*, size_t) ) {
 #ifdef DEBUG
     printf("::ll : ll_for_each_element_do\n");
 #endif
-    bool __continue = func(list->first->e);
+    int go = func(list->first->data, list->first->datasize);
     LinkedListElement *current = list->first;
-    while( (current = current->next) && __continue ) {
-        __continue = func(current->e);
+    while( (current = next(current)) && go ) {
+        go = func(current->data, current->datasize);
     }
 
 }
 
 /*
- * Executes for each element the cond function. If the return value is true, 
+ * Executes for each element the cond function. If the return value is 1, 
  * the func function is called with the value. So if the func function is very 
  * complex, the condition-function can control, which elements are processed
  * by the func function.
- * Anyway, if the func function returns false, the whole process is aborted.
+ * Anyway, if the func function returns 0, the whole process is aborted.
  */
-void ll_for_each_element_by_condition_do( LinkedList * list, bool (*cond)(void*), bool (*func)(void*) ) {
+void ll_for_each_element_by_condition_do( LinkedList *list, 
+        int (*cond)(void*, size_t), int (*func)(void*, size_t) ) {
 #ifdef DEBUG
     printf("::ll : ll_for_each_element_by_condition_do\n");
 #endif
     LinkedListElement *curr = list->first;
-    bool lastresult = true;
-    if ( cond(curr->e) ) lastresult = func(curr->e); 
-    while( lastresult && (curr = curr->next) && curr ) {
-        if(cond(curr->e)) lastresult = func(curr->e);
+    int lastresult = 1;
+    if ( cond(curr->data, curr->datasize) ) 
+        lastresult = func(curr->data, curr->datasize); 
+
+    while( lastresult && (curr = next(curr)) && curr ) {
+        if(cond(curr->data, curr->datasize)) 
+            lastresult = func(curr->data, curr->datasize);
     }
 }
 
@@ -414,18 +385,31 @@ LinkedList * ll_join( LinkedList *list1, LinkedList *list2 ) {
 
     LinkedListElement *current = list1->first;
 
-    ll_push( result, current->e );
+    ll_push( result, current->data, current->datasize );
     while( current && (current = current->next)) {
-        ll_push(result, current->e);
+        ll_push(result, current->data, current->datasize);
     }
     
     /* for second list, do the stuff again */
     current = list2->first;
 
-    ll_push( result, current->e );
+    ll_push( result, current->data, current->datasize );
     while( current && (current = current->next)) {
-        ll_push(result, current->e);
+        ll_push(result, current->data, current->datasize);
     }
 
     return result;
 }
+
+#ifdef LL_PRINTABLE
+void ll_print( LinkedList *list, void (*print_element)(void*, size_t) ) {
+#ifdef DEBUG
+    printf("::ll : ll_print\n");
+#endif //DEBUG
+
+    LinkedListElement *curr = list->first;
+    print_element(list->first->data, list->first->datasize);
+    while( (curr = next(curr)) ) 
+        print_element(curr->data, curr->datasize);
+}
+#endif //LL_PRINTABLE
