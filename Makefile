@@ -101,3 +101,18 @@ ll_test: ll testutils
 	@echo ""
 	@echo "Linking test files"
 	${CC} ${TESTUTILS_OUT}.o ${LL_OUT}.o ${LL_TEST_OUT}.o -o ${LL_TEST_OUT}
+
+#
+# make all tests and runners for them
+#
+
+tests: testutils stack stacktest ll ll_test
+
+testrun: tests
+	${BIN}/stacktest && ${BIN}/ll_test
+
+run_ll_test: testutils ll ll_test
+	${BIN}/ll_test
+
+run_stack_test: testutils stack stacktest
+	${BIN}/stacktest
