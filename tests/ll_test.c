@@ -555,5 +555,6 @@ int main(void) {
     for( i = 0; tests[i].desc && worked; i++ ) {
         worked = test_exec( &tests[i] );
     }
-    return worked;
+
+    return !worked;
 }
