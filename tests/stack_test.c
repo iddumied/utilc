@@ -72,5 +72,5 @@ int main(void) {
         worked = test_exec(&tests[i]);
     }
 
-    return worked;
+    return !worked;
 }
