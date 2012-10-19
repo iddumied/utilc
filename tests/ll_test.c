@@ -131,7 +131,7 @@ static int test_length() {
     if (!d ) return 0;
 
     int result = 0;
-    int i;
+    unsigned int i;
     double ary[] = { 1.0, 2.0, 3.0, 4.0 };
     LinkedList *l = empty_linkedlist();
 
@@ -179,7 +179,7 @@ static int test_get_by_index() {
 
     int worked = 1;
     double ary[] = { 1.0, 2.0, 3.5, 4.9, 5.5 };
-    int i;
+    unsigned int i;
     LinkedList *list = linkedlist(&ary[0], sizeof(ary[0]));
     for( i = 1 ; i<len(ary); i++) {
         ll_push( list, &ary[i], sizeof(ary[i]) );
@@ -203,7 +203,7 @@ static int test_destroy_by_element() {
 
     int worked = 1;
     double ary[] = { 1.0, 2.0, 3.5, 4.9, 5.5 };
-    int i;
+    unsigned int i;
     LinkedList *list = linkedlist(&ary[0], sizeof(ary[0]));
     for( i = 1 ; i<len(ary) ; i++ ) {
         ll_push( list, &ary[i], sizeof(ary[i]) );
@@ -225,7 +225,7 @@ static int test_destroy_by_index() {
 
     int worked = 1;
     double ary[] = { 1.0, 2.0, 3.5, 4.9, 5.5 };
-    int i;
+    unsigned int i;
     LinkedList *list = linkedlist(&ary[0], sizeof(ary[0]));
     for( i = 1 ; i<len(ary) ; i++ ) {
         ll_push( list, &ary[i], sizeof(ary[i]) );
@@ -262,7 +262,7 @@ static int test_dump() {
     if (!d) return 0;
 
     int worked = 1;
-    int i;
+    unsigned int i;
 
     double ary[] = { 1.0, 2.0, 3.5, 4.9, 5.5 };
     LinkedList *list = linkedlist(&ary[0], sizeof(ary[0]));
@@ -292,8 +292,7 @@ static int test_get_by_cond(void){
     double ary1[] = { 1.0, 2.0, 3.5, 4.9, 5.5 };
     double ary2[] = { 3.5, 4.9, 5.5 };
     LinkedList *list = linkedlist(&ary1[0], sizeof(ary1[0]));
-    LinkedList *cmpList = linkedlist(&ary2[0], sizeof(ary2[0]));
-    int i;
+    unsigned int i;
     for( i = 1; i<len(ary1); i++ ) {
         ll_push(list, &ary1[i], sizeof(ary1[i]) );
     }
@@ -315,7 +314,7 @@ static int test_for_each_do() {
     double ary1[] = { 1.0, 2.0, 3.5, 4.9, 5.5 };
     double ary2[] = { 2.0, 3.0, 4.5, 5.9, 6.5 };
     LinkedList *list = linkedlist(&ary1[0], sizeof(ary1[0]));
-    int i;
+    unsigned int i;
     for( i = 1; i<len(ary1); i++ ) {
         ll_push(list, &ary1[i], sizeof(ary1[i]));
     }
@@ -341,7 +340,7 @@ static int test_for_each_by_cond() {
     double ary1[] = { 1.0, 2.0, 3.5, 4.9, 5.5 };
     double ary2[] = { 1.0, 2.0, 4.5, 5.9, 6.5 };
     LinkedList *list = linkedlist(&ary1[0], sizeof(ary1[0]));
-    int i;
+    unsigned int i;
     for( i = 1 ; i<len(ary1); i++ ) {
         ll_push(list, &ary1[i], sizeof(ary1[i]));
     }
@@ -373,7 +372,7 @@ static int test_join() {
     LinkedList *list2 = empty_linkedlist();
     LinkedList *res_list;
 
-    int i;
+    unsigned int i;
     for( i = 0; i<len(ary1); i++ ) {
         ll_push(list1, &ary1[i], sizeof(ary1[0]));
     }
@@ -419,8 +418,7 @@ static int test_datasize_of_last() {
     int d = depends(test_creating_and_removing);
     d = d && depends(test_pushing);
 
-    int result;
-    int i;
+    unsigned int i;
     LinkedList *list = empty_linkedlist();
     double data[] = { 1.0, 2.0, 3.0 };
 
@@ -435,7 +433,7 @@ static int test_datasize_of_element() {
     d = d && depends(test_pushing);
 
     int result = 1;
-    int i;
+    unsigned int i;
     LinkedList *list = empty_linkedlist();
     double data[] = { 1.0, 2.0, 3.0 };
 
@@ -454,7 +452,7 @@ static int test_datasize_of_list() {
 
     int result = 1;
     size_t expected_size;
-    int i;
+    unsigned int i;
     LinkedList *list = empty_linkedlist();
     double data[] = { 1.0, 2.0, 3.0 };
 
@@ -491,7 +489,7 @@ static void cleanup(LinkedList *l) {
 }
 
 static int __depends(const char *func, int (*other)(void) ) {
-    int i;
+    unsigned int i;
     int res = 0;
     for( i = 0 ; tests[i].desc && !res ; i++ ) {
         if( tests[i].testfunc == other )
@@ -553,7 +551,7 @@ static int test_exec( Test *test ) {
 }
 
 int main( int argc, char ** argv ) {
-    int i;
+    unsigned int i;
     int worked = 1;
     for( i = 0; tests[i].desc && worked; i++ ) {
         worked = test_exec( &tests[i] );
