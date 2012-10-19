@@ -109,7 +109,7 @@ ll_test: ll testutils
 tests: testutils stack stacktest ll ll_test
 
 testrun: tests
-	${BIN}/stacktest && ${BIN}/ll_test
+	${BIN}/stacktest && sleep 5 && ${BIN}/ll_test
 
 run_ll_test: testutils ll ll_test
 	${BIN}/ll_test
