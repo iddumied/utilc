@@ -1,12 +1,10 @@
 #include "linkedlist/linkedlist.h"
 
 #ifdef DEBUG
-#include <stdio.h>
-
-#define EXPLAIN_FUNC printf(":: ll : %s\n", __func__)
-#define EXPLAIN_FUNC_WITH(infotype,info) printf(":: ll : %s : "infotype"\n", __func__, info)
-
+#define LIBRARYNAME "ll"
+#include "debug.h"
 #endif
+
 
 static LinkedListElement * new_linkedlistelement(size_t datasize);
 static LinkedListElement * linkedlistelement_at( LinkedList *, unsigned int );

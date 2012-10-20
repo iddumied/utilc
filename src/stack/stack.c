@@ -1,7 +1,8 @@
 #include "stack/stack.h"
 
 #ifdef DEBUG
-#include <stdio.h>
+#define LIBRARYNAME "stack"
+#include "debug.h"
 #endif
 
 static StackElement * stackelement( size_t data_size, void *data );
@@ -13,7 +14,7 @@ static void print_stackelement_binary(StackElement *ste);
 
 Stack * empty_stack() {
 #ifdef DEBUG
-    printf("Create Stack\n");
+    EXPLAIN_FUNC; 
 #endif // DEBUG
 
     Stack *stack = (Stack*) malloc( sizeof(Stack) );
@@ -24,7 +25,7 @@ Stack * empty_stack() {
 
 static StackElement * stackelement( size_t data_size, void *data ) {
 #ifdef DEBUG
-    printf("Create StackElement\n");
+    EXPLAIN_FUNC; 
 #endif // DEBUG
 
     StackElement *element = (StackElement*) malloc( sizeof(StackElement) + data_size );
@@ -42,7 +43,7 @@ static StackElement *next(StackElement *curr) {
 
 void stackpush( Stack *stack, size_t data_size, void *data ) {
 #ifdef DEBUG
-    printf("Stack: Push\n");
+    EXPLAIN_FUNC; 
 #endif // DEBUG
 
     StackElement *element = stackelement(data_size, data);
@@ -54,7 +55,7 @@ void stackpush( Stack *stack, size_t data_size, void *data ) {
 
 void * stackpop( Stack *stack ) {
 #ifdef DEBUG
-    printf("Stack: Pop\n");
+    EXPLAIN_FUNC; 
 #endif // DEBUG
 
     void *ret = malloc( stack->first->data_size );
@@ -69,6 +70,10 @@ void * stackpop( Stack *stack ) {
 
 #ifdef STACK_PRINTABLE
 void stack_print_binary(Stack *stack) {
+#ifdef DEBUG
+    EXPLAIN_FUNC;
+#endif //DEBUG
+
     StackElement *curr = stack->first;
     print_stackelement_binary(curr);
     while( (curr = next(curr)) && curr ) {
@@ -78,6 +83,10 @@ void stack_print_binary(Stack *stack) {
 }
 
 static void print_stackelement_binary(StackElement *ste) {
+#ifdef DEBUG
+    EXPLAIN_FUNC;
+#endif //DEBUG
+
     unsigned char mask = 0x01;
     unsigned int ptr, bit;
 
