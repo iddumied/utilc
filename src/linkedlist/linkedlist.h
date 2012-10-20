@@ -76,5 +76,6 @@ LinkedList * ll_join( LinkedList *list1, LinkedList *list2 );
  */
 #ifdef LL_PRINTABLE
 void ll_print(LinkedList *list, void (*print_element)(void*, size_t));
+void ll_print_binary(LinkedList *list);
 #endif //LL_PRINTABLE
 #endif

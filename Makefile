@@ -94,11 +94,11 @@ stacktest: stack testutils
 #
 
 ll:
-	${CC} ${HEADERS} ${CFLAGS} ${LL} -o ${LL_OUT}.o
+	${CC} ${HEADERS} ${CFLAGS} ${LL_FLAGS} ${LL} -o ${LL_OUT}.o
 
 ll_test: ll testutils
 	@echo "Compiling test files"
-	${CC} ${HEADERS} ${TESTHEADERS} ${CFLAGS} ${DEBUG} ${LL_TEST} -o ${LL_TEST_OUT}.o 
+	${CC} ${HEADERS} ${TESTHEADERS} ${CFLAGS} ${DEBUG} ${LL_FLAGS} ${LL_TEST} -o ${LL_TEST_OUT}.o 
 	@echo ""
 	@echo "Linking test files"
 	${CC} ${TESTUTILS_OUT}.o ${LL_OUT}.o ${LL_TEST_OUT}.o -o ${LL_TEST_OUT}

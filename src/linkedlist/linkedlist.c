@@ -15,6 +15,10 @@ static void savinclen( LinkedList * );
 static LinkedListElement * next(LinkedListElement*);
 static LinkedListElement * previous(LinkedListElement*);
 
+#ifdef LL_PRINTABLE
+static void print_binary(LinkedListElement *lle);
+#endif //LL_PRINTABLE
+
 /*static LinkedList * quicksort( LinkedList*, signed int (*)(void(*), void(*)) );*/
 
 LinkedList * linkedlist( void *data, size_t datasize ) {
@@ -449,5 +453,36 @@ void ll_print( LinkedList *list, void (*print_element)(void*, size_t) ) {
     print_element(list->first->data, list->first->datasize);
     while( (curr = next(curr)) ) 
         print_element(curr->data, curr->datasize);
+}
+
+void ll_print_binary(LinkedList *list) {
+#ifdef DEBUG
+    EXPLAIN_FUNC; 
+#endif
+
+    LinkedListElement *curr = list->first;
+    print_binary(curr);
+    while( (curr=next(curr)) && curr ) {
+        print_binary(curr);
+    }
+}
+
+static void print_binary(LinkedListElement *lle) {
+    unsigned char mask = 0x01;
+    unsigned int ptr, bit;
+
+    for(ptr = 0; ptr < lle->datasize; ptr++ ) {
+        for(bit = 7; bit != 0 ; bit-- ) {
+            if( (mask<<bit) & (unsigned char) *(lle->data+ptr) ) {
+                printf("1");
+            }
+            else {
+                printf("0");
+            }
+        }
+        printf(" ");
+        if( (ptr+1) % 8 == 0 ) 
+            printf("\n");
+    }
 }
 #endif //LL_PRINTABLE

@@ -35,6 +35,7 @@ static int test_datasize_of_list(void);
 
 #ifdef LL_PRINTABLE
 static int test_print(void);
+static int test_print_binary(void);
 #endif //LL_PRINTABLE
 
 Test tests[] = {
@@ -61,6 +62,7 @@ Test tests[] = {
 
 #ifdef LL_PRINTABLE
     {"list print",          0,  test_print,                 0 },
+    {"list print binary",   0,  test_print_binary,          0 },
 #endif //LL_PRINTABLE
     { NULL },
 };
@@ -478,6 +480,22 @@ static int test_print() {
         ll_push( list, &data[i], sizeof(double));
 
     ll_print(list, print_element ); // if no memory corruption, this was right
+    printf("\n");
+    return 1;
+}
+
+static int test_print_binary() {
+    int d = depends(test_creating_and_removing);
+    d = d && depends(test_pushing);
+    if (!d) return 0;
+
+    unsigned int i;
+    LinkedList *list = empty_linkedlist();
+    double data[] = { 1.0, 2.0, 3.0 };
+    for( i = 0 ; i < len(data) ; i++ )
+        ll_push( list, &data[i], sizeof(double));
+
+    ll_print_binary(list); // if no memory corruption, this was right
     printf("\n");
     return 1;
 }
