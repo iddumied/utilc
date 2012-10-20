@@ -2,6 +2,10 @@
 
 #ifdef DEBUG
 #include <stdio.h>
+
+#define EXPLAIN_FUNC printf(":: ll : %s\n", __func__)
+#define EXPLAIN_FUNC_WITH(infotype,info) printf(":: ll : %s : "infotype"\n", __func__, info)
+
 #endif
 
 static LinkedListElement * new_linkedlistelement(size_t datasize);
@@ -15,8 +19,9 @@ static LinkedListElement * previous(LinkedListElement*);
 
 LinkedList * linkedlist( void *data, size_t datasize ) {
 #ifdef DEBUG
-    printf("::ll : linkedlist created\n");
+    EXPLAIN_FUNC;
 #endif
+
     LinkedListElement *dataelement = new_linkedlistelement(datasize); 
     LinkedList *l = (LinkedList*) malloc( sizeof( LinkedList ) );
 
@@ -33,8 +38,9 @@ LinkedList * linkedlist( void *data, size_t datasize ) {
 
 LinkedList * empty_linkedlist() {
 #ifdef DEBUG
-    printf("::ll : linkedlist created (empty)\n");
+    EXPLAIN_FUNC;
 #endif
+
     LinkedList *list = (LinkedList*) malloc(sizeof(LinkedList));
     if (list) {
         list->first = list->last = NULL;
@@ -45,8 +51,9 @@ LinkedList * empty_linkedlist() {
 
 static LinkedListElement* new_linkedlistelement(size_t datasize) {
 #ifdef DEBUG
-    printf("::ll : linkedlist element with size %lu created\n", datasize);
+    EXPLAIN_FUNC_WITH("with size: %lu", datasize);
 #endif
+
     LinkedListElement *ll_element = (LinkedListElement*) malloc(sizeof(LinkedListElement)+datasize);
     if (ll_element) {
         /*ll_element->data = NULL;*/
@@ -64,8 +71,9 @@ static LinkedListElement* new_linkedlistelement(size_t datasize) {
  */
 static LinkedListElement * linkedlistelement_at( LinkedList * list, unsigned int i ) {
 #ifdef DEBUG
-    printf("::ll : linkedlist_element_at %i\n", i);
+    EXPLAIN_FUNC_WITH("%i", i);
 #endif
+
     LinkedListElement *current = list->first;
     unsigned int j;
     for(j = 0; j != i && current && (current = next(current)); j++);
@@ -104,8 +112,9 @@ static LinkedListElement * previous(LinkedListElement *curr) {
  */
 unsigned int ll_len( LinkedList * list, int force_recalc ) {
 #ifdef DEBUG
-    printf("::ll : ll_len");
+    // see bottom of function
 #endif
+
     unsigned int i;
     LinkedListElement *c;
 
@@ -120,7 +129,7 @@ unsigned int ll_len( LinkedList * list, int force_recalc ) {
     list->length = i;
 
 #ifdef DEBUG
-    printf(" %i\n",i);
+    EXPLAIN_FUNC_WITH(": %i", i);
 #endif
 
     return i;
@@ -128,15 +137,17 @@ unsigned int ll_len( LinkedList * list, int force_recalc ) {
 
 void * ll_last( LinkedList * list ) {
 #ifdef DEBUG
-    printf("::ll : ll_last: %p\n",list->last->data);
+    EXPLAIN_FUNC_WITH(": %p",list->last->data);
 #endif
+
     return list->last->data;
 }
 
 void * ll_first( LinkedList * list ) {
 #ifdef DEBUG
-    printf("::ll : ll_first: %p\n",list->first->data);
+    EXPLAIN_FUNC_WITH(": %p",list->first->data);
 #endif
+
     return list->first->data;
 }
 
@@ -145,14 +156,26 @@ void * ll_first( LinkedList * list ) {
  */
 
 size_t ll_datasize_last( LinkedList *list ) {
+#ifdef DEBUG
+    EXPLAIN_FUNC;
+#endif
+
     return list->last->datasize;
 }
 
 size_t ll_datasize_first( LinkedList *list ) {
+#ifdef DEBUG
+    EXPLAIN_FUNC;
+#endif
+
     return list->first->datasize;
 }
 
 size_t ll_datasize_by_index( LinkedList *list, unsigned int index ) {
+#ifdef DEBUG
+    EXPLAIN_FUNC_WITH(": index: %i", index);
+#endif
+
     unsigned int i, len = ll_len(list, 1);
     LinkedListElement *curr;
     for( i = 0, curr = list->first; i < len && i != index; i++, (curr=next(curr)) );
@@ -163,6 +186,10 @@ size_t ll_datasize_by_index( LinkedList *list, unsigned int index ) {
  * Calculates the size of the memory, used for the linkedlist stuff
  */
 size_t ll_datasize_list( LinkedList *list ) {
+#ifdef DEBUG
+    EXPLAIN_FUNC;
+#endif
+
     LinkedListElement *curr;
     unsigned int list_len = ll_len(list, 1);
     size_t result = 0;
@@ -184,8 +211,9 @@ size_t ll_datasize_list( LinkedList *list ) {
 
 void * ll_element( LinkedList * l , unsigned int i ) {
 #ifdef DEBUG
-    printf("::ll : ll_element\n");
+    EXPLAIN_FUNC; 
 #endif
+
     LinkedListElement * listelement = linkedlistelement_at( l, i );
     if( listelement ) 
         return &(listelement->data);
@@ -195,15 +223,17 @@ void * ll_element( LinkedList * l , unsigned int i ) {
 
 void * ll_pop( LinkedList * list ) {
 #ifdef DEBUG
-    printf("::ll : ll_pop\n");
+    EXPLAIN_FUNC; 
 #endif
+
     return ll_destroy_by_element( list, list->first );
 } 
 
 void ll_push( LinkedList *list, void *data, size_t datasize ) {
 #ifdef DEBUG
-    printf("::ll : ll_push\n");
+    EXPLAIN_FUNC; 
 #endif
+
     LinkedListElement * element = new_linkedlistelement(datasize); 
     memcpy( element->data, data, datasize);
 
@@ -224,10 +254,10 @@ void ll_push( LinkedList *list, void *data, size_t datasize ) {
 
 void * ll_destroy_by_element( LinkedList * list, LinkedListElement * listelement ) {
 #ifdef DEBUG
-    printf("::ll : ll_destroy_by_element\n");
+    EXPLAIN_FUNC; 
 #endif
+    
     void *data;
-
     if ( !listelement )
         return NULL;
 
@@ -258,16 +288,18 @@ void * ll_destroy_by_element( LinkedList * list, LinkedListElement * listelement
 
 void * ll_destroy_by_index( LinkedList * list, unsigned int i ){
 #ifdef DEBUG
-    printf("::ll : ll_destroy_by_index\n");
+    EXPLAIN_FUNC;
 #endif
+
     LinkedListElement * dataelement = linkedlistelement_at( list, i );
     return ll_destroy_by_element( list, dataelement );
 }  
 
 void ll_destroy( LinkedList * list ) {
 #ifdef DEBUG
-    printf("::ll : ll_destroy\n");
+    EXPLAIN_FUNC; 
 #endif
+
     LinkedListElement * curr = list->first;
 
     while( curr->next ) {
@@ -284,8 +316,9 @@ void ll_destroy( LinkedList * list ) {
 
 int ll_element_in_list( LinkedList *list, void *data, size_t datasize ) {
 #ifdef DEBUG
-    printf("::ll : ll_element_in_list\n");
+    EXPLAIN_FUNC; 
 #endif
+
     LinkedListElement * curr = list->first;
     int found = 0;
 
@@ -298,8 +331,9 @@ int ll_element_in_list( LinkedList *list, void *data, size_t datasize ) {
 
 LinkedList * ll_dump( LinkedList *list ) {
 #ifdef DEBUG
-    printf("::ll : ll_dump\n");
+    EXPLAIN_FUNC; 
 #endif
+
     LinkedList * newlist = linkedlist( list->first->data, list->first->datasize ); 
     LinkedListElement * c = list->first;
     while( (c = next(c)) ) // O(n)
@@ -310,8 +344,9 @@ LinkedList * ll_dump( LinkedList *list ) {
 
 LinkedList * ll_get_by_cond( LinkedList * list, int(*cnd)(void*, size_t) ) {
 #ifdef DEBUG
-    printf("::ll : ll_get_by_cond\n");
+    EXPLAIN_FUNC; 
 #endif
+
     LinkedList * newlist = empty_linkedlist();
     LinkedListElement *current = list->first;
     
@@ -334,8 +369,9 @@ LinkedList * ll_get_by_cond( LinkedList * list, int(*cnd)(void*, size_t) ) {
  */
 void ll_for_each_element_do( LinkedList * list, int (*func)(void*, size_t) ) {
 #ifdef DEBUG
-    printf("::ll : ll_for_each_element_do\n");
+    EXPLAIN_FUNC; 
 #endif
+
     int go = func(list->first->data, list->first->datasize);
     LinkedListElement *current = list->first;
     while( (current = next(current)) && go ) {
@@ -354,8 +390,9 @@ void ll_for_each_element_do( LinkedList * list, int (*func)(void*, size_t) ) {
 void ll_for_each_element_by_condition_do( LinkedList *list, 
         int (*cond)(void*, size_t), int (*func)(void*, size_t) ) {
 #ifdef DEBUG
-    printf("::ll : ll_for_each_element_by_condition_do\n");
+    EXPLAIN_FUNC; 
 #endif
+
     LinkedListElement *curr = list->first;
     int lastresult = 1;
     if ( cond(curr->data, curr->datasize) ) 
@@ -379,8 +416,9 @@ void ll_for_each_element_by_condition_do( LinkedList *list,
  */
 LinkedList * ll_join( LinkedList *list1, LinkedList *list2 ) {
 #ifdef DEBUG
-    printf("::ll : ll_join\n");
+    EXPLAIN_FUNC; 
 #endif
+
     LinkedList * result = empty_linkedlist();
 
     LinkedListElement *current = list1->first;
@@ -404,7 +442,7 @@ LinkedList * ll_join( LinkedList *list1, LinkedList *list2 ) {
 #ifdef LL_PRINTABLE
 void ll_print( LinkedList *list, void (*print_element)(void*, size_t) ) {
 #ifdef DEBUG
-    printf("::ll : ll_print\n");
+    EXPLAIN_FUNC; 
 #endif //DEBUG
 
     LinkedListElement *curr = list->first;
