@@ -61,6 +61,7 @@ STACKTEST_OUT = ${BIN}/stacktest
 DEBUG = -g
 
 LL_FLAGS = -D LL_PRINTABLE
+STACK_FLAGS = -D STACK_PRINTABLE
 
 #
 # just do it...
@@ -79,11 +80,11 @@ testutils:
 #
 
 stack:
-	${CC} ${HEADERS} ${CFLAGS} ${STACK} -o ${STACK_OUT}.o
+	${CC} ${HEADERS} ${CFLAGS} ${STACK} ${STACK_FLAGS} -o ${STACK_OUT}.o
 
 stacktest: stack testutils
 	@echo "Compiling test files"
-	${CC}  ${HEADERS} ${TESTHEADERS} ${CFLAGS} ${STACKTEST} -o ${STACKTEST_OUT}.o
+	${CC}  ${HEADERS} ${TESTHEADERS} ${CFLAGS} ${STACKTEST} ${STACK_FLAGS} -o ${STACKTEST_OUT}.o
 	@echo ""
 	@echo "Linking test files"
 	${CC} ${TESTUTILS_OUT}.o ${STACK_OUT}.o ${STACKTEST_OUT}.o -o ${STACKTEST_OUT}

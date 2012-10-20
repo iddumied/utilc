@@ -19,4 +19,8 @@ Stack * empty_stack(void);
 void stackpush(Stack *stack, size_t data_size, void *data);
 void * stackpop(Stack *stack);
 
+#ifdef STACK_PRINTABLE
+void stack_print_binary(Stack *stack);
+#endif //STACK_PRINTABLE
+
 #endif

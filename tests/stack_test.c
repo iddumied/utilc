@@ -3,14 +3,19 @@
 
 static int test_pushing(void);
 static int test_poping(void);
+static int test_print_bin(void);
 
 static void cleanup(Stack *stack);
 static void cleanup_element(StackElement *ste);
 
 /* desc, strict, int(*testfunc)(), result*/
 Test tests[] = {
-    {"Pushing", 1, test_pushing, 0 },
-    {"Poping",  1, test_poping,  0 },
+    {"Pushing",     1,  test_pushing,       0 },
+    {"Poping",      1,  test_poping,        0 },
+
+#ifdef STACK_PRINTABLE
+    {"printing",    1,  test_print_bin,     0 },
+#endif //STACK_PRINTABLE
     {NULL}
 };
 
@@ -49,6 +54,25 @@ static int test_poping() {
 
     return worked;
 }
+
+#ifdef STACK_PRINTABLE
+static int test_print_bin() {
+    int d = depends(test_pushing);
+    if (!d) return 0;
+
+    Stack *stack = empty_stack();
+    double ary[] = { 1, 2, 3, 4, 5 };
+
+    printf(":: Stacktest: Testing with double, which is %lu on this platform!\n",sizeof(double));
+    unsigned int i;
+    for( i = 0; i<len(ary); i++ )
+        stackpush(stack, sizeof(double), &ary[i] );
+
+    stack_print_binary(stack);
+
+    return 1;
+}
+#endif //STACK_PRINTABLE
 
 /*
  * Cleanup

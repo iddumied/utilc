@@ -5,6 +5,11 @@
 #endif
 
 static StackElement * stackelement( size_t data_size, void *data );
+static StackElement * next(StackElement* curr);
+
+#ifdef STACK_PRINTABLE
+static void print_stackelement_binary(StackElement *ste);
+#endif //STACK_PRINTABLE
 
 Stack * empty_stack() {
 #ifdef DEBUG
@@ -29,6 +34,10 @@ static StackElement * stackelement( size_t data_size, void *data ) {
         memcpy( element->data, data, data_size );
     }
     return element;
+}
+
+static StackElement *next(StackElement *curr) {
+    return curr->next;
 }
 
 void stackpush( Stack *stack, size_t data_size, void *data ) {
@@ -57,3 +66,34 @@ void * stackpop( Stack *stack ) {
     }
     return ret;
 }
+
+#ifdef STACK_PRINTABLE
+void stack_print_binary(Stack *stack) {
+    StackElement *curr = stack->first;
+    print_stackelement_binary(curr);
+    while( (curr = next(curr)) && curr ) {
+        print_stackelement_binary(curr);
+    }
+    printf("\n");
+}
+
+static void print_stackelement_binary(StackElement *ste) {
+    unsigned char mask = 0x01;
+    unsigned int ptr, bit;
+
+    for(ptr = 0; ptr < ste->data_size; ptr++ ) {
+        for(bit = 7; bit != 0 ; bit-- ) {
+            if( (mask<<bit) & (unsigned char) *(ste->data+ptr) ) {
+                printf("1");
+            }
+            else {
+                printf("0");
+            }
+        }
+        printf(" ");
+        if( (ptr+1) % 8 == 0 ) 
+            printf("\n");
+    }
+
+}
+#endif //STACK_PRINTABLE
