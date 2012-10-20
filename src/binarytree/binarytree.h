@@ -16,6 +16,6 @@ typedef struct {
     BinaryTreeElement *head;
 } BinaryTree;
 
-BinaryTree * empty_binary_tree(void);
+BinaryTree * empty_binarytree(void);
 
 #endif
