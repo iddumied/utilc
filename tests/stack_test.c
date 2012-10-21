@@ -1,6 +1,9 @@
 #include "stack/stack.h"
 #include "utilc_test_utils.h"
 
+/*
+ * Static function prototypes
+ */
 static int test_pushing(void);
 static int test_poping(void);
 static int test_print_bin(void);
@@ -8,7 +11,9 @@ static int test_print_bin(void);
 static void cleanup(Stack *stack);
 static void cleanup_element(StackElement *ste);
 
-/* desc, strict, int(*testfunc)(), result*/
+/*
+ * Test array
+ */
 Test tests[] = {
     {"Pushing",     1,  test_pushing,       0 },
     {"Poping",      1,  test_poping,        0 },
@@ -18,6 +23,13 @@ Test tests[] = {
 #endif //STACK_PRINTABLE
     {NULL}
 };
+
+
+/*
+ * ====================
+ * Test implementations 
+ * ====================
+ */
 
 static int test_pushing() {
     Stack *stack = empty_stack();
@@ -75,6 +87,12 @@ static int test_print_bin() {
 #endif //STACK_PRINTABLE
 
 /*
+ * ================
+ * Helper Functions
+ * ================
+ */
+
+/*
  * Cleanup
  */
 static void cleanup(Stack *stack) {
@@ -89,6 +107,9 @@ static void cleanup_element(StackElement *ste) {
         free(ste);
 }
 
+/*
+ * Main
+ */
 int main(void) {
     unsigned int i;
     int worked = 1;
