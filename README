@@ -49,3 +49,8 @@ Note: There will be no sorting for the linkedlist stuff!
 	Version 2.1.2
 	-------------
 	* Just code-styling
+
+	Version 2.2.0
+	-------------
+	* Stack can be removed from memory
+	* Some Bugfixes
