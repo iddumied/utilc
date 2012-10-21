@@ -38,6 +38,14 @@ What's new:
 
 Note: There will be no sorting for the linkedlist stuff!
 
-Version 2.1.0
--------------
-* print your stack or your linkedlist binary!
+	Version 2.1.0
+	-------------
+	* print your stack or your linkedlist binary!
+
+	Version 2.1.1
+	-------------
+	* some bugfixes. Removing LinkedList from memory was fixed.
+
+	Version 2.1.2
+	-------------
+	* Just code-styling
