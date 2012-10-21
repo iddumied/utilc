@@ -4,6 +4,7 @@
 /*
  * Static function prototypes
  */
+static int test_removing(void);
 static int test_pushing(void);
 static int test_poping(void);
 static int test_print_bin(void);
@@ -15,6 +16,7 @@ static void cleanup_element(StackElement *ste);
  * Test array
  */
 Test tests[] = {
+    {"Removing",    1,  test_removing,      0 },
     {"Pushing",     1,  test_pushing,       0 },
     {"Poping",      1,  test_poping,        0 },
 
@@ -30,6 +32,20 @@ Test tests[] = {
  * Test implementations 
  * ====================
  */
+
+static int test_removing() {
+    Stack *stack = empty_stack();
+    double ary[] = { 1.0, 2.0, 3.5, 4.9, 5.1 };
+
+    unsigned int i;
+    for( i = 0 ; i < len(ary) ; i++ ) {
+        stackpush(stack, &ary[i], sizeof(double));
+    }
+
+    stackdelete(stack);
+
+    return 1;
+}
 
 static int test_pushing() {
     Stack *stack = empty_stack();
