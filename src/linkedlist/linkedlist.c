@@ -306,12 +306,13 @@ void ll_destroy( LinkedList * list ) {
 #endif
 
     LinkedListElement * curr = list->first;
+    LinkedListElement * next_element;
 
-    while( curr->next ) {
-        curr = next(curr);
-        ll_destroy_by_element( list, previous(curr) );
+    while( curr ) {
+        next_element = next(curr);
+        ll_destroy_by_element(list, curr);
+        curr = next_element;
     }
-    ll_destroy_by_element( list, list->last );
     free( list );
 } 
 
