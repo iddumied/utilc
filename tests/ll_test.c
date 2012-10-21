@@ -38,6 +38,9 @@ static int test_print(void);
 static int test_print_binary(void);
 #endif //LL_PRINTABLE
 
+/*
+ * Test array
+ */
 Test tests[] = {
     {"Creating/Deleting",   1,   test_creating_and_removing, 0 },
     {"Pushing",             1,   test_pushing,               0 },
@@ -71,7 +74,6 @@ Test tests[] = {
  * Prototypes : Helper functions 
  */
 static void cleanup(LinkedList*);
-int comparefunction(void*, void*);
 int condition_is_bigger_three(void*, size_t);
 int do_foreach_inc(void*, size_t);
 
@@ -140,6 +142,7 @@ static int test_length() {
         ll_push(l, &ary[i], sizeof(ary[i]));
     }
 
+    cleanup(l);
     return result;
 }
 
@@ -215,6 +218,8 @@ static int test_destroy_by_element() {
         b = &ary[i];
         worked = 0 == memcmp(a, b, sizeof(double));
     }
+
+    cleanup(list);
     return worked;
 }
 
@@ -237,6 +242,8 @@ static int test_destroy_by_index() {
         b = &ary[i];
         worked = 0 == memcmp(a, b, sizeof(double));
     }
+
+    cleanup(list);
     return worked;
 }
 
@@ -252,6 +259,7 @@ static int test_element_in_list() {
     int a = ll_element_in_list(list, &value1, sizeof(value1));
     int b = !ll_element_in_list(list, &value2, sizeof(value2));
 
+    cleanup(list);
     return (a&&b);
 }
 
@@ -278,7 +286,11 @@ static int test_dump() {
         worked = 0 == memcmp(a, b, sizeof(double));
         printf("[%u/%lu] : %f == %f, size: %lu\n", i, len(ary), *a, *b, sizeof(double) );
     }
-    return (worked && list != dump);
+
+    cleanup(list);
+    worked = worked && list != dump;
+    cleanup(dump);
+    return worked;
 }
 
 static int test_get_by_cond(void){
@@ -300,6 +312,8 @@ static int test_get_by_cond(void){
     for( i = 0 ; i<len(ary2); i++ )
         worked = 0 == memcmp( (double*)ll_element(new,i), &ary2[i], sizeof(double));
 
+    cleanup(list);
+    cleanup(new);
     return worked;
 }
 
@@ -325,6 +339,8 @@ static int test_for_each_do() {
         b = (double*)ll_element(list, i);
         worked = 0 == memcmp(a, b, sizeof(double)); 
     }
+
+    cleanup(list);
     return worked;
 }
 
@@ -352,6 +368,8 @@ static int test_for_each_by_cond() {
         b = (double*)ll_element(list, i);
         worked = 0 == memcmp(a, b, sizeof(double)); 
     }
+
+    cleanup(list);
     return worked;
 }
 
@@ -388,12 +406,16 @@ static int test_join() {
         worked = 0 == memcmp(a, b, sizeof(double));
     }
 
+    cleanup(list1);
+    cleanup(list2);
+    cleanup(res_list);
     return worked;
 }
 
 /*
  * Datasize tests:
  */
+
 static int test_datasize_of_first() {
     int d = depends(test_creating_and_removing);
     d = d && depends(test_pushing);
@@ -411,6 +433,8 @@ static int test_datasize_of_first() {
     result = (sizeof(d_data) == ll_datasize_first(list1));
     result = result && (sizeof(i_data) == ll_datasize_first(list2));
 
+    cleanup(list1);
+    cleanup(list2);
     return result;
 }
 
@@ -426,7 +450,9 @@ static int test_datasize_of_last() {
     for( i = 0 ; i < len(data) ; i++ )
         ll_push( list, &data[i], sizeof(data[i]) );
 
-    return ( sizeof(data[2]) == ll_datasize_last(list) );
+    int result = ( sizeof(data[2]) == ll_datasize_last(list) );
+    cleanup(list);
+    return result;
 }
 
 static int test_datasize_of_element() {
@@ -445,6 +471,7 @@ static int test_datasize_of_element() {
     for( i = 0 ; i < len(data) ; i++ )
         result = result && ll_datasize_by_index(list,i) == sizeof(data[i]);
 
+    cleanup(list);
     return result;
 }
 
@@ -464,7 +491,9 @@ static int test_datasize_of_list() {
     expected_size = sizeof(LinkedList) + 
         (sizeof(LinkedListElement)+sizeof(double)) * 3;
 
-    return ( ll_datasize_list(list) == expected_size );
+    int result = ( ll_datasize_list(list) == expected_size );
+    cleanup(list);
+    return result;
 }
 
 #ifdef LL_PRINTABLE
@@ -481,6 +510,8 @@ static int test_print() {
 
     ll_print(list, print_element ); // if no memory corruption, this was right
     printf("\n");
+
+    cleanup(list);
     return 1;
 }
 
@@ -497,24 +528,15 @@ static int test_print_binary() {
 
     ll_print_binary(list); // if no memory corruption, this was right
     printf("\n");
+    
+    cleanup(list);
     return 1;
 }
 #endif //LL_PRINTABLE
 
 /*
- * Compare function for sort testing
+ * Test helpers
  */
-int comparefunction(void *a, void *b) {
-    double *doubleA, *doubleB;
-    doubleA = (double*)a;
-    doubleB = (double*)b;
-
-    if( doubleA == doubleB )
-        return 0;
-    if( doubleA < doubleB )
-        return 1;
-    return -1;
-}
 
 /*
  * Condition function for testing 
@@ -540,6 +562,9 @@ int do_foreach_inc( void *value, size_t size) {
     return 1;
 };
 
+/*
+ * Cleanup helper
+ */
 static void cleanup(LinkedList *l) {
     ll_destroy(l);
 }
