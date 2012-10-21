@@ -1,6 +1,9 @@
 #include "stack/stack.h"
 #include "utilc_test_utils.h"
 
+/*
+ * Static function prototypes
+ */
 static int test_pushing(void);
 static int test_poping(void);
 static int test_print_bin(void);
@@ -8,7 +11,9 @@ static int test_print_bin(void);
 static void cleanup(Stack *stack);
 static void cleanup_element(StackElement *ste);
 
-/* desc, strict, int(*testfunc)(), result*/
+/*
+ * Test array
+ */
 Test tests[] = {
     {"Pushing",     1,  test_pushing,       0 },
     {"Poping",      1,  test_poping,        0 },
@@ -19,12 +24,19 @@ Test tests[] = {
     {NULL}
 };
 
+
+/*
+ * ====================
+ * Test implementations 
+ * ====================
+ */
+
 static int test_pushing() {
     Stack *stack = empty_stack();
     int result = 0;
     int topush = 1;
 
-    stackpush(stack, sizeof(topush), &topush);
+    stackpush(stack, &topush, sizeof(topush));
     result =    (stack->first->next == NULL) && 
                 (stack->first->data_size == sizeof(topush)) &&
                 ((int)*stack->first->data == topush);
@@ -44,7 +56,7 @@ static int test_poping() {
 
     unsigned int i, j;
     for( i = 0; i<len(ary); i++ )
-        stackpush(stack, sizeof(ary[i]), &ary[i] );
+        stackpush(stack, &ary[i], sizeof(ary[i]));
 
     for( i = 0 ; i<len(res); i++ )
         res[i] = *(int*)stackpop(stack);
@@ -61,18 +73,24 @@ static int test_print_bin() {
     if (!d) return 0;
 
     Stack *stack = empty_stack();
-    double ary[] = { 1, 2, 3, 4, 5 };
+    double ary[] = { 1.0 , 2.0 , 3.5 , 4.9 , 5.0 };
 
     printf(":: Stacktest: Testing with double, which is %lu on this platform!\n",sizeof(double));
     unsigned int i;
     for( i = 0; i<len(ary); i++ )
-        stackpush(stack, sizeof(double), &ary[i] );
+        stackpush(stack, &ary[i], sizeof(double) );
 
     stack_print_binary(stack);
 
     return 1;
 }
 #endif //STACK_PRINTABLE
+
+/*
+ * ================
+ * Helper Functions
+ * ================
+ */
 
 /*
  * Cleanup
@@ -89,6 +107,9 @@ static void cleanup_element(StackElement *ste) {
         free(ste);
 }
 
+/*
+ * Main
+ */
 int main(void) {
     unsigned int i;
     int worked = 1;

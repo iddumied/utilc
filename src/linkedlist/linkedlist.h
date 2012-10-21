@@ -1,5 +1,5 @@
-#ifndef __D_ARRAY__H__
-#define __D_ARRAY__H__
+#ifndef __LINKEDLIST_H__ 
+#define __LINKEDLIST_H__ 
 
 #include <stdlib.h>
 #include <string.h>

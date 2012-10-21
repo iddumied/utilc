@@ -16,7 +16,7 @@ typedef struct {
 } Stack;
 
 Stack * empty_stack(void);
-void stackpush(Stack *stack, size_t data_size, void *data);
+void stackpush(Stack *stack, void *data, size_t data_size);
 void * stackpop(Stack *stack);
 
 #ifdef STACK_PRINTABLE
