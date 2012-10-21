@@ -1,31 +1,36 @@
 This is a set of utils in C
+===========================
 
-Mainly to work with C, Pointer stuff and memory handling. Learning-by-doing stuff,
-you know?
+Containing:
 
-First goal is:
-Implement a linked list in C with as much functionality as possible:
+- a linked list implementation 
+- a stack implementation 
 
-- init with a value
-- get length of it
-- push values
-- pop values
-- dump it
-- sort it (will be in v2.0.0)
-- permutation (will be in v2.0.0)
-- iteration 
-- take values from it by condition
+Versioning
+----------
+Major.Minor.Patchlevel[ optional self-explanatory stuff ]
 
-Version 1.0.0 is released
--------------------------
+Major 
+	is changed when there is new functionality or API-Changes
+
+Minor 
+	is changed when there are new features (E.G.: stack can be removed from 
+	memory-> version 2.1.2 to 2.2.0)
+
+Patchlevel 
+	is changed when there are bugfixes.
+
+
+Version 1.0.0
+-------------
 See the similar named tag. The tests are running, the stuff is working. If there
 are any problems, please let me know / send a pull request! I would be pleased!
 
 If you want to add functionality to the linkedlist, do it! I would love to see 
 your ideas!
 
-Version 2.0.0 is released
--------------------------
+Version 2.0.0
+-------------
 Thanks to the guys from stackoverflow.com. They gave me nice and constructive 
 feedback!
 
