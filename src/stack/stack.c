@@ -165,7 +165,9 @@ void stackdelete(Stack *stack) {
     EXPLAIN_FUNC;
 #endif //DEBUG
     
-    remove_stackelement(stack->first);
+    if( stack->first )
+        remove_stackelement(stack->first);
+    free(stack);
 }
 
 #ifdef STACK_PRINTABLE
