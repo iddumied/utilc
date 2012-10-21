@@ -281,7 +281,10 @@ void * ll_destroy_by_element( LinkedList * list, LinkedListElement * listelement
             listelement->next->prev = previous(listelement);
         }
     }
-    // else {}
+    else {
+        list->first = list->last = NULL;
+    }
+    
     data = listelement->data; // save element value
     free( listelement );
     savdeclen(list);
