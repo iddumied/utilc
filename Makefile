@@ -41,10 +41,10 @@ CFLAGS += -D DEBUG
 # Some variables
 #
 HEADERS = -I./src/
-TESTHEADERS = -I./tests/
 
-TESTUTILS=${TESTS}/utilc_test_utils.c
-TESTUTILS_OUT=${BIN}/utilc_test_utils
+TESTUTILS= ./testutils/src/testutils.c
+TESTHEADERS = -I./testutils/src/
+TESTUTILS_OUT=${BIN}/testutils
 
 LL = ${SRC}/linkedlist/linkedlist.c
 LL_OUT = ${BIN}/linkedlist
@@ -72,7 +72,7 @@ clean:
 clean_outs:
 	@rm ${BIN}/*.o
 
-testutils:
+test_utils:
 	${CC} ${CFLAGS} ${HEADERS} ${TESTHEADERS} ${TESTUTILS} -o ${TESTUTILS_OUT}.o
 
 #
