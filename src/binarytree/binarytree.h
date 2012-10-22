@@ -2,6 +2,7 @@
 #define __BINARYTREE_H__
 
 #include <stdlib.h>
+#include <string.h>
 
 struct bintree_elem{
     struct bintree_elem * left;
@@ -18,4 +19,14 @@ typedef struct {
 
 BinaryTree * empty_binarytree(void);
 
+void binarytree_insert(
+        BinaryTree *tree, 
+        void *data, 
+        size_t datasize,
+        signed int (*cmp)(
+            void *data1, 
+            size_t datasize1, 
+            void *data2, 
+            size_t datasize2
+        ) );
 #endif
