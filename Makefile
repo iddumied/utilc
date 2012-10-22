@@ -58,8 +58,6 @@ STACK_OUT = ${BIN}/stack
 STACKTEST = ./tests/stack_test.c
 STACKTEST_OUT = ${BIN}/stacktest
 
-DEBUG = -g
-
 LL_FLAGS = -D LL_PRINTABLE
 STACK_FLAGS = -D STACK_PRINTABLE
 
