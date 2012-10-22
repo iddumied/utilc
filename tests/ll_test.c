@@ -3,7 +3,7 @@
  */
 
 #include "linkedlist/linkedlist.h"
-#include "utilc_test_utils.h"
+#include "testutils.h"
 
 #include <stdlib.h>
 #include <stdio.h>
