@@ -45,8 +45,7 @@ static int test_removing() {
 }
 
 static int test_pushing() {
-    int d = depends(test_removing);
-    if (!d) return 0;
+    depends(test_removing);
 
     Stack *stack = empty_stack();
     int result = 0;
@@ -62,9 +61,8 @@ static int test_pushing() {
 }
 
 static int test_poping() {
-    int d = depends(test_pushing);
-    d = d && depends(test_removing);
-    if (!d) return 0;
+    depends(test_pushing);
+    depends(test_removing);
 
     Stack *stack = empty_stack();
     int ary[] = { 1, 2, 3, 4, 5 };
@@ -87,9 +85,8 @@ static int test_poping() {
 
 #ifdef STACK_PRINTABLE
 static int test_print_bin() {
-    int d = depends(test_pushing);
-    d = d && depends(test_removing);
-    if (!d) return 0;
+    depends(test_pushing);
+    depends(test_removing);
 
     Stack *stack = empty_stack();
     double ary[] = { 1.0 , 2.0 , 3.5 , 4.9 , 5.0 };
