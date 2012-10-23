@@ -19,7 +19,7 @@ typedef struct {
 
 BinaryTree * empty_binarytree(void);
 
-void binarytree_insert(
+void bt_insert(
         BinaryTree *tree, 
         void *data, 
         size_t datasize,
@@ -29,4 +29,5 @@ void binarytree_insert(
             void *data2, 
             size_t datasize2
         ) );
+
 #endif

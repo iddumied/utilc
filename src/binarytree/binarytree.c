@@ -86,7 +86,7 @@ BinaryTree * empty_binarytree() {
     return tree;
 }
 
-void binarytree_insert( 
+void bt_insert( 
         BinaryTree *tree, 
         void *data, 
         size_t datasize, 
