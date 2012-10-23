@@ -14,20 +14,20 @@ struct bintree_elem{
 typedef struct bintree_elem BinaryTreeElement;
 
 typedef struct {
-    BinaryTreeElement *head;
+    BinaryTreeElement *root;
 } BinaryTree;
 
 BinaryTree * empty_binarytree(void);
 
+#define BT_CMP_FUNC signed int (*cmp)(void *d1, size_t ds1, void *d2, size_t ds2)
 void bt_insert(
         BinaryTree *tree, 
         void *data, 
         size_t datasize,
-        signed int (*cmp)(
-            void *data1, 
-            size_t datasize1, 
-            void *data2, 
-            size_t datasize2
-        ) );
+        BT_CMP_FUNC
+        );
+
+size_t bt_head_datasize(BinaryTree *bt);
+void * bt_get_root_data(BinaryTree *bt);
 
 #endif

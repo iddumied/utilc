@@ -81,7 +81,7 @@ static void insert(
 BinaryTree * empty_binarytree() {
     BinaryTree * tree = (BinaryTree*) malloc( sizeof(BinaryTree) );
     if(tree) {
-        tree->head = NULL;
+        tree->root = NULL;
     }
     return tree;
 }
@@ -98,7 +98,13 @@ void bt_insert(
             ) 
         ) {
 
-    insert(tree->head, data, datasize, cmp);
+    insert(tree->root, data, datasize, cmp);
 }
 
+size_t bt_root_datasize(BinaryTree *bt) {
+    return bt->root->datasize;
+}
 
+void * bt_get_root_data(BinaryTree *bt) {
+    return bt->root->data;
+}
