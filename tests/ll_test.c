@@ -94,8 +94,7 @@ static int test_creating_and_removing() {
 }
 
 static int test_pushing() {
-    int d = depends( test_creating_and_removing );
-    if (!d) return 0;
+    depends( test_creating_and_removing );
 
     int res;
     double value1 = 5.00;
@@ -112,9 +111,8 @@ static int test_pushing() {
 }
 
 static int test_poping() {
-    int d = depends( test_creating_and_removing );
-    d = d && depends( test_pushing );
-    if (!d) return 0;
+    depends( test_creating_and_removing );
+    depends( test_pushing );
 
     double value1 = 5.00;
     double value2 = 6.00;
@@ -128,9 +126,8 @@ static int test_poping() {
 }
 
 static int test_length() {
-    int d = depends(test_creating_and_removing);
-    d = d && depends(test_pushing);
-    if (!d ) return 0;
+    depends(test_creating_and_removing);
+    depends(test_pushing);
 
     int result = 0;
     unsigned int i;
@@ -147,8 +144,7 @@ static int test_length() {
 }
 
 static int test_get_first() {
-    int d = depends( test_creating_and_removing );
-    if (!d) return 0;
+    depends( test_creating_and_removing );
 
     double value = 5.00;
     LinkedList *l = linkedlist(&value, sizeof(value));
@@ -160,9 +156,8 @@ static int test_get_first() {
 }
 
 static int test_get_last() {
-    int d = depends( test_creating_and_removing );
-    d = d && depends( test_pushing );
-    if (!d) return 0;
+    depends( test_creating_and_removing );
+    depends( test_pushing );
 
     double value1 = 5.00;
     double value2 = 6.00;
@@ -176,9 +171,8 @@ static int test_get_last() {
 }
 
 static int test_get_by_index() {
-    int d = depends( test_creating_and_removing );
-    d = d && depends( test_pushing );
-    if (!d) return 0;
+    depends( test_creating_and_removing );
+    depends( test_pushing );
 
     int worked = 1;
     double ary[] = { 1.0, 2.0, 3.5, 4.9, 5.5 };
@@ -200,9 +194,8 @@ static int test_get_by_index() {
 }
 
 static int test_destroy_by_element() {
-    int d = depends( test_creating_and_removing );
-    d = d && depends( test_pushing );
-    if (!d) return 0;
+    depends( test_creating_and_removing );
+    depends( test_pushing );
 
     int worked = 1;
     double ary[] = { 1.0, 2.0, 3.5, 4.9, 5.5 };
@@ -224,9 +217,8 @@ static int test_destroy_by_element() {
 }
 
 static int test_destroy_by_index() {
-    int d = depends( test_creating_and_removing );
-    d = d && depends( test_pushing );
-    if (!d) return 0;
+    depends( test_creating_and_removing );
+    depends( test_pushing );
 
     int worked = 1;
     double ary[] = { 1.0, 2.0, 3.5, 4.9, 5.5 };
@@ -248,9 +240,8 @@ static int test_destroy_by_index() {
 }
 
 static int test_element_in_list() {
-    int d = depends( test_creating_and_removing );
-    d = d && depends( test_pushing );
-    if (!d) return 0;
+    depends( test_creating_and_removing );
+    depends( test_pushing );
 
     double value1 = 5.0;
     double value2 = 6.0;
@@ -264,10 +255,9 @@ static int test_element_in_list() {
 }
 
 static int test_dump() {
-    int d = depends( test_creating_and_removing );
-    d = d && depends( test_pushing );
-    d = d && depends( test_get_by_index );
-    if (!d) return 0;
+    depends( test_creating_and_removing );
+    depends( test_pushing );
+    depends( test_get_by_index );
 
     int worked = 1;
     unsigned int i;
@@ -294,10 +284,9 @@ static int test_dump() {
 }
 
 static int test_get_by_cond(void){
-    int d = depends( test_creating_and_removing );
-    d = d && depends( test_pushing );
-    d = d && depends( test_get_by_index );
-    if (!d) return 0;
+    depends( test_creating_and_removing );
+    depends( test_pushing );
+    depends( test_get_by_index );
 
     int worked = 1;
     double ary1[] = { 1.0, 2.0, 3.5, 4.9, 5.5 };
@@ -318,10 +307,9 @@ static int test_get_by_cond(void){
 }
 
 static int test_for_each_do() {
-    int d = depends( test_creating_and_removing );
-    d = d && depends( test_pushing );
-    d = d && depends( test_get_by_index );
-    if (!d) return 0;
+    depends( test_creating_and_removing );
+    depends( test_pushing );
+    depends( test_get_by_index );
 
     int worked = 1;
     double ary1[] = { 1.0, 2.0, 3.5, 4.9, 5.5 };
@@ -345,11 +333,10 @@ static int test_for_each_do() {
 }
 
 static int test_for_each_by_cond() {
-    int d = depends( test_creating_and_removing );
-    d = d && depends( test_pushing );
-    d = d && depends( test_get_by_index );
-    d = d && depends( test_for_each_do );
-    if (!d) return 0;
+    depends( test_creating_and_removing );
+    depends( test_pushing );
+    depends( test_get_by_index );
+    depends( test_for_each_do );
 
     int worked = 1;
     double ary1[] = { 1.0, 2.0, 3.5, 4.9, 5.5 };
@@ -374,10 +361,9 @@ static int test_for_each_by_cond() {
 }
 
 static int test_join() {
-    int d = depends( test_creating_and_removing );
-    d = d && depends( test_pushing );
-    d = d && depends( test_get_by_index );
-    if (!d) return 0;
+    depends( test_creating_and_removing );
+    depends( test_pushing );
+    depends( test_get_by_index );
 
     int worked = 1;
     double ary1[] = { 1.0, 2.0, 3.0, 4.0, 5.0 };
@@ -417,9 +403,8 @@ static int test_join() {
  */
 
 static int test_datasize_of_first() {
-    int d = depends(test_creating_and_removing);
-    d = d && depends(test_pushing);
-    if (!d) return 0;
+    depends(test_creating_and_removing);
+    depends(test_pushing);
 
     int result;
     LinkedList *list1 = empty_linkedlist();
@@ -439,9 +424,8 @@ static int test_datasize_of_first() {
 }
 
 static int test_datasize_of_last() { 
-    int d = depends(test_creating_and_removing);
-    d = d && depends(test_pushing);
-    if (!d) return 0;
+    depends(test_creating_and_removing);
+    depends(test_pushing);
 
     unsigned int i;
     LinkedList *list = empty_linkedlist();
@@ -456,9 +440,8 @@ static int test_datasize_of_last() {
 }
 
 static int test_datasize_of_element() {
-    int d = depends(test_creating_and_removing);
-    d = d && depends(test_pushing);
-    if (!d) return 0;
+    depends(test_creating_and_removing);
+    depends(test_pushing);
 
     int result = 1;
     unsigned int i;
@@ -476,9 +459,8 @@ static int test_datasize_of_element() {
 }
 
 static int test_datasize_of_list() {
-    int d = depends(test_creating_and_removing);
-    d = d && depends(test_pushing);
-    if (!d) return 0;
+    depends(test_creating_and_removing);
+    depends(test_pushing);
 
     size_t expected_size;
     unsigned int i;
@@ -498,9 +480,8 @@ static int test_datasize_of_list() {
 
 #ifdef LL_PRINTABLE
 static int test_print() {
-    int d = depends(test_creating_and_removing);
-    d = d && depends(test_pushing);
-    if (!d) return 0;
+    depends(test_creating_and_removing);
+    depends(test_pushing);
 
     unsigned int i;
     LinkedList *list = empty_linkedlist();
@@ -516,9 +497,8 @@ static int test_print() {
 }
 
 static int test_print_binary() {
-    int d = depends(test_creating_and_removing);
-    d = d && depends(test_pushing);
-    if (!d) return 0;
+    depends(test_creating_and_removing);
+    depends(test_pushing);
 
     unsigned int i;
     LinkedList *list = empty_linkedlist();
