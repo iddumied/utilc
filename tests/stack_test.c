@@ -1,20 +1,19 @@
 #include "stack/stack.h"
-#include "utilc_test_utils.h"
+#include "testutils.h"
 
 /*
  * Static function prototypes
  */
+static int test_removing(void);
 static int test_pushing(void);
 static int test_poping(void);
 static int test_print_bin(void);
-
-static void cleanup(Stack *stack);
-static void cleanup_element(StackElement *ste);
 
 /*
  * Test array
  */
 Test tests[] = {
+    {"Removing",    1,  test_removing,      0 },
     {"Pushing",     1,  test_pushing,       0 },
     {"Poping",      1,  test_poping,        0 },
 
@@ -31,7 +30,24 @@ Test tests[] = {
  * ====================
  */
 
+static int test_removing() {
+    Stack *stack = empty_stack();
+    double ary[] = { 1.0, 2.0, 3.5, 4.9, 5.1 };
+
+    unsigned int i;
+    for( i = 0 ; i < len(ary) ; i++ ) {
+        stackpush(stack, &ary[i], sizeof(double));
+    }
+
+    stackdelete(stack);
+
+    return 1;
+}
+
 static int test_pushing() {
+    int d = depends(test_removing);
+    if (!d) return 0;
+
     Stack *stack = empty_stack();
     int result = 0;
     int topush = 1;
@@ -41,12 +57,13 @@ static int test_pushing() {
                 (stack->first->data_size == sizeof(topush)) &&
                 ((int)*stack->first->data == topush);
 
-    cleanup(stack);
+    stackdelete(stack);
     return result;
 }
 
 static int test_poping() {
     int d = depends(test_pushing);
+    d = d && depends(test_removing);
     if (!d) return 0;
 
     Stack *stack = empty_stack();
@@ -64,12 +81,14 @@ static int test_poping() {
     for( i = 0, j = len(res)-1 ; i<len(res) && j != 0 && worked; i++, j-- )
         worked = res[i] == ary[j];
 
+    stackdelete(stack);
     return worked;
 }
 
 #ifdef STACK_PRINTABLE
 static int test_print_bin() {
     int d = depends(test_pushing);
+    d = d && depends(test_removing);
     if (!d) return 0;
 
     Stack *stack = empty_stack();
@@ -82,30 +101,10 @@ static int test_print_bin() {
 
     stack_print_binary(stack);
 
+    stackdelete(stack);
     return 1;
 }
 #endif //STACK_PRINTABLE
-
-/*
- * ================
- * Helper Functions
- * ================
- */
-
-/*
- * Cleanup
- */
-static void cleanup(Stack *stack) {
-    cleanup_element(stack->first);
-    free(stack);
-}
-
-static void cleanup_element(StackElement *ste) {
-    if( ste->next )
-        cleanup_element(ste->next);
-    else
-        free(ste);
-}
 
 /*
  * Main

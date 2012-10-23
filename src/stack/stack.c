@@ -11,6 +11,8 @@
 static StackElement * stackelement( void *data, size_t data_size );
 static StackElement * next(StackElement* curr);
 
+static void remove_stackelement(StackElement *se);
+
 #ifdef STACK_PRINTABLE
 static void print_stackelement_binary(StackElement *ste);
 #endif //STACK_PRINTABLE
@@ -50,6 +52,13 @@ static StackElement * stackelement( void *data, size_t data_size ) {
  */
 static StackElement * next(StackElement *curr) {
     return curr->next;
+}
+
+static void remove_stackelement(StackElement *se) {
+    if( se->next )
+        remove_stackelement(se->next);
+    else
+        free(se);
 }
 
 #ifdef STACK_PRINTABLE
@@ -144,6 +153,21 @@ void * stackpop( Stack *stack ) {
         stack->first = next;
     }
     return ret;
+}
+
+/*
+ * Removes Stack from memory
+ *
+ * @param stack the Stack to remove
+ */
+void stackdelete(Stack *stack) {
+#ifdef DEBUG
+    EXPLAIN_FUNC;
+#endif //DEBUG
+    
+    if( stack->first )
+        remove_stackelement(stack->first);
+    free(stack);
 }
 
 #ifdef STACK_PRINTABLE
