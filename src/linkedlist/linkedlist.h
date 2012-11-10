@@ -50,6 +50,7 @@ void ll_push( LinkedList *list, void *data, size_t datasize );
 /*
  * Remove elements or the LinkedList from memory
  */
+void ll_limit( LinkedList *list, unsigned int len );
 void * ll_destroy_by_element( LinkedList *list, LinkedListElement *listelement );
 void * ll_destroy_by_index( LinkedList *list, unsigned int i );
 void ll_destroy( LinkedList *list );

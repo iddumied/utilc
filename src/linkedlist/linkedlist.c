@@ -407,6 +407,31 @@ void ll_push( LinkedList *list, void *data, size_t datasize ) {
  */
 
 /*
+ * This functions limits the length of the list to 'len'. The elements which are 
+ * not in the range from element 0 to len-1 will be completely removed from mem.
+ *
+ * @param list the list which should be limited
+ * @param len the length which the list should have afterwards
+ */
+void ll_limit( LinkedList *list, unsigned int len ) {
+#ifdef DEBUG
+    EXPLAIN_FUNC;
+#endif 
+
+    unsigned int currlen = ll_len( list, 1 );
+    unsigned int to_remove, i;
+    if ( currlen > len ) {
+        to_remove = currlen - len;
+        for( i = 0 ; i < to_remove ; i++ ) {
+            ll_destroy_by_element( list, list->last );
+        }
+    }
+    else {
+        /* nothing to do! */
+    }
+}
+
+/*
  * destroy a specific element in the linkedlist, return it's data
  * This function the pointer-fix automatically.
  *
