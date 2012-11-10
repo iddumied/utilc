@@ -412,8 +412,10 @@ void ll_push( LinkedList *list, void *data, size_t datasize ) {
  *
  * @param list the list which should be limited
  * @param len the length which the list should have afterwards
+ * @param take_start if set to true, the first 'len' entries will be kept, else
+ * the last 'len' entries will be kept
  */
-void ll_limit( LinkedList *list, unsigned int len ) {
+void ll_limit( LinkedList *list, unsigned int len, int take_start ) {
 #ifdef DEBUG
     EXPLAIN_FUNC;
 #endif 
@@ -423,7 +425,10 @@ void ll_limit( LinkedList *list, unsigned int len ) {
     if ( currlen > len ) {
         to_remove = currlen - len;
         for( i = 0 ; i < to_remove ; i++ ) {
-            ll_destroy_by_element( list, list->last );
+            if( take_start ) 
+                ll_destroy_by_element( list, list->last );
+            else
+                ll_destroy_by_element( list, list->first );
         }
     }
     else {

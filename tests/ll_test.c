@@ -18,7 +18,8 @@ static int test_length(void);
 static int test_get_first(void);
 static int test_get_last(void);
 static int test_get_by_index(void);
-static int test_limit_length(void);
+static int test_limit_length_keep_first(void);
+static int test_limit_length_keep_last(void);
 static int test_destroy_by_element(void);
 static int test_destroy_by_index(void);
 static int test_element_in_list(void);
@@ -50,7 +51,8 @@ Test tests[] = {
     {"get first",           0,  test_get_first,             0 },
     {"get last",            0,  test_get_last,              0 },
     {"get by index",        0,  test_get_by_index,          0 },
-    {"limit length",        0,  test_limit_length,          0 },
+    {"limit: keep first",   0,  test_limit_length_keep_first,0 },
+    {"limit: keep last",    0,  test_limit_length_keep_last, 0 },
     {"destroy by element",  0,  test_destroy_by_element,    0 },
     {"destroy by index",    0,  test_destroy_by_index,      0 },
     {"element in list",     0,  test_element_in_list,       0 },
@@ -195,7 +197,7 @@ static int test_get_by_index() {
     return worked;
 }
 
-static int test_limit_length() {
+static int test_limit_length_keep_first() {
     depends( test_creating_and_removing );
     depends( test_pushing );
     depends( test_length );
@@ -211,14 +213,44 @@ static int test_limit_length() {
         ll_push( list, &ary[i], sizeof(ary[i]) );
     }
 
-    ll_limit( list, 3 );
+    ll_limit( list, 3, 1 );
 
     worked = ll_len( list, 1 ) == (unsigned int)3;
 
     double * curr_element;
     for( i = 0 ; worked && i<len(res) ; i++ ) {
          curr_element = (double*)ll_element(list, i);
-         worked = *curr_element == ary[i]; 
+         worked = *curr_element == res[i]; 
+    }
+
+    cleanup(list);
+    return worked;
+}
+
+static int test_limit_length_keep_last() {
+    depends( test_creating_and_removing );
+    depends( test_pushing );
+    depends( test_length );
+    depends( test_get_by_index );
+
+    int worked = 1;
+    unsigned int i;
+    double ary[] = { 1.0, 2.0, 3.5, 4.9, 5.5 };
+    double res[] = { 3.5, 4.9, 5.5 };
+
+    LinkedList *list = linkedlist(&ary[0], sizeof(ary[0]));
+    for( i = 1 ; i<len(ary) ; i++ ) {
+        ll_push( list, &ary[i], sizeof(ary[i]) );
+    }
+
+    ll_limit( list, 3, 0 );
+
+    worked = ll_len( list, 1 ) == (unsigned int)3;
+
+    double * curr_element;
+    for( i = 0 ; worked && i<len(res) ; i++ ) {
+         curr_element = (double*)ll_element(list, i);
+         worked = *curr_element == res[i]; 
     }
 
     cleanup(list);
