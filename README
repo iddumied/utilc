@@ -59,3 +59,7 @@ Note: There will be no sorting for the linkedlist stuff!
 	-------------
 	* Stack can be removed from memory
 	* Some Bugfixes
+
+	Version 2.3.0
+	-------------
+	* limit the length of a LinkedList to a given value with the  ll_limit() function
