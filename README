@@ -63,3 +63,7 @@ Note: There will be no sorting for the linkedlist stuff!
 	Version 2.3.0
 	-------------
 	* limit the length of a LinkedList to a given value with the  ll_limit() function
+	
+	Version 2.3.1
+	-------------
+	* keep the first n or the last n when using ll_limit() function
