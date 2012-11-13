@@ -170,6 +170,29 @@ void stackdelete(Stack *stack) {
     free(stack);
 }
 
+/*
+ * returns 0 if stack is not empty and a positive value != 0 if it is
+ */
+int stack_empty(Stack *stack) {
+    return stack->first == NULL;
+}
+
+/*
+ * Creates a new Stack, sorted the other way round as the passed one
+ * The passed one is removed from memory
+ */
+Stack * stack_restack(Stack *stack) {
+    Stack *newstack = empty_stack();
+    StackElement *se;
+    while(!stack_empty(stack)) {
+        se = stack->first;
+        stackpush( newstack, stackpop(stack), se->data_size );
+    }
+
+    stackdelete(stack);
+    return newstack;
+}
+
 #ifdef STACK_PRINTABLE
 /*
  * Prints each stack elements data binary.

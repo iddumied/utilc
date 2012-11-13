@@ -21,6 +21,9 @@ void * stackpop(Stack *stack);
 
 void stackdelete(Stack *stack);
 
+int stack_empty(Stack *stack);
+Stack * stack_restack(Stack *stack);
+
 #ifdef STACK_PRINTABLE
 void stack_print_binary(Stack *stack);
 #endif //STACK_PRINTABLE
