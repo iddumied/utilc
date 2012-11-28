@@ -12,10 +12,10 @@
  */
 static LinkedListElement * new_linkedlistelement(size_t datasize);
 static LinkedListElement * linkedlistelement_at( LinkedList *, unsigned int );
-static void savdeclen( LinkedList * );
-static void savinclen( LinkedList * );
-static LinkedListElement * next(LinkedListElement*);
-static LinkedListElement * previous(LinkedListElement*);
+#define savinclen(l) if(l->length) l->length++
+#define savdeclen(l) if(l->length) l->length--
+#define next(c) c->next
+#define previous(c) c->prev
 
 #ifdef LL_PRINTABLE
 static void print_binary(LinkedListElement *lle);
@@ -68,42 +68,6 @@ static LinkedListElement * linkedlistelement_at( LinkedList * list, unsigned int
     for(j = 0; j != i && current && (current = next(current)); j++);
     if ( j != i ) return NULL;
     return current;
-}
-
-/*
- * decrements the length variable in the list savely
- *
- * @param list the list where the length is to decrement
- */
-static void savdeclen( LinkedList * list ) {
-    if( list->length ) list->length--;
-}
-
-/*
- * increments the length variable in the list savely
- *
- * @param list the list where the length is to increment
- */
-static void savinclen( LinkedList * list ) {
-    if( list->length ) list->length++;
-}
-
-/*
- * returns next element based on current
- *
- * @param curr The element to return the next from.
- */
-static LinkedListElement * next(LinkedListElement *curr) {
-    return curr->next;
-}
-
-/*
- * returns previous element based on current
- *
- * @param curr The element to return the previous from.
- */
-static LinkedListElement * previous(LinkedListElement *curr) {
-    return curr->prev;
 }
 
 #ifdef LL_PRINTABLE
@@ -739,3 +703,9 @@ void ll_print_binary(LinkedList *list) {
 }
 
 #endif //LL_PRINTABLE
+
+/*
+ * Undef "static" macros
+ */
+#undef savinclen
+#undef savdeclen
