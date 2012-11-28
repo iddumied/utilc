@@ -407,36 +407,6 @@ void ll_push( LinkedList *list, void *data, size_t datasize ) {
  */
 
 /*
- * This functions limits the length of the list to 'len'. The elements which are 
- * not in the range from element 0 to len-1 will be completely removed from mem.
- *
- * @param list the list which should be limited
- * @param len the length which the list should have afterwards
- * @param take_start if set to true, the first 'len' entries will be kept, else
- * the last 'len' entries will be kept
- */
-void ll_limit( LinkedList *list, unsigned int len, int take_start ) {
-#ifdef DEBUG
-    EXPLAIN_FUNC;
-#endif 
-
-    unsigned int currlen = ll_len( list, 1 );
-    unsigned int to_remove, i;
-    if ( currlen > len ) {
-        to_remove = currlen - len;
-        for( i = 0 ; i < to_remove ; i++ ) {
-            if( take_start ) 
-                ll_destroy_by_element( list, list->last );
-            else
-                ll_destroy_by_element( list, list->first );
-        }
-    }
-    else {
-        /* nothing to do! */
-    }
-}
-
-/*
  * destroy a specific element in the linkedlist, return it's data
  * This function the pointer-fix automatically.
  *
@@ -527,6 +497,76 @@ void ll_destroy( LinkedList * list ) {
  */
 
 /*
+ * Copy the linkedlist and return the new one.
+ * -> Does not change the passed list
+ *
+ * @return LinkedList*
+ * @param list the "old" linkedlist
+ */
+LinkedList * ll_dump( LinkedList *list ) {
+#ifdef DEBUG
+    EXPLAIN_FUNC; 
+#endif
+
+    LinkedList * newlist = linkedlist( list->first->data, list->first->datasize ); 
+    LinkedListElement * c = list->first;
+    while( (c = next(c)) ) // O(n)
+        ll_push( newlist, c->data, c->datasize );
+
+    return newlist;
+}
+
+/*
+ * Easy join function. 
+ * The ll_join function joins two LinkedLists together by allocating mem for a 
+ * new LinkedList and running through every element of the passed lists and 
+ * appending them. 
+ * So the expense of this function is O(n^2)
+ * -> Does not change the passed lists
+ *
+ * Notice: The function does not take every value one time. It really just joins
+ * two lists.
+ *
+ * @return LinkedList*
+ * @param list1 the first list
+ * @param list2 the second list
+ */
+LinkedList * ll_join( LinkedList *list1, LinkedList *list2 ) {
+#ifdef DEBUG
+    EXPLAIN_FUNC; 
+#endif
+
+    LinkedList * result = empty_linkedlist();
+
+    LinkedListElement *current = list1->first;
+
+    ll_push( result, current->data, current->datasize );
+    while( current && (current = current->next)) {
+        ll_push(result, current->data, current->datasize);
+    }
+    
+    /* for second list, do the stuff again */
+    current = list2->first;
+
+    ll_push( result, current->data, current->datasize );
+    while( current && (current = current->next)) {
+        ll_push(result, current->data, current->datasize);
+    }
+
+    return result;
+}
+
+
+/*
+ *
+ * You can define this macro if you want to have some more functionality in the 
+ * linkedlist library. If not, this will not be compiled and will not use any 
+ * memory on your machine.
+ */
+#ifdef LL_EXTENDED
+
+
+/*
  * A checker if specific data is already in the linkedlist.
  *
  * @return int : 1 if data is in the linkedlist, else 0
@@ -547,26 +587,6 @@ int ll_element_in_list( LinkedList *list, void *data, size_t datasize ) {
         curr = next(curr);
     }
     return found;
-}
-
-/*
- * Copy the linkedlist and return the new one.
- * -> Does not change the passed list
- *
- * @return LinkedList*
- * @param list the "old" linkedlist
- */
-LinkedList * ll_dump( LinkedList *list ) {
-#ifdef DEBUG
-    EXPLAIN_FUNC; 
-#endif
-
-    LinkedList * newlist = linkedlist( list->first->data, list->first->datasize ); 
-    LinkedListElement * c = list->first;
-    while( (c = next(c)) ) // O(n)
-        ll_push( newlist, c->data, c->datasize );
-
-    return newlist;
 }
 
 /*
@@ -596,6 +616,36 @@ LinkedList * ll_get_by_cond( LinkedList * list, int(*cnd)(void*, size_t) ) {
     } 
 
     return newlist;
+}
+
+/*
+ * This functions limits the length of the list to 'len'. The elements which are 
+ * not in the range from element 0 to len-1 will be completely removed from mem.
+ *
+ * @param list the list which should be limited
+ * @param len the length which the list should have afterwards
+ * @param take_start if set to true, the first 'len' entries will be kept, else
+ * the last 'len' entries will be kept
+ */
+void ll_limit( LinkedList *list, unsigned int len, int take_start ) {
+#ifdef DEBUG
+    EXPLAIN_FUNC;
+#endif 
+
+    unsigned int currlen = ll_len( list, 1 );
+    unsigned int to_remove, i;
+    if ( currlen > len ) {
+        to_remove = currlen - len;
+        for( i = 0 ; i < to_remove ; i++ ) {
+            if( take_start ) 
+                ll_destroy_by_element( list, list->last );
+            else
+                ll_destroy_by_element( list, list->first );
+        }
+    }
+    else {
+        /* nothing to do! */
+    }
 }
 
 /*
@@ -648,45 +698,7 @@ void ll_for_each_element_by_condition_do( LinkedList *list,
     }
 }
 
-/*
- * Easy join function. 
- * The ll_join function joins two LinkedLists together by allocating mem for a 
- * new LinkedList and running through every element of the passed lists and 
- * appending them. 
- * So the expense of this function is O(n^2)
- * -> Does not change the passed lists
- *
- * Notice: The function does not take every value one time. It really just joins
- * two lists.
- *
- * @return LinkedList*
- * @param list1 the first list
- * @param list2 the second list
- */
-LinkedList * ll_join( LinkedList *list1, LinkedList *list2 ) {
-#ifdef DEBUG
-    EXPLAIN_FUNC; 
-#endif
-
-    LinkedList * result = empty_linkedlist();
-
-    LinkedListElement *current = list1->first;
-
-    ll_push( result, current->data, current->datasize );
-    while( current && (current = current->next)) {
-        ll_push(result, current->data, current->datasize);
-    }
-    
-    /* for second list, do the stuff again */
-    current = list2->first;
-
-    ll_push( result, current->data, current->datasize );
-    while( current && (current = current->next)) {
-        ll_push(result, current->data, current->datasize);
-    }
-
-    return result;
-}
+#endif // LL_EXTENDED
 
 #ifdef LL_PRINTABLE
 /*
