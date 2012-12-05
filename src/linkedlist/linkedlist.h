@@ -4,6 +4,17 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include <stdint.h>
+
+#define bit(x) 1<<x
+enum {
+    LL_REALLOC          = bit(0),
+    LL_RET_DESTROYES    = bit(1),
+    LL_POP_DESTROY      = bit(2),
+    /* currently there is not more config */
+};
+#undef bit
+
 typedef struct linked_list_element  LinkedListElement;
 typedef struct linked_list          LinkedList;
 
@@ -22,6 +33,15 @@ struct linked_list {
 
 LinkedList * linkedlist( void *data, size_t datasize );
 LinkedList * empty_linkedlist(void);
+
+/*
+ * Config the Linkedlist. Configuration is available withe the variables
+ * from 
+ *  enum LL_CONFIG
+ */
+void ll_config_set( uint8_t conf );
+uint8_t ll_config_get(void);
+
 
 /*
  * Get info about the LinkedList

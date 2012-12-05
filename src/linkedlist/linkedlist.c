@@ -6,16 +6,31 @@
 #endif
 
 /*
+ * Static variables
+ *
+ * This configuration variables are used as flags for doing stuff. 
+ * They are set with the ll_config() function and the enumerators
+ */
+static uint8_t ll_config_variable;
+
+/*
  * ==========================
  * Static function prototypes 
  * ==========================
  */
 static LinkedListElement * new_linkedlistelement(size_t datasize);
 static LinkedListElement * linkedlistelement_at( LinkedList *, unsigned int );
+static void * savely_return(LinkedListElement* lle);
+
 #define savinclen(l) if(l->length) l->length++
 #define savdeclen(l) if(l->length) l->length--
 #define next(c) c->next
 #define previous(c) c->prev
+
+/*
+ * Following macro are required by the functions which need the config
+ */
+#define CONFIG_SET(map,conf) (map & conf)
 
 #ifdef LL_PRINTABLE
 static void print_binary(LinkedListElement *lle);
@@ -68,6 +83,25 @@ static LinkedListElement * linkedlistelement_at( LinkedList * list, unsigned int
     for(j = 0; j != i && current && (current = next(current)); j++);
     if ( j != i ) return NULL;
     return current;
+}
+
+/*
+ * returner function for returning values by checking config for what to do.
+ * If config says, the value should be copied to another place in memory before 
+ * returning a pointer to it, do so.
+ * Otherwise return the pointer to the real data and don't copy it
+ *
+ * @return a void* to the value passed by the param, or to the value in another 
+ *  location in the memory
+ * @param lle return the value of this linkedlistelement
+ */
+static void * savely_return( LinkedListElement* lle ) {
+    if( !CONFIG_SET(ll_config_variable, LL_REALLOC) )
+        return lle->data;
+
+    void * new_mem = (void*) malloc( lle->datasize );
+    new_mem = memcpy( new_mem, lle->data, lle->datasize );
+    return new_mem;
 }
 
 #ifdef LL_PRINTABLE
@@ -151,6 +185,23 @@ LinkedList * empty_linkedlist() {
 }
 
 /*
+ * Pass the configuration with binary OR, this function will set the internal 
+ * configuration variable.
+ *
+ * @param conf the configuration flags
+ */
+void ll_config_set( uint8_t conf ) {
+    ll_config_variable = conf;
+}
+
+/*
+ * get the config. No pointer to it!
+ */
+uint8_t ll_config_get() {
+    return ll_config_variable;
+}
+
+/*
  * -----------------------------
  * Get info about the LinkedList
  * -----------------------------
@@ -204,7 +255,7 @@ void * ll_last( LinkedList * list ) {
     EXPLAIN_FUNC_WITH(": %p",list->last->data);
 #endif
 
-    return list->last->data;
+    return savely_return(list->last);
 }
 
 /*
@@ -218,7 +269,7 @@ void * ll_first( LinkedList * list ) {
     EXPLAIN_FUNC_WITH(": %p",list->first->data);
 #endif
 
-    return list->first->data;
+    return savely_return(list->first);
 }
 
 /*
@@ -319,13 +370,14 @@ void * ll_element( LinkedList * l , unsigned int i ) {
 
     LinkedListElement * listelement = linkedlistelement_at( l, i );
     if( listelement ) 
-        return &(listelement->data);
+        return savely_return(listelement);
     else
         return NULL; // e == NULL
 }
 
 /*
- * pop the first element from the list and return it's data
+ * pop the first element from the list and return it's data if the config says 
+ * that.
  *
  * @return void*
  * @param list the list to pop from
@@ -335,7 +387,15 @@ void * ll_pop( LinkedList * list ) {
     EXPLAIN_FUNC; 
 #endif
 
-    return ll_destroy_by_element( list, list->first );
+    if( CONFIG_SET(ll_config_variable,LL_POP_DESTROY) ) {
+        return ll_destroy_by_element( list, list->first );
+    }
+    /*
+     * else:
+     *
+     * the ll_first function is savely_returning!
+     */
+    return ll_first(list);
 } 
 
 /*
@@ -709,3 +769,6 @@ void ll_print_binary(LinkedList *list) {
  */
 #undef savinclen
 #undef savdeclen
+#undef next
+#undef previous
+#undef BIT_SET
