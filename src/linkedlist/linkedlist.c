@@ -431,8 +431,9 @@ void ll_push( LinkedList *list, void *data, size_t datasize ) {
  */
 
 /*
- * destroy a specific element in the linkedlist, return it's data
- * This function the pointer-fix automatically.
+ * destroy a specific element in the linkedlist, return it's data if config is 
+ * set, otherwise NULL.
+ * This function does the pointer-fix automatically.
  *
  * @return void*
  * @param list the list to destroy the element in
@@ -443,7 +444,7 @@ void * ll_destroy_by_element( LinkedList * list, LinkedListElement * listelement
     EXPLAIN_FUNC; 
 #endif
     
-    void *data;
+    void *data = NULL;
     if ( !listelement )
         return NULL;
 
@@ -469,7 +470,11 @@ void * ll_destroy_by_element( LinkedList * list, LinkedListElement * listelement
         list->first = list->last = NULL;
     }
     
-    data = listelement->data; // save element value
+    if( CONFIG_SET(ll_config_variable, LL_RET_DESTROYED )) {
+        data = (void*) malloc( listelement->datasize );
+        data = memcpy( data, listelement->data, listelement->datasize );
+    }
+
     free( listelement );
     savdeclen(list);
     return data;
@@ -479,6 +484,10 @@ void * ll_destroy_by_element( LinkedList * list, LinkedListElement * listelement
  * Destroy an element from the list by index and returns its data.
  * This is kind of a wrapper, it simply uses the internal function
  * linkedlistelement_at and ll_destroy_by_element.
+ *
+ * Function is returning automatically as set in config by using the 
+ *  ll_destroy_by_element() 
+ * function.
  *
  * @return void*
  * @param list the list to destroy int

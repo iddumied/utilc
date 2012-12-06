@@ -9,7 +9,7 @@
 #define bit(x) 1<<x
 enum {
     LL_REALLOC          = bit(0),
-    LL_RET_DESTROYES    = bit(1),
+    LL_RET_DESTROYED    = bit(1),
     LL_POP_DESTROY      = bit(2),
     /* currently there is not more config */
 };
