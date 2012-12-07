@@ -714,8 +714,9 @@ void ll_for_each_element_do( LinkedList * list, int (*func)(void*, size_t) ) {
  * @param cond the condition-function
  * @param func the function to execute
  */
-void ll_for_each_element_by_condition_do( LinkedList *list, 
-        int (*cond)(void*, size_t), int (*func)(void*, size_t) ) {
+void ll_for_each_element_by_condition_do(   LinkedList *list, 
+                                            int (*cond)(void*, size_t), 
+                                            int (*func)(void*, size_t) ) {
 #ifdef DEBUG
     EXPLAIN_FUNC; 
 #endif
@@ -750,8 +751,9 @@ void ll_print( LinkedList *list, void (*print_element)(void*, size_t) ) {
 
     LinkedListElement *curr = list->first;
     print_element(list->first->data, list->first->datasize);
-    while( (curr = next(curr)) ) 
+    while( (curr = next(curr)) ) {
         print_element(curr->data, curr->datasize);
+    }
 }
 
 /*
