@@ -4,7 +4,10 @@
  * Static function prototypes
  */
 static signed int compare_elements(MapElement *a, MapElement *b);
-static signed int compare_keys(void *keya, void* keyb);
+static signed int compare_keys( void *keya, 
+                                size_t keyasize, 
+                                void* keyb, 
+                                size_t keybsize);
 
 #define swap_elements(a,b) do { \
         MapElement *x = (MapElement*) malloc(sizeof(MapElement));   \
@@ -21,13 +24,30 @@ static signed int compare_keys(void *keya, void* keyb);
 /*
  * @return -1 when a is bigger, 0 if they are equal, 1 if b is bigger
  */
-static signed int compare_elements(MapElement *a, MapElement *b) {
-}
+#define compare_elements(a,b) compare_keys(a->key,a->key_size,b->key,b->key_size)
 
 /*
  * Comares keys
+ *
+ * @return -1 when keya is bigger, 0 if they are equal, 1 if keyb is bigger
+ *
+ * Interal key sorting is done by some simple rules:
+ * 1) keys with longer key_size are greater
+ * 2) keys with equal key_size are compared by memcmp()
  */
-static signed int compare_keys(void *keya, void* keyb) {
+static signed int compare_keys( void *keya, 
+                                size_t keyasize, 
+                                void* keyb, 
+                                size_t keybsize) {
+
+    if( keyasize != keybsize ) {
+        if( keyasize > keybsize )
+            return -1;
+        /* else */
+            return 1;
+    }
+    else
+        return memcmp( keya, keyb, keyasize /* or keybsize */ );
 } 
 
 /*
@@ -99,8 +119,12 @@ MapInsertStatus map_insert( Map *m,
     unsigned int i;
     
     /* keep map sorted */
-    MapElement * current_element;
-    for( i = 0; i < m->len && 1 != compare_keys(m->elements[i].key, key) ; i++ );
+#define curr_e m->elements[i]
+    for( i = 0; 
+            i < m->len && 
+            1 != compare_keys(curr_e.key, curr_e.key_size, key, keysize); 
+            i++ );
+#undef curr_e
     /* i points to the first key which is smaller or equal than the key to insert */
 
     MapElement * src = &(m->elements[i]);
@@ -108,12 +132,13 @@ MapInsertStatus map_insert( Map *m,
     dest = memmove(dest, src, sizeof(MapElement)*(m->cnt_set_elements - (i-1)) );
     
     /* Copy the new data into the map */
-    src->key    = (void*) malloc( keysize );
+    src->key        = (void*) malloc( keysize );
     if( src->key == NULL ) goto r_unable_to_alloc;
-    src->key    = memcpy( src->key, key, keysize );
+    src->key        = memcpy( src->key, key, keysize );
+    src->key_size   = keysize;
 
-    src->value  = (void*) malloc( valuesize );
-    src->value  = memcpy( src->value, value, valuesize );
+    src->value      = (void*) malloc( valuesize );
+    src->value      = memcpy( src->value, value, valuesize );
     if( src->value == NULL ) goto r_unable_to_alloc;
 
     src->value_size = valuesize; 
