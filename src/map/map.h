@@ -5,9 +5,10 @@
 #include <string.h>
 
 typedef struct {
-    size_t value_size;
     void * key;
+    size_t key_size;
     void * value;
+    size_t value_size;
 } MapElement;
 
 typedef struct {
