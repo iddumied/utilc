@@ -3,8 +3,6 @@
 /*
  * Static function prototypes
  */
-static void sort(Map *m);
-static void mergesort(Map *m, unsigned int start, unsigned int maxoffset);
 static signed int compare_elements(MapElement *a, MapElement *b);
 static signed int compare_keys(void *keya, void* keyb);
 
@@ -19,31 +17,6 @@ static signed int compare_keys(void *keya, void* keyb);
 /*
  * Static function implementations
  */
-
-static void sort(Map *m) {
-    if (m->len == 1 || m->cnt_set_elements == 1) {
-        return;
-    }
-
-    mergesort(m, 0, m->cnt_set_elements);
-}
-
-static void mergesort(Map *m, unsigned int start, unsigned int maxoffset) {
-    if( maxoffset > 1 ) {
-        mergesort(m, start, maxoffset/2);
-        mergesort(m, start+maxoffset, maxoffset/2); 
-    }
-    else { /* maxoffset is 1 */
-        if( 1 == compare_elements(&m->elements[start], &m->elements[start+maxoffset])){
-            MapElement *a = &(m->elements[start]);
-            MapElement *b = &(m->elements[start+maxoffset]);
-            swap_elements(a, b);
-        }
-        /* if result is 0, they are equal and don't need to be swapped, 
-         * if result is -1, first element is bigger and everything is okay.
-         */
-    }
-}
 
 /*
  * @return -1 when a is bigger, 0 if they are equal, 1 if b is bigger
