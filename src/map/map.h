@@ -37,7 +37,7 @@ MapInsertStatus     map_insert( Map *m,
                                 size_t keysize,
                                 void *value,
                                 size_t valuesize);
-void *              map_find(void *key);
+MapElement *        map_find(Map *m, void *key, size_t keysize);
 void *              map_delete_by_key(void *key);
 void *              map_delete_by_value(void *val);
 

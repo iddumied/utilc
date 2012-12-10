@@ -1,13 +1,20 @@
 #include "map.h"
 
 /*
+ * ==========================
  * Static function prototypes
+ * ==========================
  */
 static signed int compare_elements(MapElement *a, MapElement *b);
 static signed int compare_keys( void *keya, 
                                 size_t keyasize, 
                                 void* keyb, 
                                 size_t keybsize);
+static MapElement * find_element(   Map *m, 
+                                    void *key, 
+                                    size_t keysize, 
+                                    unsigned int range_start,
+                                    unsigned int range_end );
 
 #define swap_elements(a,b) do { \
         MapElement *x = (MapElement*) malloc(sizeof(MapElement));   \
@@ -18,7 +25,9 @@ static signed int compare_keys( void *keya,
     } while(0);
 
 /*
+ * ===============================
  * Static function implementations
+ * ===============================
  */
 
 /*
@@ -51,6 +60,49 @@ static signed int compare_keys( void *keya,
 } 
 
 /*
+ * internal function to search for a element in the map 
+ *
+ * @return the MapElement or NULL if it was not found
+ *
+ * @param m the map where to search in 
+ * @param key the key to identify the element 
+ * @param keysize the size of the key 
+ * @param range_start (internal) start of the range to search in
+ * @param range_end (internal) end of the range to search in
+ */
+static MapElement * find_element(   Map *m, 
+                                    void *key, 
+                                    size_t keysize, 
+                                    unsigned int range_start,
+                                    unsigned int range_end ) {
+
+    MapElement *result = NULL;
+    MapElement *test;
+
+    if( range_end - range_start == 0 ) {
+        test = &(m->elements[range_start]);
+        if ( 0 == compare_keys(test->key, test->key_size, key, keysize) ) {
+            result = test;
+        } 
+        /* if keys are not equal, result = NULL */
+    }
+    else {
+       unsigned int mid = (range_end - range_start) / 2;
+       result = find_element(m, key, keysize, range_start, mid);
+       if( result == NULL )
+           result = find_element(m, key, keysize, mid, range_end);
+    }
+
+    return result;
+}
+
+/*
+ * ========================
+ * Function implementations
+ * ========================
+ */
+
+/*
  * Allocates memory for a new map.
  *
  * @param prealloc allocate memory for elements when allocating memory for map.
@@ -78,6 +130,9 @@ Map * map_new_map(  unsigned int prealloc,
  * Deletes map from memory
  *
  * @param map the map to delete
+ *
+ * Currently, this function does not remove the MapElements from the memory, i
+ * guess. It has to be improved, surely!
  */
 void map_delete_map(Map *m) {
     free(m);
@@ -152,3 +207,17 @@ r_key_exists:
 r_unknown_error:
     return MAP_UNKNOWN_ERROR;
 }
+
+/*
+ * find alias for user.
+ *
+ * @return the MapElement or NULL if it was not found
+ *
+ * @param m the map where to search in 
+ * @param key the key to identify the element 
+ * @param keysize the size of the key to compare with one in the map
+ */
+MapElement * map_find(Map *m, void *key, size_t keysize) {
+    return find_element(m, key, keysize, 0, m->cnt_set_elements-1);
+}
+
