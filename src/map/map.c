@@ -10,7 +10,7 @@ static signed int compare_keys( void *keya,
                                 size_t keyasize, 
                                 void* keyb, 
                                 size_t keybsize);
-static MapElement * find_element(   Map *m, 
+static MapElement * binarysearch(   Map *m, 
                                     void *key, 
                                     size_t keysize, 
                                     unsigned int range_start,
@@ -70,7 +70,7 @@ static signed int compare_keys( void *keya,
  * @param range_start (internal) start of the range to search in
  * @param range_end (internal) end of the range to search in
  */
-static MapElement * find_element(   Map *m, 
+static MapElement * binarysearch(   Map *m, 
                                     void *key, 
                                     size_t keysize, 
                                     unsigned int range_start,
@@ -88,9 +88,9 @@ static MapElement * find_element(   Map *m,
     }
     else {
        unsigned int mid = (range_end - range_start) / 2;
-       result = find_element(m, key, keysize, range_start, mid);
+       result = binarysearch(m, key, keysize, range_start, mid);
        if( result == NULL )
-           result = find_element(m, key, keysize, mid, range_end);
+           result = binarysearch(m, key, keysize, mid, range_end);
     }
 
     return result;
@@ -210,6 +210,7 @@ r_unknown_error:
 
 /*
  * find alias for user.
+ * Selects the search algo which is configured by user.
  *
  * @return the MapElement or NULL if it was not found
  *
@@ -218,6 +219,9 @@ r_unknown_error:
  * @param keysize the size of the key to compare with one in the map
  */
 MapElement * map_find(Map *m, void *key, size_t keysize) {
-    return find_element(m, key, keysize, 0, m->cnt_set_elements-1);
+    /*
+     * Currently, there is only binarysearch
+     */
+    return binarysearch(m, key, keysize, 0, m->cnt_set_elements-1);
 }
 
