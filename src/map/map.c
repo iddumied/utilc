@@ -15,6 +15,9 @@ static MapElement * binarysearch(   Map *m,
                                     size_t keysize, 
                                     unsigned int range_start,
                                     unsigned int range_end );
+static MapElement * linearsearch(   Map *m,
+                                    void *key,
+                                    size_t keysize );
 
 #define swap_elements(a,b) do { \
         MapElement *x = (MapElement*) malloc(sizeof(MapElement));   \
@@ -94,6 +97,28 @@ static MapElement * binarysearch(   Map *m,
     }
 
     return result;
+}
+
+/*
+ * internal function to search for a element in the mapelement
+ *
+ * @return the MapElement or NULL if it was not found
+ *
+ * @param m the map where to search in 
+ * @param key the key to identify the element 
+ * @param keysize the size of the key 
+ */
+static MapElement * linearsearch(   Map *m,
+                                    void *key,
+                                    size_t keysize ) {
+    unsigned int i;
+    MapElement * curr;
+    for( i = 0, curr = &(m->elements[i]) ; 
+            i < m->cnt_set_elements && 
+            0 != memcmp(curr->key, key, keysize); 
+            i++, curr = &(m->elements[i]) );
+
+    return curr;
 }
 
 /*
