@@ -112,11 +112,16 @@ static MapElement * linearsearch(   Map *m,
                                     void *key,
                                     size_t keysize ) {
     unsigned int i;
+    int found;
     MapElement * curr;
-    for( i = 0, curr = &(m->elements[i]) ; 
+
+    for( i = 0, found = 0, curr = &(m->elements[i]) ; 
             i < m->cnt_set_elements && 
-            0 != memcmp(curr->key, key, keysize); 
-            i++, curr = &(m->elements[i]) );
+            !found; 
+            i++, curr = &(m->elements[i]) ) {
+
+        found = 0 == memcmp(curr->key, key, keysize);
+    }
 
     return curr;
 }
