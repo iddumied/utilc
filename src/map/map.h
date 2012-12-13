@@ -3,6 +3,7 @@
 
 #include <stdlib.h>
 #include <string.h>
+#include <stdint.h>
 
 typedef struct {
     void * key;
@@ -28,8 +29,19 @@ typedef enum {
     MAP_STATUS_LEN,
 } MapInsertStatus;
 
+#define BIT(x) (1<<x)
+enum { 
+    MAP_REALLOC_RET   = BIT(0),
+    MAP_SEARCH_BEST   = BIT(1),
+    MAP_SEARCH_LINEAR = BIT(2),
+    MAP_SEARCH_BINARY = BIT(3),
+};
+#undef BIT
+
 Map *               map_new_map(unsigned int prealloc, 
                                 signed int (*cmpfunc)(void* key_x, void* key_y));
+
+void                map_config(uint8_t c);
 void                map_delete_map(Map *m);
 
 MapInsertStatus     map_insert( Map *m, 
