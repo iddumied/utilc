@@ -2,6 +2,13 @@
 
 /*
  * ==========================
+ * Static types and variables
+ * ==========================
+ */
+static uint8_t configuration;
+
+/*
+ * ==========================
  * Static function prototypes
  * ==========================
  */
@@ -157,6 +164,13 @@ Map * map_new_map(  unsigned int prealloc,
 }
 
 /*
+ * Configure the map behaviour
+ */
+void map_config(uint8_t c) {
+    configuration = c;
+}
+
+/*
  * Deletes map from memory
  *
  * @param map the map to delete
@@ -239,7 +253,6 @@ r_unknown_error:
 }
 
 /*
- * find alias for user.
  * Selects the search algo which is configured by user.
  *
  * @return the MapElement or NULL if it was not found
@@ -249,9 +262,44 @@ r_unknown_error:
  * @param keysize the size of the key to compare with one in the map
  */
 MapElement * map_find(Map *m, void *key, size_t keysize) {
+    MapElement * result;
+    MapElement * found;
+    if( configuration & MAP_SEARCH_BINARY ) {
+        found = linearsearch(m, key, keysize );
+    }
+
+    /*else if ( configuration & MAP_SEARCH_BINARY ) { 
+        return binarysearch(m, key, keysize, 0, m->cnt_set_elements-1);
+    }
+    else if( configuration & MAP_SEARCH_BEST ) { */
+
+    else {
+        found = binarysearch(m, key, keysize, 0, m->cnt_set_elements-1);
+    }
+
     /*
-     * Currently, there is only binarysearch
+     * `found` is now set or NULL.
      */
-    return binarysearch(m, key, keysize, 0, m->cnt_set_elements-1);
+
+    /*
+     * If config says that there is a realloc required before returning, do so.
+     */
+    if( configuration & MAP_REALLOC_RET ) {
+        if( found == NULL ) {
+            result = found;
+        }
+        else {
+            result = (MapElement*) malloc( sizeof(*result) );
+            result = memcpy(result, found, sizeof(*result) );
+        }
+
+        /*
+         * `result` is now found or NULL.
+         */
+
+        return result;
+    }
+    /* else don't and return the 'real' pointer */
+    return found;
 }
 
